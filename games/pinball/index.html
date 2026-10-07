@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>街机弹球 (Pinball) - OmniGame</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <div class="pinball-container">
+    <header class="pinball-header">
+      <div class="pinball-title-row">
+        <h1 class="pinball-title">街机弹珠台 <span>Pinball</span></h1>
+        <div class="pinball-tools">
+          <button id="soundBtn" class="pinball-icon-btn" title="声音开关">🔊</button>
+          <button id="restartBtn" class="pinball-btn pinball-btn-accent" title="重开">重新开局</button>
+        </div>
+      </div>
+      <div class="pinball-status-row">
+        <div class="pinball-badge">得分: <span id="scoreText">0</span></div>
+        <div class="pinball-badge">倍率: <span id="multText">x1</span></div>
+        <div class="pinball-badge balls" id="ballsContainer">
+          弹球: <span class="ball-icon active">⚪</span><span class="ball-icon active">⚪</span><span class="ball-icon active">⚪</span>
+        </div>
+      </div>
+    </header>
+
+    <div class="canvas-wrapper" id="canvasWrapper">
+      <canvas id="gameCanvas"></canvas>
+      <div class="flipper-controls">
+        <button class="flipper-touch-btn left" id="leftTouchBtn">左板 (A / ←)</button>
+        <button class="plunger-touch-btn" id="plungerTouchBtn">发射 🚀</button>
+        <button class="flipper-touch-btn right" id="rightTouchBtn">右板 (D / →)</button>
+      </div>
+    </div>
+
+    <footer class="pinball-footer">
+      <div class="pinball-hint">键盘 ← → / A D 或屏幕下方按钮控制左右挡板 · 空格/下键拉栓发球</div>
+    </footer>
+  </div>
+
+  <div class="modal-overlay" id="gameOverModal">
+    <div class="modal-card">
+      <div class="modal-emoji">🎰</div>
+      <h2 class="modal-title" id="modalTitle">全盘落球，游戏结束！</h2>
+      <p class="modal-desc" id="modalDesc">最终得分: 0 分</p>
+      <div class="modal-actions">
+        <button id="modalRestartBtn" class="modal-btn modal-btn-primary">再投一币</button>
+      </div>
+    </div>
+  </div>
+
+  <script src="game.js"></script>
+</body>
+</html>

@@ -1,0 +1,70 @@
+/* 贪吃蛇 — OmniGame */
+* { box-sizing: border-box; }
+html, body {
+  margin: 0;
+  height: 100%;
+  overflow: hidden;
+  background: #0e1020; color: #eef1ff;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC",
+    "Hiragino Sans GB", "Microsoft YaHei", Roboto, Helvetica, Arial, sans-serif;
+}
+.wrap {
+  height: 100%;
+  display: flex; flex-direction: column; align-items: center;
+  padding: 10px 14px 8px; gap: 8px;
+  box-sizing: border-box;
+}
+.head {
+  width: 100%; max-width: min(94vw, 760px);
+  display: flex; align-items: center; justify-content: center; gap: 10px;
+}
+.back {
+  border: 0; background: #242844; color: #eef1ff;
+  border-radius: 10px; padding: 8px 12px; font-size: 14px; cursor: pointer;
+}
+.back:hover { background: #2e3358; }
+.scores { display: flex; gap: 8px; }
+.score-box {
+  background: #242844; border-radius: 10px; padding: 6px 14px;
+  text-align: center; min-width: 64px;
+}
+.score-box span { display: block; font-size: 11px; color: #a6abce; letter-spacing: 1px; }
+.score-box b { font-size: 20px; }
+
+.stage {
+  position: relative; width: 100%; max-width: min(94vw, 760px);
+  flex: 1 1 auto; min-height: 0;
+  display: flex; align-items: center; justify-content: center;
+  border-radius: 14px; overflow: hidden;
+  background: #11142a; box-shadow: 0 10px 30px rgba(0,0,0,0.4);
+}
+#cv { display: block; width: 100%; height: 100%; }
+
+.overlay {
+  position: absolute; inset: 0; display: flex; align-items: center; justify-content: center;
+  background: rgba(14,16,32,0.82); backdrop-filter: blur(2px);
+}
+.overlay[hidden] { display: none; }
+.overlay-inner { text-align: center; padding: 20px; }
+.overlay-inner h2 { margin: 0 0 6px; font-size: 26px; }
+.overlay-inner p { margin: 0 0 16px; color: #a6abce; font-size: 14px; }
+.btn {
+  border: 0; background: linear-gradient(135deg,#22c55e,#15924a); color: #fff;
+  border-radius: 12px; padding: 11px 24px; font-size: 15px; font-weight: 700; cursor: pointer;
+}
+.btn:hover { filter: brightness(1.08); }
+
+.controls {
+  width: 100%; max-width: 300px; display: flex; flex-direction: column;
+  align-items: center; gap: 8px; user-select: none;
+}
+.ctrl-row { display: flex; gap: 8px; }
+.ctrl {
+  width: 64px; height: 52px; border: 0; border-radius: 12px;
+  background: #242844; color: #eef1ff; font-size: 20px; cursor: pointer;
+  transition: background 0.1s ease, transform 0.05s ease;
+}
+.ctrl:active { background: #34d17a; transform: scale(0.96); }
+.ctrl-wide { width: 208px; height: 44px; font-size: 15px; }
+
+.tip { color: #a6abce; font-size: 12px; margin: 0; text-align: center; }

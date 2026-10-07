@@ -1,0 +1,208 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+  <title>钓鱼达人 - OmniGame</title>
+  <link rel="stylesheet" href="../_shared/game-layout.css">
+  <style>
+    body {
+      background: #0f172a;
+      color: #f8fafc;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      margin: 0;
+      padding: 0;
+      display: flex;
+      flex-direction: column;
+      height: 100vh;
+      overflow: hidden;
+      user-select: none;
+    }
+    .hud {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 10px 16px;
+      background: #1e293b;
+      border-bottom: 1px solid #334155;
+      font-size: 14px;
+    }
+    .hud-val {
+      font-weight: bold;
+      color: #facc15;
+    }
+    .pond-container {
+      flex: 1;
+      position: relative;
+      background: linear-gradient(180deg, #38bdf8 0%, #0284c7 35%, #0369a1 100%);
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      overflow: hidden;
+    }
+    .pier-dock {
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      height: 80px;
+      background: #78350f;
+      border-top: 4px solid #92400e;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .bobber {
+      position: absolute;
+      width: 24px;
+      height: 24px;
+      background: radial-gradient(circle at 35% 35%, #ef4444 45%, #ffffff 50%);
+      border-radius: 50%;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.3);
+      transition: top 0.4s cubic-bezier(0.18, 0.89, 0.32, 1.28);
+    }
+    .bobber.bite {
+      animation: tug 0.2s infinite alternate;
+    }
+    @keyframes tug {
+      0% { transform: translateY(0); }
+      100% { transform: translateY(10px); }
+    }
+    .bite-alert {
+      position: absolute;
+      font-size: 36px;
+      font-weight: bold;
+      color: #facc15;
+      text-shadow: 0 2px 8px rgba(0,0,0,0.6);
+      animation: popAlert 0.3s ease-out;
+    }
+    @keyframes popAlert {
+      0% { transform: scale(0.5); opacity: 0; }
+      100% { transform: scale(1.2); opacity: 1; }
+    }
+    .reel-ui {
+      position: absolute;
+      right: 20px;
+      top: 50%;
+      transform: translateY(-50%);
+      width: 44px;
+      height: 220px;
+      background: rgba(15, 23, 42, 0.7);
+      border: 2px solid #38bdf8;
+      border-radius: 22px;
+      overflow: hidden;
+      display: none;
+      flex-direction: column;
+      justify-content: flex-end;
+    }
+    .reel-target-zone {
+      position: absolute;
+      width: 100%;
+      height: 60px;
+      background: rgba(34, 197, 94, 0.6);
+      border-top: 2px solid #22c55e;
+      border-bottom: 2px solid #22c55e;
+    }
+    .reel-fish-icon {
+      position: absolute;
+      width: 100%;
+      text-align: center;
+      font-size: 24px;
+      transition: top 0.1s linear;
+    }
+    .progress-track {
+      position: absolute;
+      left: 20px;
+      top: 50%;
+      transform: translateY(-50%);
+      width: 16px;
+      height: 200px;
+      background: rgba(15, 23, 42, 0.6);
+      border-radius: 8px;
+      overflow: hidden;
+      display: none;
+    }
+    .progress-fill {
+      width: 100%;
+      height: 0%;
+      background: #22c55e;
+      position: absolute;
+      bottom: 0;
+      transition: height 0.1s linear;
+    }
+    .btn-action-round {
+      width: 70px;
+      height: 70px;
+      border-radius: 50%;
+      background: #f59e0b;
+      border: 3px solid #fef08a;
+      color: #0f172a;
+      font-size: 16px;
+      font-weight: bold;
+      cursor: pointer;
+      box-shadow: 0 4px 14px rgba(0,0,0,0.4);
+      z-index: 10;
+    }
+    .btn-action-round:active {
+      transform: scale(0.92);
+      background: #d97706;
+    }
+    .modal {
+      position: absolute;
+      inset: 0;
+      background: rgba(15, 23, 42, 0.85);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      z-index: 50;
+    }
+    .modal.hidden { display: none; }
+    .modal h2 { font-size: 28px; margin: 0 0 10px 0; color: #facc15; }
+    .btn-close {
+      margin-top: 16px;
+      padding: 8px 24px;
+      background: #2563eb;
+      color: #fff;
+      border: none;
+      border-radius: 8px;
+      font-weight: bold;
+      cursor: pointer;
+    }
+  </style>
+</head>
+<body>
+  <div class="hud">
+    <div>🎣 钓鱼达人 (Fishing Master)</div>
+    <div>收获: <span id="catches-el" class="hud-val">0 尾</span></div>
+    <div>金币: <span id="coins-el" class="hud-val">🪙 0</span></div>
+  </div>
+
+  <div class="pond-container" id="pond">
+    <div class="bobber" id="bobber" style="left: 50%; top: 40%; display: none;"></div>
+    <div class="bite-alert" id="bite-alert" style="display: none;">❗ 咬钩啦！</div>
+
+    <!-- Reeling mini-game -->
+    <div class="progress-track" id="prog-track">
+      <div class="progress-fill" id="prog-fill"></div>
+    </div>
+    <div class="reel-ui" id="reel-ui">
+      <div class="reel-target-zone" id="target-zone" style="top: 80px;"></div>
+      <div class="reel-fish-icon" id="reel-fish" style="top: 80px;">🐟</div>
+    </div>
+
+    <div class="pier-dock">
+      <button class="btn-action-round" id="btn-cast">抛竿 🎣</button>
+    </div>
+
+    <div class="modal hidden" id="catch-modal">
+      <h2 id="modal-fish-name">🐟 捕获：鲈鱼！</h2>
+      <p id="modal-fish-desc">重量: 2.4 kg | 售价: 🪙 25 金币</p>
+      <button class="btn-close" id="btn-modal-ok">收下入兜</button>
+    </div>
+  </div>
+
+  <script src="game.js"></script>
+</body>
+</html>

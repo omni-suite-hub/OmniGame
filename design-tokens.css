@@ -1,0 +1,51 @@
+/* ============================================================
+   OmniGame Design Tokens — 品牌 VI 规范（v1.0）
+   风格：深空夜底 + 电浆霓虹 | 主色 #00E5FF | 辅色 #FF2D95
+   Slogan：悬浮即玩，随时开局
+   锚点：悬浮方块 Orbit Block（见 omnigame-brand.miora）
+   ============================================================ */
+
+:root {
+  /* ---------- 品牌核心色 ---------- */
+  --brand-primary: #00E5FF;        /* 电浆青· 主色 */
+  --brand-secondary: #FF2D95;      /* 品红 · 辅色 */
+  --brand-base: #0E1020;           /* 深空夜 · 基底（沿用原 popup.css） */
+  --brand-surface: #141831;        /* 表面层 1（沿用） */
+  --brand-surface-2: #1A1D35;      /* 表面层 2（沿用） */
+  --brand-surface-3: #242844;      /* 表面层 3（沿用） */
+  --brand-text: #EEF1FF;           /* 主文本（沿用） */
+  --brand-muted: #A6ABCE;          /* 次要文本（沿用） */
+
+  /* ---------- 语义色（沿用并对齐新主色） ---------- */
+  --brand-good: #46D39A;
+  --brand-warn: #FFCE5C;
+  --brand-danger: #FF6B6B;
+
+  /* ---------- 形状与投影 ---------- */
+  --radius: 18px;
+  --radius-sm: 12px;
+  --gap: 14px;
+  --shadow: 0 10px 30px rgba(0, 0, 0, 0.4);
+  --ring: 0 0 0 2px rgba(0, 229, 255, 0.55);   /* 原 #6c8cff → 品牌主色 */
+  --glow-primary: 0 0 24px rgba(0, 229, 255, 0.35);
+  --glow-secondary: 0 0 24px rgba(255, 45, 149, 0.30);
+
+  /* ---------- 游戏分类色相 ----------
+     替代原 144 款随机渐变，6 类各定一色相，形成色彩节奏。
+     catalog.js 中按 category 字段读取。
+     --------------------------------- */
+  --cat-arcade: #22D3EE;           /* 街机 · 电光青 */
+  --cat-puzzle: #A78BFA;           /* 益智 · 紫罗兰 */
+  --cat-multiplayer: #F472B6;      /* 联机 · 玫红 */
+  --cat-physics: #FBBF24;          /* 物理 · 琥珀 */
+  --cat-match: #4ADE80;            /* 消除 · 翡翠 */
+  --cat-board: #818CF8;            /* 棋盘 · 靛蓝 */
+}
+
+/* 分类色渐变（catalog.js 的 grad 字段按分类取值） */
+.grad-arcade      { background: linear-gradient(135deg, #22D3EE, #0891B2); }
+.grad-puzzle     { background: linear-gradient(135deg, #A78BFA, #7C3AED); }
+.grad-multiplayer{ background: linear-gradient(135deg, #F472B6, #DB2777); }
+.grad-physics    { background: linear-gradient(135deg, #FBBF24, #EA580C); }
+.grad-match      { background: linear-gradient(135deg, #4ADE80, #059669); }
+.grad-board      { background: linear-gradient(135deg, #818CF8, #4F46E5); }

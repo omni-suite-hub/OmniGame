@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>国际象棋 (Chess) - OmniGame</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <div class="chess-container">
+    <header class="chess-header">
+      <div class="chess-title-row">
+        <h1 class="chess-title">国际象棋 <span>Chess</span></h1>
+        <div class="chess-tools">
+          <button id="soundBtn" class="chess-icon-btn" title="声音开关">🔊</button>
+          <button id="undoBtn" class="chess-btn chess-btn-ghost" title="悔棋">悔棋</button>
+          <button id="restartBtn" class="chess-btn chess-btn-accent" title="新局">新局</button>
+        </div>
+      </div>
+      <div class="chess-status-row">
+        <div class="chess-badge">当前回合: <span id="turnText" class="turn-white">白方走子</span></div>
+        <div class="chess-badge">模式: <span id="modeText">人机对弈</span></div>
+        <div class="chess-badge">回合数: <span id="movesText">0</span></div>
+      </div>
+    </header>
+
+    <div class="board-wrapper" id="boardWrapper">
+      <div class="chess-board" id="board"></div>
+    </div>
+
+    <footer class="chess-footer">
+      <div class="chess-hint">白先黑后 · 兵升变 · 骑士日字跳 · 后控全盘 · 击杀敌方国王取胜</div>
+    </footer>
+  </div>
+
+  <div class="modal-overlay" id="gameOverModal">
+    <div class="modal-card">
+      <div class="modal-emoji" id="modalEmoji">👑</div>
+      <h2 class="modal-title" id="modalTitle">将死！白方大获全胜！</h2>
+      <p class="modal-desc" id="modalDesc">总共进行 28 回合</p>
+      <div class="modal-actions">
+        <button id="modalRestartBtn" class="modal-btn modal-btn-primary">再弈一局</button>
+      </div>
+    </div>
+  </div>
+
+  <script src="game.js"></script>
+</body>
+</html>

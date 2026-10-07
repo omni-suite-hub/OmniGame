@@ -1,0 +1,269 @@
+/*
+ * games/_shared/game-layout.css — OmniGame 传统游戏共享外壳样式
+ *
+ * 为什么存在：
+ *   47 个内置传统游戏共用同一套 HTML 约定 —— #container 包裹全屏画布，
+ *   .hud 在顶部显示分数，.modal 是开始/结束遮罩，.hidden 控制显隐。
+ *   把这些约定收敛到一个文件里，比在47 份 HTML 里各抄一遍内联样式更可靠。
+ *
+ * 设计原则：
+ *   1. 只做「骨架」，不做「皮肤」。具体配色仍由各游戏的内联 <style> 决定，
+ *      本文件提供的是布局、层级、可交互区域的最小可用尺寸。
+ *   2. 零副作用：只用低特异性选择器，不设 color/background 等会被内联样式覆盖的属性，
+ *      避免破坏各游戏已有的视觉。
+ *   3. 触控目标 ≥ 44px —— 这是 H5 可用性的硬指标，不是可选项。
+ *   4. safe-area 适配 ——刘海屏/圆角屏是当前主流，不适配会被系统栏遮住。
+ */
+
+/* ── 根容器 ───────────────────────────────────────── */
+
+html, body {
+  margin: 0;
+  padding: 0;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  overscroll-behavior: none;          /* 禁掉下拉刷新与橡皮筋 */
+  -webkit-tap-highlight-color: transparent;
+}
+
+/* 传统游戏统一挂在这个容器下（47 个游戏全部遵循此约定） */
+#container {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+}
+
+/* ── 画布 ────────────────────────────────────────── */
+
+/* 填满容器并保持 1:1 像素比；各游戏的 JS 会按容器尺寸计算逻辑坐标 */
+#game-canvas,
+canvas.game-canvas {
+  display: block;
+  width: 100%;
+  height: 100%;
+  /* 不设 touch-action: none —— 部分老游戏用 touchmove 做滑动，
+     强行禁掉会破坏它们的手势逻辑。 */
+}
+
+/* ── HUD ─────────────────────────────────────────── */
+
+.hud {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 10;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 12px;
+  padding-top: max(8px, env(safe-area-inset-top));
+  padding-left: max(12px, env(safe-area-inset-left));
+  padding-right: max(12px, env(safe-area-inset-right));
+  pointer-events: none;              /* HUD 默认不吃点击，交互交给按钮 */
+}
+
+.hud > * { pointer-events: auto; }
+
+.hud-val {
+  font-family: ui-monospace, "SF Mono", Menlo, Consolas, monospace;
+  font-size: 15px;
+  font-weight: 600;
+  font-variant-numeric: tabular-nums; /* 数字等宽：分数跳动时不抖动 */
+  line-height: 1;
+  white-space: nowrap;
+}
+
+.hud-stat {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 3px;
+  font-size: 8px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  opacity: 0.65;
+}
+
+.stat-badge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 22px;
+  min-height: 22px;
+  padding: 0 6px;
+  border-radius: 11px;
+  font-family: ui-monospace, "SF Mono", Menlo, Consolas, monospace;
+  font-size: 11px;
+  font-weight: 600;
+  line-height: 1;
+}
+
+/* ── 按钮 ────────────────────────────────────────── */
+
+/* 所有可点击控件统一最小 44px —— 低于此在手机上会误触 */
+button,
+.btn-action,
+.btn-ctl,
+.tool-btn,
+.dpad-btn,
+.touch-btn {
+  min-height: 44px;
+  min-width: 44px;
+  padding: 0 16px;
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  border-radius: 8px;
+  background: rgba(255, 255, 255, 0.06);
+  color: #e9ebee;
+  font-family: inherit;
+  font-size: 13px;
+  font-weight: 600;
+  line-height: 1;
+  cursor: pointer;
+  touch-action: manipulation;          /* 消除 300ms 点击延迟 */
+  transition: background 0.12s, border-color 0.12s, transform 0.08s;
+  -webkit-user-select: none;
+  user-select: none;
+}
+
+button:active,
+.btn-action:active,
+.dpad-btn:active,
+.touch-btn:active {
+  transform: scale(0.96);
+}
+
+button:focus-visible,
+.btn-action:focus-visible,
+.dpad-btn:focus-visible {
+  outline: 2px solid #d8ff3e;
+  outline-offset: 2px;
+}
+
+/* 方向键/摇杆：正方形 + 更大触控区 */
+.dpad-btn {
+  min-width: 56px;
+  min-height: 56px;
+  padding: 0;
+  border-radius: 10px;
+  font-size: 18px;
+  flex-shrink: 0;
+}
+
+.touch-controls {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 11;
+  display: flex;
+  align-items: center;
+  justify-content: space-around;
+  gap: 12px;
+  padding: 12px;
+  padding-bottom: max(12px, env(safe-area-inset-bottom));
+  pointer-events: none;
+}
+
+.touch-controls > * { pointer-events: auto; }
+
+/* ── 遮罩 / 弹窗 ─────────────────────────────────── */
+
+.modal {
+  position: absolute;
+  inset: 0;
+  z-index: 20;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 14px;
+  padding: 24px;
+  padding-top: max(24px, env(safe-area-inset-top));
+  padding-bottom: max(24px, env(safe-area-inset-bottom));
+  text-align: center;
+  background: rgba(6, 7, 10, 0.94);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  overflow-y: auto;
+}
+
+.modal-title {
+  font-size: clamp(22px, 6vw, 32px);
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  line-height: 1.1;
+}
+
+.modal-desc {
+  max-width: 42ch;
+  font-size: 13px;
+  line-height: 1.7;
+  opacity: 0.75;
+}
+
+/* 隐藏态：47 个游戏里出现 30 次，是最常用的切换类 */
+.hidden {
+  display: none !important;
+}
+
+/* ── 其他高频约定 ─────────────────────────────────── */
+
+/* 主视图容器（9 个游戏用） */
+.main-view {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* 竞技场容器（23 个游戏用，通常包住画布） */
+.arena-container {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  height: 100%;
+}
+
+/* 卡片类元素（塔防等用） */
+.plant-card,
+.card-icon {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+  border-radius: 10px;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  background: rgba(255, 255, 255, 0.04);
+  overflow: hidden;
+}
+
+/* ── 无障碍：尊重系统的减少动效设置 ────────────────── */
+
+@media (prefers-reduced-motion: reduce) {
+  button,
+  .btn-action,
+  .dpad-btn,
+  .tool-btn {
+    transition: none !important;
+  }
+  button:active,
+  .btn-action:active {
+    transform: none !important;
+  }
+}
+
+/* ── 窄屏收敛 ────────────────────────────────────── */
+
+@media (max-width: 480px) {
+  .hud { gap: 6px; padding-left: 8px; padding-right: 8px; }
+  .hud-val { font-size: 13px; }
+  .modal { padding: 18px; gap: 11px; }
+  .modal-desc { font-size: 12px; }
+}

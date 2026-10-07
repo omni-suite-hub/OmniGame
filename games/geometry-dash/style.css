@@ -1,0 +1,234 @@
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+  user-select: none;
+  -webkit-user-select: none;
+}
+
+body {
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "PingFang SC", "Microsoft YaHei", sans-serif;
+  background: radial-gradient(circle at center, #0f172a, #020617);
+  color: #f1f5f9;
+  min-height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 6px;
+  overflow-x: hidden;
+}
+
+.gd-container {
+  width: 100%;
+  max-width: 440px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+}
+
+.gd-header {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.gd-title-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.gd-title {
+  font-size: 18px;
+  font-weight: 800;
+  color: #38bdf8;
+  display: flex;
+  align-items: baseline;
+  gap: 6px;
+  text-shadow: 0 0 12px rgba(56, 189, 248, 0.5);
+}
+.gd-title span {
+  font-size: 12px;
+  font-weight: 500;
+  color: #a855f7;
+}
+
+.gd-tools {
+  display: flex;
+  gap: 6px;
+}
+
+.gd-btn {
+  border: none;
+  border-radius: 6px;
+  padding: 5px 12px;
+  font-size: 11px;
+  font-weight: 700;
+  cursor: pointer;
+  background: linear-gradient(135deg, #06b6d4, #0284c7);
+  color: #fff;
+  transition: all 0.2s;
+}
+
+.gd-icon-btn {
+  background: rgba(255, 255, 255, 0.08);
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  color: #cbd5e1;
+  width: 28px;
+  height: 28px;
+  border-radius: 6px;
+  font-size: 13px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.gd-status-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background: rgba(15, 23, 42, 0.8);
+  border: 1px solid rgba(56, 189, 248, 0.3);
+  border-radius: 8px;
+  padding: 4px 10px;
+}
+
+.gd-badge {
+  font-size: 11px;
+  color: #94a3b8;
+}
+.gd-badge span {
+  font-weight: 700;
+  color: #38bdf8;
+}
+
+.progress-bar-wrap {
+  width: 100%;
+  height: 6px;
+  background: rgba(0, 0, 0, 0.5);
+  border-radius: 3px;
+  overflow: hidden;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.progress-bar-fill {
+  height: 100%;
+  width: 0%;
+  background: linear-gradient(90deg, #06b6d4, #a855f7);
+  transition: width 0.1s linear;
+}
+
+.canvas-wrap {
+  width: 100%;
+  height: 320px;
+  background: #020617;
+  border: 3px solid #0284c7;
+  border-radius: 12px;
+  position: relative;
+  overflow: hidden;
+  box-shadow: 0 8px 24px rgba(0,0,0,0.6), 0 0 16px rgba(2, 132, 199, 0.2);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+#gameCanvas {
+  width: 100%;
+  height: 100%;
+  display: block;
+}
+
+.start-hint {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background: rgba(15, 23, 42, 0.85);
+  border: 1px solid rgba(56, 189, 248, 0.5);
+  border-radius: 20px;
+  padding: 8px 18px;
+  font-size: 13px;
+  font-weight: 700;
+  color: #38bdf8;
+  pointer-events: none;
+  animation: pulse-hint 1.5s infinite alternate;
+}
+
+@keyframes pulse-hint {
+  from { opacity: 0.7; transform: translate(-50%, -50%) scale(0.96); }
+  to { opacity: 1; transform: translate(-50%, -50%) scale(1.04); }
+}
+
+.gd-footer {
+  width: 100%;
+  text-align: center;
+}
+
+.gd-hint {
+  font-size: 11px;
+  color: #94a3b8;
+}
+
+/* Modal */
+.modal-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(2, 6, 23, 0.85);
+  backdrop-filter: blur(4px);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 100;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.3s;
+}
+
+.modal-overlay.active {
+  opacity: 1;
+  pointer-events: auto;
+}
+
+.modal-card {
+  background: #0f172a;
+  border: 2px solid #38bdf8;
+  border-radius: 16px;
+  padding: 24px;
+  text-align: center;
+  max-width: 300px;
+  width: 88%;
+  box-shadow: 0 0 30px rgba(56, 189, 248, 0.3);
+}
+
+.modal-emoji {
+  font-size: 44px;
+  margin-bottom: 8px;
+}
+
+.modal-title {
+  font-size: 18px;
+  font-weight: 800;
+  color: #f8fafc;
+  margin-bottom: 6px;
+}
+
+.modal-desc {
+  font-size: 13px;
+  color: #94a3b8;
+  margin-bottom: 18px;
+}
+
+.modal-btn {
+  width: 100%;
+  padding: 10px;
+  border-radius: 8px;
+  border: none;
+  font-weight: 700;
+  font-size: 14px;
+  cursor: pointer;
+  background: linear-gradient(135deg, #06b6d4, #0284c7);
+  color: #fff;
+}

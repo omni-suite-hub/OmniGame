@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+  <title>极速赛车 - OmniGame</title>
+  <link rel="stylesheet" href="../_shared/game-layout.css">
+  <style>
+    body {
+      background: #0f172a;
+      color: #f8fafc;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      margin: 0;
+      padding: 0;
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+      height: 100vh;
+      touch-action: none;
+    }
+    .hud {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 8px 16px;
+      background: #1e293b;
+      border-bottom: 1px solid #334155;
+      font-size: 14px;
+      z-index: 10;
+    }
+    .stat-badge {
+      font-weight: 700;
+      color: #38bdf8;
+    }
+    .canvas-container {
+      flex: 1;
+      position: relative;
+      overflow: hidden;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      background: #0f172a;
+    }
+    canvas {
+      box-shadow: 0 4px 20px rgba(0,0,0,0.6);
+      background: #1e293b;
+      touch-action: none;
+    }
+    .touch-controls {
+      display: none;
+      position: absolute;
+      bottom: 16px;
+      left: 0;
+      right: 0;
+      padding: 0 20px;
+      justify-content: space-between;
+      pointer-events: none;
+      z-index: 20;
+    }
+    .touch-group {
+      display: flex;
+      gap: 12px;
+      pointer-events: auto;
+    }
+    .touch-btn {
+      width: 58px;
+      height: 58px;
+      border-radius: 50%;
+      background: rgba(30, 41, 59, 0.85);
+      border: 2px solid #38bdf8;
+      color: #fff;
+      font-size: 20px;
+      font-weight: bold;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      user-select: none;
+      -webkit-user-select: none;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.4);
+    }
+    .touch-btn:active, .touch-btn.active {
+      background: #38bdf8;
+      color: #0f172a;
+      transform: scale(0.92);
+    }
+    @media (hover: none), (pointer: coarse) {
+      .touch-controls { display: flex; }
+    }
+    .modal {
+      position: absolute;
+      inset: 0;
+      background: rgba(15, 23, 42, 0.85);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      z-index: 50;
+    }
+    .modal.hidden { display: none; }
+    .modal h2 { font-size: 28px; margin: 0 0 12px 0; color: #facc15; }
+    .modal p { font-size: 15px; color: #cbd5e1; margin: 4px 0; }
+    .btn-primary {
+      margin-top: 18px;
+      padding: 10px 24px;
+      font-size: 16px;
+      font-weight: 600;
+      border-radius: 8px;
+      border: none;
+      background: linear-gradient(135deg, #0284c7, #2563eb);
+      color: #fff;
+      cursor: pointer;
+      box-shadow: 0 4px 12px rgba(37,99,235,0.4);
+    }
+  </style>
+</head>
+<body>
+  <div class="hud">
+    <div>🏁 圈数: <span id="lap-display" class="stat-badge">1 / 3</span></div>
+    <div>⏱️ 用时: <span id="time-display" class="stat-badge">00:00.0</span></div>
+    <div>🏎️ 速度: <span id="speed-display" class="stat-badge">0 km/h</span></div>
+    <div>🏆 最佳: <span id="best-display" class="stat-badge">--:--.-</span></div>
+  </div>
+
+  <div class="canvas-container" id="container">
+    <canvas id="game-canvas"></canvas>
+
+    <div class="touch-controls">
+      <div class="touch-group">
+        <button class="touch-btn" id="btn-left">◀</button>
+        <button class="touch-btn" id="btn-right">▶</button>
+      </div>
+      <div class="touch-group">
+        <button class="touch-btn" id="btn-brake" style="border-color:#ef4444;">🛑</button>
+        <button class="touch-btn" id="btn-gas" style="border-color:#22c55e;">🚀</button>
+      </div>
+    </div>
+
+    <div class="modal hidden" id="finish-modal">
+      <h2 id="modal-title">🏆 完赛凯旋！</h2>
+      <p id="modal-time">总用时: 01:23.4</p>
+      <p id="modal-best">最快单圈: 00:27.1</p>
+      <button class="btn-primary" id="btn-restart">再来一局</button>
+    </div>
+  </div>
+
+  <script src="game.js"></script>
+</body>
+</html>

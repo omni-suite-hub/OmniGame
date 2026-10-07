@@ -1,0 +1,303 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no, viewport-fit=cover">
+<title>声纳迷雾 - OmniGame</title>
+<link rel="stylesheet" href="../_shared/game-layout.css">
+<style>
+  :root {
+    --bg: #030a0e;
+    --card: #0a1820;
+    --sonar: #10b981;
+    --sonar-glow: rgba(16, 185, 129, 0.45);
+    --gold: #fbbf24;
+    --cyan: #06b6d4;
+    --text: #f0fdf4;
+    --text-dim: #6ee7b7;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; user-select: none; -webkit-user-select: none; }
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    overflow: hidden;
+    height: 100vh;
+    display: flex;
+    flex-direction: column;
+  }
+  #gameContainer {
+    position: relative;
+    width: 100%;
+    height: 100%;
+    max-width: 520px;
+    margin: 0 auto;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    background: radial-gradient(ellipse at 50% 30%, #081e28 0%, #030a0e 85%);
+  }
+  /* Top HUD */
+  .top-hud {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    z-index: 20;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 10px 16px;
+    background: linear-gradient(180deg, rgba(3, 10, 14, 0.95) 0%, transparent 100%);
+    pointer-events: none;
+  }
+  .hud-stat {
+    display: flex;
+    flex-direction: column;
+  }
+  .hud-label {
+    font-size: 10px;
+    font-weight: 700;
+    color: #64748b;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+  }
+  .hud-val {
+    font-size: 17px;
+    font-weight: 800;
+    color: #fff;
+    text-shadow: 0 0 10px var(--sonar-glow);
+  }
+  .oxygen-meter {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 3px;
+  }
+  .oxygen-title {
+    font-size: 11px;
+    font-weight: 800;
+    color: var(--cyan);
+  }
+  .oxygen-bar {
+    width: 90px;
+    height: 6px;
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 999px;
+    overflow: hidden;
+    border: 1px solid rgba(6, 182, 212, 0.35);
+  }
+  .oxygen-fill {
+    height: 100%;
+    width: 100%;
+    background: linear-gradient(90deg, #06b6d4, #10b981);
+    border-radius: 999px;
+    transition: width 0.1s linear;
+  }
+  /* Canvas */
+  #gameCanvas {
+    width: 100%;
+    height: 100%;
+    display: block;
+    cursor: default;
+  }
+  /* Touch Controls Deck */
+  .touch-deck {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    height: 130px;
+    z-index: 15;
+    pointer-events: none;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0 20px 16px;
+  }
+  .joy-zone {
+    width: 90px;
+    height: 90px;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.04);
+    border: 1.5px dashed rgba(255, 255, 255, 0.16);
+    position: relative;
+    pointer-events: auto;
+    touch-action: none;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  .joy-knob {
+    width: 38px;
+    height: 38px;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.25);
+    border: 2px solid rgba(255, 255, 255, 0.4);
+    pointer-events: none;
+  }
+  .btn-sonar {
+    width: 80px;
+    height: 70px;
+    border-radius: 20px;
+    background: linear-gradient(135deg, #10b981, #06b6d4);
+    border: 0;
+    color: #030a0e;
+    font-weight: 900;
+    font-size: 13px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 3px;
+    cursor: pointer;
+    box-shadow: 0 4px 20px rgba(16, 185, 129, 0.45);
+    pointer-events: auto;
+    touch-action: manipulation;
+    transition: transform 0.08s ease;
+  }
+  .btn-sonar:active, .btn-sonar.active {
+    transform: scale(0.92);
+    box-shadow: 0 0 24px rgba(16, 185, 129, 0.8);
+  }
+  /* Overlay */
+  .overlay {
+    position: absolute;
+    inset: 0;
+    background: rgba(3, 10, 14, 0.92);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    z-index: 30;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 24px;
+    text-align: center;
+  }
+  .overlay.hidden { display: none; }
+  .modal-title {
+    font-size: 26px;
+    font-weight: 800;
+    color: #fff;
+    margin-bottom: 8px;
+    text-shadow: 0 0 20px var(--sonar-glow);
+  }
+  .modal-sub {
+    font-size: 13px;
+    color: #94a3b8;
+    margin-bottom: 24px;
+    line-height: 1.6;
+    max-width: 320px;
+  }
+  .btn-start {
+    padding: 12px 36px;
+    border-radius: 999px;
+    border: 0;
+    background: linear-gradient(135deg, #10b981, #06b6d4);
+    color: #030a0e;
+    font-size: 16px;
+    font-weight: 800;
+    cursor: pointer;
+    box-shadow: 0 4px 20px rgba(16, 185, 129, 0.4);
+    transition: all 0.15s ease;
+  }
+  .btn-start:hover { transform: translateY(-2px); }
+  .btn-start:active { transform: scale(0.97); }
+  .score-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+    width: 100%;
+    max-width: 280px;
+    margin-bottom: 24px;
+  }
+  .score-card {
+    background: rgba(255, 255, 255, 0.04);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    border-radius: 12px;
+    padding: 10px;
+  }
+  .score-card-num {
+    font-size: 20px;
+    font-weight: 800;
+    color: var(--sonar);
+  }
+  .score-card-lbl {
+    font-size: 11px;
+    color: #94a3b8;
+    font-weight: 600;
+  }
+</style>
+</head>
+<body>
+<div id="gameContainer">
+  <div class="top-hud">
+    <div class="hud-stat">
+      <span class="hud-label">下潜深度</span>
+      <span id="depthVal" class="hud-val">0 m</span>
+    </div>
+    <div class="oxygen-meter">
+      <span class="oxygen-title">🫧 潜艇氧气</span>
+      <div class="oxygen-bar"><div id="oxygenFill" class="oxygen-fill"></div></div>
+    </div>
+    <div class="hud-stat" style="text-align: right;">
+      <span class="hud-label">深海宝藏</span>
+      <span id="scoreVal" class="hud-val" style="color: var(--gold);">0 💎</span>
+    </div>
+  </div>
+
+  <canvas id="gameCanvas"></canvas>
+
+  <div class="touch-deck">
+    <div id="joyZone" class="joy-zone">
+      <div id="joyKnob" class="joy-knob"></div>
+    </div>
+    <button id="btnSonar" class="btn-sonar">
+      <span>📡 声纳</span>
+      <span style="font-size:9px; opacity:0.85;">空格 / 点击</span>
+    </button>
+  </div>
+
+  <!-- Start Overlay -->
+  <div id="startOverlay" class="overlay">
+    <h1 class="modal-title">🌊 声纳迷雾</h1>
+    <p class="modal-sub">
+      深海声纳探测 · 潜入暗无天日的万米海沟！<br>
+      按下<b>【声纳脉冲】</b>发射绿色声学光波，点亮海底峭壁与沉船宝藏！<br>
+      及时拾取氧气气泡，避开黑暗中巡弋的深海发光巨兽！<br>
+      方向键/摇杆移动 · 空格发射声纳
+    </p>
+    <button id="startBtn" class="btn-start">下潜启航</button>
+  </div>
+
+  <!-- Over Overlay -->
+  <div id="overOverlay" class="overlay hidden">
+    <h2 class="modal-title" id="overTitle">氧气耗尽</h2>
+    <p class="modal-sub" id="overSub">在宁静深邃的海底完成了科研勘探</p>
+    <div class="score-grid">
+      <div class="score-card">
+        <div id="finalDepth" class="score-card-num">0 m</div>
+        <div class="score-card-lbl">下潜深度</div>
+      </div>
+      <div class="score-card">
+        <div id="finalScore" class="score-card-num">0 💎</div>
+        <div class="score-card-lbl">打捞宝藏</div>
+      </div>
+      <div class="score-card">
+        <div id="finalSonar" class="score-card-num">0</div>
+        <div class="score-card-lbl">声纳扫描</div>
+      </div>
+      <div class="score-card">
+        <div id="finalTime" class="score-card-num">0s</div>
+        <div class="score-card-lbl">深海用时</div>
+      </div>
+    </div>
+    <button id="retryBtn" class="btn-start">再次下潜</button>
+  </div>
+</div>
+
+<script src="../_shared/storage.js"></script>
+<script src="game.js"></script>
+</body>
+</html>

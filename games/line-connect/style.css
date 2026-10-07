@@ -1,0 +1,205 @@
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+  user-select: none;
+  -webkit-user-select: none;
+}
+
+body {
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "PingFang SC", "Microsoft YaHei", sans-serif;
+  background: radial-gradient(circle at center, #0f172a, #020617);
+  color: #f1f5f9;
+  min-height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 6px;
+  overflow-x: hidden;
+}
+
+.lc-container {
+  width: 100%;
+  max-width: 440px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+}
+
+.lc-header {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.lc-title-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.lc-title {
+  font-size: 18px;
+  font-weight: 800;
+  color: #38bdf8;
+  display: flex;
+  align-items: baseline;
+  gap: 6px;
+  text-shadow: 0 0 10px rgba(56, 189, 248, 0.4);
+}
+.lc-title span {
+  font-size: 12px;
+  font-weight: 500;
+  color: #a855f7;
+}
+
+.lc-tools {
+  display: flex;
+  gap: 6px;
+}
+
+.lc-btn {
+  border: none;
+  border-radius: 6px;
+  padding: 5px 12px;
+  font-size: 11px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.lc-btn-ghost {
+  background: rgba(255, 255, 255, 0.1);
+  color: #cbd5e1;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+.lc-btn-accent {
+  background: linear-gradient(135deg, #0284c7, #0369a1);
+  color: #fff;
+}
+
+.lc-icon-btn {
+  background: rgba(255, 255, 255, 0.15);
+  border: 1px solid rgba(255, 255, 255, 0.25);
+  color: #fff;
+  width: 28px;
+  height: 28px;
+  border-radius: 6px;
+  font-size: 13px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.lc-status-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background: rgba(15, 23, 42, 0.8);
+  border: 1px solid rgba(56, 189, 248, 0.3);
+  border-radius: 8px;
+  padding: 5px 12px;
+}
+
+.lc-badge {
+  font-size: 11px;
+  color: #cbd5e1;
+}
+.lc-badge span {
+  font-weight: 700;
+  color: #38bdf8;
+}
+
+.board-wrap {
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background: #000000;
+  border: 3px solid #38bdf8;
+  border-radius: 14px;
+  padding: 10px;
+  box-shadow: 0 8px 24px rgba(0,0,0,0.6), 0 0 20px rgba(56, 189, 248, 0.2);
+}
+
+#gameCanvas {
+  display: block;
+  background: #090d16;
+  border-radius: 8px;
+  touch-action: none;
+}
+
+.lc-footer {
+  width: 100%;
+  text-align: center;
+}
+
+.lc-hint {
+  font-size: 11px;
+  color: #94a3b8;
+}
+
+/* Modal */
+.modal-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(2, 6, 23, 0.88);
+  backdrop-filter: blur(4px);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 100;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.3s;
+}
+
+.modal-overlay.active {
+  opacity: 1;
+  pointer-events: auto;
+}
+
+.modal-card {
+  background: #0f172a;
+  border: 2px solid #38bdf8;
+  border-radius: 16px;
+  padding: 24px;
+  text-align: center;
+  max-width: 300px;
+  width: 88%;
+  box-shadow: 0 0 30px rgba(56, 189, 248, 0.4);
+}
+
+.modal-emoji {
+  font-size: 44px;
+  margin-bottom: 8px;
+}
+
+.modal-title {
+  font-size: 18px;
+  font-weight: 800;
+  color: #f8fafc;
+  margin-bottom: 6px;
+}
+
+.modal-desc {
+  font-size: 13px;
+  color: #cbd5e1;
+  margin-bottom: 18px;
+}
+
+.modal-btn {
+  width: 100%;
+  padding: 10px;
+  border-radius: 8px;
+  border: none;
+  font-weight: 700;
+  font-size: 14px;
+  cursor: pointer;
+  background: linear-gradient(135deg, #0284c7, #0369a1);
+  color: #fff;
+}

@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>找马挑战 (Find The Horse) - OmniGame</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <div class="horse-container">
+    <!-- Header -->
+    <header class="horse-header">
+      <div class="header-top">
+        <h1 class="game-title">
+          <span class="title-emoji">🐴</span>
+          <span class="title-text">找马挑战</span>
+          <span class="title-sub">每天方块</span>
+        </h1>
+        <div class="header-actions">
+          <button id="soundBtn" class="icon-btn" title="声音开关" aria-label="声音开关">🔊</button>
+          <button id="rulesBtn" class="icon-btn" title="玩法规则" aria-label="玩法规则">❓</button>
+          <button id="restartBtn" class="btn btn-ghost" title="重开本关">重置</button>
+        </div>
+      </div>
+
+      <!-- Level Selection Tabs -->
+      <div class="level-tabs" id="levelTabs">
+        <button class="level-pill active" data-level="1">第1关 5×5</button>
+        <button class="level-pill" data-level="2">第2关 6×6</button>
+        <button class="level-pill" data-level="3">第3关 7×7</button>
+        <button class="level-pill" data-level="4">第4关 8×8</button>
+        <button class="level-pill" data-level="5">第5关 9×9</button>
+        <button class="level-pill" data-level="random">🎲 随机</button>
+      </div>
+
+      <!-- Status Bar -->
+      <div class="status-bar">
+        <div class="status-item hearts" id="heartsBox" title="生命值：允许失误2次，第3次失误挑战失败">
+          <span class="status-label">容错:</span>
+          <span id="heartsContainer" class="hearts-row">❤️❤️❤️</span>
+        </div>
+        <div class="status-item target" title="已找到小马 / 目标总数">
+          <span class="status-label">目标:</span>
+          <span class="count-highlight"><span id="foundCount">0</span>/<span id="totalHorses">3</span> 🐴</span>
+        </div>
+        <div class="status-item timer">
+          <span class="status-label">用时:</span>
+          <span id="timerText">00:00</span>
+        </div>
+      </div>
+
+      <!-- Tools & Props Toolbar -->
+      <div class="toolbar">
+        <div class="tool-group modes">
+          <button id="modeCatchBtn" class="tool-btn active" data-mode="catch" title="找马模式 (快捷键 1 或左键)：点击认为有马的方格">
+            <span class="tool-icon">🐴</span>
+            <span class="tool-name">抓马</span>
+          </button>
+          <button id="modeDigBtn" class="tool-btn" data-mode="dig" title="探路模式 (快捷键 2 或右键)：翻开安全格子获取周围线索">
+            <span class="tool-icon">🔍</span>
+            <span class="tool-name">探路</span>
+          </button>
+          <button id="modeFlagBtn" class="tool-btn" data-mode="flag" title="标记空地 (快捷键 3)：标记你确定没有马的草地">
+            <span class="tool-icon">🌱</span>
+            <span class="tool-name">标草</span>
+          </button>
+        </div>
+
+        <div class="tool-group props">
+          <button id="propCarrotBtn" class="prop-btn" title="胡萝卜诱饵：直接吸引并显现 1 匹隐藏小马">
+            <span class="prop-icon">🥕</span>
+            <span class="prop-badge" id="carrotCount">2</span>
+          </button>
+          <button id="propRadarBtn" class="prop-btn" title="小马雷达：安全透视 3×3 范围内的所有隐藏状态">
+            <span class="prop-icon">🧭</span>
+            <span class="prop-badge" id="radarCount">1</span>
+          </button>
+        </div>
+      </div>
+    </header>
+
+    <!-- Main Board Area -->
+    <main class="board-container" id="boardContainer">
+      <div class="board-outer" id="boardOuter">
+        <!-- Rendered via JS: Col headers, Row headers, Grid cells -->
+        <div class="puzzle-matrix" id="puzzleMatrix"></div>
+      </div>
+    </main>
+
+    <!-- Footer Guidance -->
+    <footer class="horse-footer">
+      <div class="footer-hint" id="footerHint">
+        💡 提示：左键点击或切换模式 · 行/列数字为该线藏马数 · 避开空地揪出所有小马！
+      </div>
+    </footer>
+  </div>
+
+  <!-- Victory Modal -->
+  <div class="modal-overlay hidden" id="victoryModal">
+    <div class="modal-card win-card">
+      <div class="modal-emoji">🏆🐴🎉</div>
+      <h2 class="modal-title">太棒了！所有小马已归队！</h2>
+      <p class="modal-desc" id="victoryDesc">用时 00:38 · 完美通关</p>
+      <div class="modal-stats" id="victoryStats">
+        <div class="stat-box">
+          <div class="stat-val" id="vicTime">00:38</div>
+          <div class="stat-lbl">挑战用时</div>
+        </div>
+        <div class="stat-box">
+          <div class="stat-val" id="vicHearts">❤️❤️❤️</div>
+          <div class="stat-lbl">剩余爱心</div>
+        </div>
+      </div>
+      <div class="modal-actions">
+        <button id="nextLevelBtn" class="modal-btn btn-primary">挑战下一关 ⏩</button>
+        <button id="replayBtn" class="modal-btn btn-ghost">再玩一次 🔄</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Game Over Modal -->
+  <div class="modal-overlay hidden" id="failModal">
+    <div class="modal-card fail-card">
+      <div class="modal-emoji">💔🥺🐎</div>
+      <h2 class="modal-title">失误过多，小马受惊跑丢了！</h2>
+      <p class="modal-desc">3 次容错已用完，别灰心，复盘看看小马藏在哪里吧！</p>
+      <div class="modal-actions">
+        <button id="retryBtn" class="modal-btn btn-primary">重新挑战 🔄</button>
+        <button id="revealAnswerBtn" class="modal-btn btn-ghost">查看藏马答案 👁️</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Rules Modal -->
+  <div class="modal-overlay hidden" id="rulesModal">
+    <div class="modal-card rules-card">
+      <div class="rules-header">
+        <h3 class="rules-title">🐴 找马挑战 · 规则秘籍</h3>
+        <button id="closeRulesBtn" class="modal-close">&times;</button>
+      </div>
+      <div class="rules-body">
+        <div class="rule-item">
+          <span class="rule-icon">🎯</span>
+          <div><strong>目标</strong>：在方块矩阵中找出所有隐藏的小马 🐴。全部找齐即可过关！</div>
+        </div>
+        <div class="rule-item">
+          <span class="rule-icon">💡</span>
+          <div><strong>双重数字线索</strong>：
+            <ul>
+              <li><strong>边缘数字</strong>：外围显示的数字表示该行或该列一共藏有多少匹小马。找齐后徽章变绿打勾！</li>
+              <li><strong>格内数字</strong>：探路翻开的安全格子，数字表示其周围九宫格相邻隐藏的小马数（0~8）。</li>
+            </ul>
+          </div>
+        </div>
+        <div class="rule-item">
+          <span class="rule-icon">❤️</span>
+          <div><strong>2次失误容错</strong>：内置 3 颗爱心，点错只扣除 1 颗心，第 3 次失误才会失败，轻松无挫败感！</div>
+        </div>
+        <div class="rule-item">
+          <span class="rule-icon">🥕</span>
+          <div><strong>强力道具</strong>：卡关时点击 🥕 胡萝卜引出 1 匹马，或使用 🧭 雷达透视 3×3 区域！</div>
+        </div>
+        <div class="rule-item">
+          <span class="rule-icon">⌨️</span>
+          <div><strong>操作快捷键</strong>：
+            <code>1</code> 抓马模式 · <code>2</code> 探路模式 · <code>3</code> 标草模式 · <code>R</code> 重开 · 鼠标右键可快捷探路。
+          </div>
+        </div>
+      </div>
+      <div class="modal-actions">
+        <button id="knowRulesBtn" class="modal-btn btn-primary">我明白了，开始找马！</button>
+      </div>
+    </div>
+  </div>
+
+  <script src="../_shared/storage.js"></script>
+  <script src="game.js"></script>
+</body>
+</html>

@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+  <title>飞刀打靶 - OmniGame</title>
+  <link rel="stylesheet" href="../_shared/game-layout.css">
+  <style>
+    body {
+      background: #0f172a;
+      color: #f8fafc;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      margin: 0;
+      padding: 0;
+      display: flex;
+      flex-direction: column;
+      height: 100vh;
+      overflow: hidden;
+      touch-action: manipulation;
+      user-select: none;
+    }
+    .hud {
+      display: flex;
+      justify-content: space-around;
+      align-items: center;
+      padding: 8px 12px;
+      background: #1e293b;
+      border-bottom: 2px solid #334155;
+      font-size: 13px;
+      z-index: 10;
+    }
+    .hud-val {
+      font-weight: bold;
+      color: #facc15;
+    }
+    .arena-container {
+      flex: 1;
+      position: relative;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      background: #020617;
+      overflow: hidden;
+    }
+    canvas {
+      box-shadow: 0 4px 25px rgba(0,0,0,0.8);
+      touch-action: none;
+    }
+    .modal {
+      position: absolute;
+      inset: 0;
+      background: rgba(15, 23, 42, 0.92);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      z-index: 50;
+    }
+    .modal.hidden { display: none; }
+    .modal h2 { font-size: 28px; margin: 0 0 10px 0; color: #facc15; }
+    .btn-action {
+      margin-top: 16px;
+      padding: 10px 24px;
+      background: #ea580c;
+      color: #fff;
+      border: none;
+      border-radius: 8px;
+      font-weight: bold;
+      font-size: 15px;
+      cursor: pointer;
+    }
+  </style>
+</head>
+<body>
+  <div class="hud">
+    <div>🗡️ 剩余飞刀: <span id="knives-el" class="hud-val">7</span></div>
+    <div>🍎 苹果: <span id="apples-el" class="hud-val">0</span></div>
+    <div>关卡: <span id="stage-el" class="hud-val">Stage 1</span></div>
+    <div>🪙 得分: <span id="score-el" class="hud-val">0</span></div>
+  </div>
+
+  <div class="arena-container" id="container">
+    <canvas id="game-canvas"></canvas>
+
+    <div class="modal hidden" id="game-modal">
+      <h2 id="modal-title">🏆 飞刀大师！</h2>
+      <p id="modal-desc" style="font-size:16px;">木靶应声碎裂！</p>
+      <button class="btn-action" id="btn-restart">挑战下一关</button>
+    </div>
+  </div>
+
+  <script src="game.js"></script>
+</body>
+</html>

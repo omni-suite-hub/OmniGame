@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+  <title>地牢探险 - OmniGame</title>
+  <link rel="stylesheet" href="../_shared/game-layout.css">
+  <style>
+    body {
+      background: #0f172a;
+      color: #f8fafc;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, monospace;
+      margin: 0;
+      padding: 0;
+      display: flex;
+      flex-direction: column;
+      height: 100vh;
+      overflow: hidden;
+      user-select: none;
+      touch-action: none;
+    }
+    .hud {
+      display: flex;
+      justify-content: space-around;
+      align-items: center;
+      padding: 8px 12px;
+      background: #1e293b;
+      border-bottom: 1px solid #334155;
+      font-size: 13px;
+    }
+    .hud-val {
+      font-weight: bold;
+      color: #facc15;
+    }
+    .main-wrap {
+      flex: 1;
+      position: relative;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      background: #0f172a;
+      padding: 6px;
+    }
+    .dungeon-canvas {
+      background: #000000;
+      border: 2px solid #334155;
+      border-radius: 8px;
+      box-shadow: 0 4px 20px rgba(0,0,0,0.8);
+      touch-action: none;
+    }
+    .combat-log {
+      width: 100%;
+      max-width: 640px;
+      height: 48px;
+      background: #1e293b;
+      border-top: 1px solid #334155;
+      padding: 6px 12px;
+      font-size: 12px;
+      color: #94a3b8;
+      overflow-y: auto;
+      box-sizing: border-box;
+      line-height: 1.4;
+    }
+    .virtual-dpad {
+      display: none;
+      position: absolute;
+      bottom: 60px;
+      right: 16px;
+      width: 120px;
+      height: 120px;
+      z-index: 20;
+    }
+    .dpad-btn {
+      position: absolute;
+      width: 38px;
+      height: 38px;
+      background: rgba(30, 41, 59, 0.85);
+      border: 1px solid #38bdf8;
+      color: #fff;
+      border-radius: 8px;
+      font-size: 16px;
+      font-weight: bold;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .dpad-up    { top: 0; left: 41px; }
+    .dpad-down  { bottom: 0; left: 41px; }
+    .dpad-left  { top: 41px; left: 0; }
+    .dpad-right { top: 41px; right: 0; }
+    @media (hover: none), (pointer: coarse) {
+      .virtual-dpad { display: block; }
+    }
+  </style>
+</head>
+<body>
+  <div class="hud">
+    <div>❤️ HP: <span id="hp-el" class="hud-val" style="color:#ef4444;">100 / 100</span></div>
+    <div>⚔️ ATK: <span id="atk-el" class="hud-val">15</span></div>
+    <div>🏰 地下: <span id="floor-el" class="hud-val">1 层</span></div>
+    <div>🪙 金币: <span id="gold-el" class="hud-val">0</span></div>
+  </div>
+
+  <div class="main-wrap">
+    <canvas id="dungeon-canvas" class="dungeon-canvas"></canvas>
+
+    <div class="virtual-dpad">
+      <button class="dpad-btn dpad-up" id="btn-up">▲</button>
+      <button class="dpad-btn dpad-down" id="btn-down">▼</button>
+      <button class="dpad-btn dpad-left" id="btn-left">◀</button>
+      <button class="dpad-btn dpad-right" id="btn-right">▶</button>
+    </div>
+  </div>
+
+  <div class="combat-log" id="combat-log">
+    欢迎来到无尽地下城！方向键移动，撞向魔物发起攻击，寻找通向下层的门扉！
+  </div>
+
+  <script src="game.js"></script>
+</body>
+</html>

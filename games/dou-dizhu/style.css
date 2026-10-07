@@ -1,0 +1,429 @@
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+  user-select: none;
+  -webkit-user-select: none;
+}
+
+body {
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "PingFang SC", "Microsoft YaHei", sans-serif;
+  background: radial-gradient(circle at center, #1e3a8a, #0f172a);
+  color: #f1f5f9;
+  min-height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 6px;
+  overflow-x: hidden;
+}
+
+.ddz-container {
+  width: 100%;
+  max-width: 440px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+}
+
+.ddz-header {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.ddz-title-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.ddz-title {
+  font-size: 18px;
+  font-weight: 800;
+  color: #f8fafc;
+  display: flex;
+  align-items: baseline;
+  gap: 6px;
+}
+.ddz-title span {
+  font-size: 12px;
+  font-weight: 500;
+  color: #60a5fa;
+}
+
+.ddz-tools {
+  display: flex;
+  gap: 6px;
+}
+
+.ddz-btn {
+  border: none;
+  border-radius: 6px;
+  padding: 5px 12px;
+  font-size: 11px;
+  font-weight: 700;
+  cursor: pointer;
+  background: linear-gradient(135deg, #3b82f6, #2563eb);
+  color: #fff;
+}
+
+.ddz-icon-btn {
+  background: rgba(255, 255, 255, 0.08);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  color: #cbd5e1;
+  width: 28px;
+  height: 28px;
+  border-radius: 6px;
+  font-size: 13px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.ddz-status-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background: rgba(15, 23, 42, 0.7);
+  border: 1px solid rgba(96, 165, 250, 0.2);
+  border-radius: 8px;
+  padding: 4px 10px;
+}
+
+.ddz-badge {
+  font-size: 11px;
+  color: #93c5fd;
+}
+.ddz-badge span {
+  font-weight: 700;
+  color: #fbbf24;
+}
+
+.ddz-table {
+  width: 100%;
+  height: 430px;
+  background: radial-gradient(circle at center, #1e40af, #1e293b);
+  border: 4px solid #3b82f6;
+  border-radius: 14px;
+  position: relative;
+  overflow: hidden;
+  box-shadow: inset 0 2px 12px rgba(0,0,0,0.5), 0 8px 24px rgba(0,0,0,0.4);
+}
+
+/* 3 Hole Cards */
+.bottom-cards-box {
+  position: absolute;
+  top: 8px;
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2px;
+}
+
+.bottom-cards-title {
+  font-size: 9px;
+  color: #93c5fd;
+  font-weight: 600;
+}
+
+.bottom-cards {
+  display: flex;
+  gap: 4px;
+}
+
+.card-back {
+  width: 26px;
+  height: 38px;
+  background: linear-gradient(135deg, #1d4ed8, #1e3a8a);
+  border: 1px solid #60a5fa;
+  border-radius: 3px;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.3);
+}
+
+/* Bot Seats */
+.bot-seat {
+  position: absolute;
+  top: 60px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 3px;
+  z-index: 10;
+}
+
+.seat-left { left: 8px; }
+.seat-right { right: 8px; }
+
+.avatar {
+  font-size: 11px;
+  font-weight: 700;
+  color: #e2e8f0;
+}
+
+.card-count-badge {
+  font-size: 10px;
+  background: rgba(0, 0, 0, 0.4);
+  padding: 1px 6px;
+  border-radius: 10px;
+  color: #fbbf24;
+  font-weight: 700;
+}
+
+.role-badge {
+  font-size: 9px;
+  padding: 1px 5px;
+  border-radius: 4px;
+  font-weight: 700;
+  background: #334155;
+  color: #cbd5e1;
+}
+
+.role-landlord {
+  background: #dc2626 !important;
+  color: #fff !important;
+}
+
+.role-farmer {
+  background: #0284c7 !important;
+  color: #fff !important;
+}
+
+.played-slot {
+  margin-top: 10px;
+  display: flex;
+  gap: -8px;
+}
+
+/* Center Desk and Played Slots */
+.center-desk {
+  position: absolute;
+  top: 140px;
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  justify-content: center;
+  gap: 2px;
+  min-height: 52px;
+  z-index: 15;
+}
+
+.played-slot-player {
+  position: absolute;
+  bottom: 125px;
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  justify-content: center;
+  gap: 2px;
+  min-height: 52px;
+  z-index: 15;
+}
+
+/* Action Buttons Bar */
+.action-bar {
+  position: absolute;
+  bottom: 100px;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 30;
+}
+
+.btn-group {
+  display: flex;
+  gap: 8px;
+}
+
+.action-btn {
+  border: none;
+  border-radius: 16px;
+  padding: 5px 14px;
+  font-size: 12px;
+  font-weight: 800;
+  cursor: pointer;
+  color: #fff;
+  box-shadow: 0 4px 8px rgba(0,0,0,0.3);
+  transition: transform 0.1s;
+}
+.action-btn:active {
+  transform: scale(0.95);
+}
+
+.btn-call { background: linear-gradient(135deg, #ef4444, #dc2626); }
+.btn-play { background: linear-gradient(135deg, #10b981, #059669); }
+.btn-hint { background: linear-gradient(135deg, #f59e0b, #d97706); }
+.btn-pass { background: #64748b; }
+
+/* Player Hand Container */
+.player-hand-container {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 95px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.player-info-row {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+  font-size: 11px;
+  font-weight: 700;
+  margin-bottom: 2px;
+}
+
+.player-role {
+  font-size: 10px;
+  padding: 1px 6px;
+  border-radius: 4px;
+  background: #334155;
+  color: #cbd5e1;
+}
+
+.player-score {
+  color: #fbbf24;
+}
+
+.player-cards {
+  display: flex;
+  justify-content: center;
+  position: relative;
+  width: 96%;
+  height: 70px;
+}
+
+/* Poker Card Component */
+.poker-card {
+  width: 38px;
+  height: 56px;
+  background: #ffffff;
+  border-radius: 4px;
+  border: 1px solid #cbd5e1;
+  box-shadow: -1px 2px 4px rgba(0, 0, 0, 0.35);
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  padding: 3px;
+  position: absolute;
+  cursor: pointer;
+  transition: transform 0.15s ease, box-shadow 0.15s ease;
+}
+
+.poker-card.selected {
+  transform: translateY(-16px) !important;
+  box-shadow: 0 8px 16px rgba(239, 68, 68, 0.5), 0 0 0 2px #ef4444;
+}
+
+.card-top {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  line-height: 1;
+}
+
+.card-rank {
+  font-size: 13px;
+  font-weight: 900;
+}
+
+.card-suit {
+  font-size: 10px;
+  margin-top: 1px;
+}
+
+.card-center-suit {
+  align-self: center;
+  font-size: 15px;
+  opacity: 0.85;
+}
+
+.suit-red { color: #dc2626; }
+.suit-black { color: #0f172a; }
+
+.pass-label {
+  font-size: 13px;
+  font-weight: 800;
+  color: #94a3b8;
+  background: rgba(0,0,0,0.5);
+  padding: 4px 10px;
+  border-radius: 6px;
+}
+
+.ddz-footer {
+  width: 100%;
+  text-align: center;
+}
+
+.ddz-hint {
+  font-size: 11px;
+  color: #93c5fd;
+}
+
+/* Modal */
+.modal-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(15, 23, 42, 0.85);
+  backdrop-filter: blur(4px);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 100;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.3s;
+}
+
+.modal-overlay.active {
+  opacity: 1;
+  pointer-events: auto;
+}
+
+.modal-card {
+  background: #1e293b;
+  border: 1px solid rgba(96, 165, 250, 0.3);
+  border-radius: 16px;
+  padding: 24px;
+  text-align: center;
+  max-width: 300px;
+  width: 88%;
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.6);
+}
+
+.modal-emoji {
+  font-size: 44px;
+  margin-bottom: 8px;
+}
+
+.modal-title {
+  font-size: 18px;
+  font-weight: 800;
+  color: #f8fafc;
+  margin-bottom: 6px;
+}
+
+.modal-desc {
+  font-size: 13px;
+  color: #93c5fd;
+  margin-bottom: 18px;
+}
+
+.modal-btn {
+  width: 100%;
+  padding: 10px;
+  border-radius: 8px;
+  border: none;
+  font-weight: 700;
+  font-size: 14px;
+  cursor: pointer;
+  background: linear-gradient(135deg, #3b82f6, #2563eb);
+  color: #fff;
+}

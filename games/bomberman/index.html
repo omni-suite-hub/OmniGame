@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+  <title>炸弹人 - OmniGame</title>
+  <link rel="stylesheet" href="../_shared/game-layout.css">
+  <style>
+    body {
+      background: #0f172a;
+      color: #f8fafc;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, monospace;
+      margin: 0;
+      padding: 0;
+      display: flex;
+      flex-direction: column;
+      height: 100vh;
+      overflow: hidden;
+      touch-action: none;
+      user-select: none;
+    }
+    .hud {
+      display: flex;
+      justify-content: space-around;
+      align-items: center;
+      padding: 8px 12px;
+      background: #1e293b;
+      border-bottom: 1px solid #334155;
+      font-size: 13px;
+      z-index: 10;
+    }
+    .hud-val {
+      font-weight: bold;
+      color: #facc15;
+    }
+    .arena-container {
+      flex: 1;
+      position: relative;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      background: #052e16;
+      overflow: hidden;
+    }
+    canvas {
+      background: #14532d;
+      box-shadow: 0 4px 20px rgba(0,0,0,0.8);
+      touch-action: none;
+    }
+    .touch-controls {
+      display: none;
+      position: absolute;
+      bottom: 16px;
+      left: 0;
+      right: 0;
+      padding: 0 20px;
+      justify-content: space-between;
+      pointer-events: none;
+      z-index: 20;
+    }
+    .dpad {
+      position: relative;
+      width: 120px;
+      height: 120px;
+      pointer-events: auto;
+    }
+    .dpad-btn {
+      position: absolute;
+      width: 38px;
+      height: 38px;
+      background: rgba(30, 41, 59, 0.85);
+      border: 1px solid #38bdf8;
+      color: #fff;
+      border-radius: 8px;
+      font-size: 16px;
+      font-weight: bold;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .dpad-up    { top: 0; left: 41px; }
+    .dpad-down  { bottom: 0; left: 41px; }
+    .dpad-left  { top: 41px; left: 0; }
+    .dpad-right { top: 41px; right: 0; }
+    .btn-bomb {
+      width: 64px;
+      height: 64px;
+      border-radius: 50%;
+      background: #eab308;
+      border: 3px solid #facc15;
+      color: #0f172a;
+      font-weight: bold;
+      font-size: 24px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      pointer-events: auto;
+      box-shadow: 0 4px 12px rgba(234,179,8,0.5);
+    }
+    @media (hover: none), (pointer: coarse) {
+      .touch-controls { display: flex; align-items: flex-end; }
+    }
+    .modal {
+      position: absolute;
+      inset: 0;
+      background: rgba(15, 23, 42, 0.9);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      z-index: 50;
+    }
+    .modal.hidden { display: none; }
+    .modal h2 { font-size: 28px; margin: 0 0 10px 0; color: #facc15; }
+    .btn-action {
+      margin-top: 16px;
+      padding: 10px 24px;
+      background: #2563eb;
+      color: #fff;
+      border: none;
+      border-radius: 8px;
+      font-weight: bold;
+      font-size: 15px;
+      cursor: pointer;
+    }
+  </style>
+</head>
+<body>
+  <div class="hud">
+    <div>👾 怪物: <span id="monsters-el" class="hud-val">4</span></div>
+    <div>💣 炸弹: <span id="bombs-el" class="hud-val">1/1</span></div>
+    <div>🔥 火力: <span id="fire-el" class="hud-val">1</span></div>
+    <div>❤️ 生命: <span id="lives-el" class="hud-val" style="color:#ef4444;">3</span></div>
+    <div>🪙 得分: <span id="score-el" class="hud-val">0</span></div>
+  </div>
+
+  <div class="arena-container" id="container">
+    <canvas id="game-canvas"></canvas>
+
+    <div class="touch-controls">
+      <div class="dpad">
+        <button class="dpad-btn dpad-up" id="btn-up">▲</button>
+        <button class="dpad-btn dpad-down" id="btn-down">▼</button>
+        <button class="dpad-btn dpad-left" id="btn-left">◀</button>
+        <button class="dpad-btn dpad-right" id="btn-right">▶</button>
+      </div>
+      <button class="btn-bomb" id="btn-bomb">💣</button>
+    </div>
+
+    <div class="modal hidden" id="game-modal">
+      <h2 id="modal-title">🏆 迷宫通关！</h2>
+      <p id="modal-desc">成功清剿所有巡逻怪物！</p>
+      <button class="btn-action" id="btn-restart">再玩一局</button>
+    </div>
+  </div>
+
+  <script src="game.js"></script>
+</body>
+</html>

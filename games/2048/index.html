@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover"
+    />
+    <title>2048 · OmniGame</title>
+    <link rel="stylesheet" href="style.css" />
+  </head>
+  <body>
+    <div class="wrap">
+      <div class="head">
+        <div class="scores">
+          <div class="score-box">
+            <span>分数</span><b id="score">0</b>
+          </div>
+          <div class="score-box">
+            <span>最佳</span><b id="best">0</b>
+          </div>
+        </div>
+      </div>
+
+      <div class="board-area">
+        <div class="board" id="board"></div>
+        <div class="msg" id="msg" hidden>
+          <div class="msg-inner">
+            <h2 id="msgTitle"></h2>
+            <button id="msgBtn" class="btn">再来一局</button>
+          </div>
+        </div>
+      </div>
+
+      <p class="tip">方向键 / WASD，或在棋盘上滑动</p>
+    </div>
+
+    <script src="../_shared/storage.js"></script>
+    <script src="game.js"></script>
+  </body>
+</html>

@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>三国杀简版 (San Guo Sha) - OmniGame</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <div class="sgs-container">
+    <header class="sgs-header">
+      <div class="sgs-title-row">
+        <h1 class="sgs-title">三国杀 <span>Three Kingdoms</span></h1>
+        <div class="sgs-tools">
+          <button id="soundBtn" class="sgs-icon-btn" title="声音">🔊</button>
+          <button id="restartBtn" class="sgs-btn sgs-btn-accent">新对决</button>
+        </div>
+      </div>
+      <div class="sgs-status-row">
+        <div class="sgs-badge">牌堆剩余: <span id="deckCount">48</span></div>
+        <div class="sgs-badge">阶段: <span id="phaseText">出牌阶段</span></div>
+        <div class="sgs-badge">回合数: <span id="roundText">1</span></div>
+      </div>
+    </header>
+
+    <div class="sgs-battlefield">
+      <!-- Enemy (Bot) -->
+      <div class="hero-card bot-hero">
+        <div class="hero-avatar">🦹‍♂️</div>
+        <div class="hero-meta">
+          <div class="hero-name-row">
+            <span class="hero-name" id="botHeroName">曹操</span>
+            <span class="hero-role role-rebel">反贼</span>
+          </div>
+          <div class="hero-hp" id="botHpBar">
+            <span class="hp-heart">❤️</span><span class="hp-heart">❤️</span><span class="hp-heart">❤️</span><span class="hp-heart">❤️</span>
+          </div>
+          <div class="hero-cards-count">手牌: <span id="botHandCount">4</span>张</div>
+        </div>
+      </div>
+
+      <!-- Battle Animation & Log Desk -->
+      <div class="duel-arena">
+        <div class="played-card-slot" id="playedSlot">
+          <span class="arena-placeholder">战局交锋区</span>
+        </div>
+        <div class="battle-log" id="battleLog">战斗打响！主公刘备对决反贼曹操！</div>
+      </div>
+
+      <!-- Player Hand & Info -->
+      <div class="hero-card player-hero">
+        <div class="hero-avatar">🤴</div>
+        <div class="hero-meta">
+          <div class="hero-name-row">
+            <span class="hero-name" id="playerHeroName">刘备</span>
+            <span class="hero-role role-lord">主公</span>
+          </div>
+          <div class="hero-hp" id="playerHpBar">
+            <span class="hp-heart">❤️</span><span class="hp-heart">❤️</span><span class="hp-heart">❤️</span><span class="hp-heart">❤️</span>
+          </div>
+        </div>
+        <div class="turn-controls">
+          <button id="btnEndTurn" class="sgs-btn btn-end-turn">结束出牌</button>
+        </div>
+      </div>
+
+      <!-- Player Hand Cards -->
+      <div class="hand-container" id="playerHand"></div>
+    </div>
+
+    <footer class="sgs-footer">
+      <div class="sgs-hint">点击手牌出牌 · 杀出伤、闪避伤、桃回血、决斗死斗、顺拆制敌 · 击杀反贼获胜！</div>
+    </footer>
+  </div>
+
+  <div class="modal-overlay" id="gameOverModal">
+    <div class="modal-card">
+      <div class="modal-emoji" id="modalEmoji">🏆</div>
+      <h2 class="modal-title" id="modalTitle">荡平叛乱！主公凯旋！</h2>
+      <p class="modal-desc" id="modalDesc">历经 6 个激烈回合斩杀反贼！</p>
+      <div class="modal-actions">
+        <button id="modalRestartBtn" class="modal-btn">重整旗鼓</button>
+      </div>
+    </div>
+  </div>
+
+  <script src="game.js"></script>
+</body>
+</html>

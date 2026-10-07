@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover"
+    />
+    <title>暗箱轮盘 · OmniGame</title>
+    <link rel="stylesheet" href="style.css" />
+  </head>
+  <body>
+    <div class="wrap">
+      <!-- Terminal Header -->
+      <header class="head">
+        <div class="title-group">
+          <h1 class="title">暗箱轮盘</h1>
+          <span class="sub">HACK ROULETTE v2.4 · 摸鱼联机</span>
+        </div>
+        <button class="mode-btn" id="modeSelectBtn">模式: 🤖 赛博AI</button>
+      </header>
+
+      <!-- Terminal Battle Arena -->
+      <div class="arena">
+        <!-- Opponent Zone (Top) -->
+        <div class="hacker-card opponent-card" id="oppCard">
+          <div class="card-info">
+            <span class="hacker-avatar">🤖</span>
+            <div class="hacker-meta">
+              <b class="hacker-name" id="oppName">CYBER-DEALER</b>
+              <div class="hp-bar" id="oppHpBar">
+                <span class="hp-heart active">❤️</span>
+                <span class="hp-heart active">❤️</span>
+                <span class="hp-heart active">❤️</span>
+              </div>
+            </div>
+          </div>
+          <!-- Opponent Items -->
+          <div class="items-row" id="oppItemsRow"></div>
+        </div>
+
+        <!-- Center Chamber Visualizer & Log -->
+        <div class="center-stage">
+          <div class="chamber-info">
+            <div class="ammo-stats">
+              <span class="ammo-tag live">🔴 病毒代码: <b id="liveCount">0</b></span>
+              <span class="ammo-tag blank">🔵 空白指令: <b id="blankCount">0</b></span>
+            </div>
+            <div class="chamber-slots" id="chamberSlots"></div>
+          </div>
+
+          <!-- Terminal Output Log -->
+          <div class="terminal-log" id="terminalLog">
+            <div class="log-line sys">> 终端已连接。弹夹重构完成，请做出决策。</div>
+          </div>
+        </div>
+
+        <!-- Player Zone (Bottom) -->
+        <div class="hacker-card player-card active" id="playerCard">
+          <div class="card-info">
+            <span class="hacker-avatar">🐱</span>
+            <div class="hacker-meta">
+              <b class="hacker-name" id="playerName">ROOT_PLAYER</b>
+              <div class="hp-bar" id="playerHpBar">
+                <span class="hp-heart active">❤️</span>
+                <span class="hp-heart active">❤️</span>
+                <span class="hp-heart active">❤️</span>
+              </div>
+            </div>
+            <div class="turn-badge" id="turnBadge">你的回合</div>
+          </div>
+          <!-- Player Inventory Items -->
+          <div class="items-row" id="playerItemsRow"></div>
+        </div>
+      </div>
+
+      <!-- Execution Action Panel -->
+      <div class="action-panel">
+        <button class="action-btn shoot-self" id="btnShootSelf">
+          <span class="action-icon">🛡️</span>
+          <div class="action-text">
+            <b>注入自身</b>
+            <small>若为空指令可多行动一次</small>
+          </div>
+        </button>
+        <button class="action-btn shoot-opp" id="btnShootOpp">
+          <span class="action-icon">⚡</span>
+          <div class="action-text">
+            <b>注入对手</b>
+            <small>若为病毒代码造成伤害</small>
+          </div>
+        </button>
+      </div>
+
+      <div class="bottom-tools">
+        <button class="online-btn" id="onlineLobbyBtn">🌐 联机对决大厅</button>
+      </div>
+
+      <!-- Overlay Modal -->
+      <div class="overlay" id="overlay" hidden>
+        <div class="modal">
+          <div class="trophy" id="trophyIcon">💀</div>
+          <h2 id="winnerTitle">系统权限已夺取！</h2>
+          <p id="winnerDesc">对手的防御核心已彻底过载融毁。</p>
+          <div class="stats-row" id="finalStats"></div>
+          <div class="modal-actions">
+            <button class="btn primary" id="playAgainBtn">重置弹夹再战</button>
+            <button class="btn secondary" id="changeModeBtn">更换对手</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <script src="../_shared/storage.js"></script>
+    <script src="../_shared/omni-net.js"></script>
+    <script src="game.js"></script>
+  </body>
+</html>

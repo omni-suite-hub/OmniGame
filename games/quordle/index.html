@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+  <title>四词同猜 - OmniGame</title>
+  <link rel="stylesheet" href="../_shared/game-layout.css">
+  <style>
+    body {
+      background: #0f172a;
+      color: #f8fafc;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      margin: 0;
+      padding: 0;
+      display: flex;
+      flex-direction: column;
+      height: 100vh;
+      overflow: hidden;
+      user-select: none;
+    }
+    .hud {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 8px 16px;
+      background: #1e293b;
+      border-bottom: 1px solid #334155;
+      font-size: 14px;
+    }
+    .hud-stat {
+      font-weight: bold;
+      color: #38bdf8;
+    }
+    .quad-container {
+      flex: 1;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      grid-template-rows: 1fr 1fr;
+      gap: 8px;
+      padding: 8px;
+      overflow-y: auto;
+      max-width: 600px;
+      margin: 0 auto;
+      width: 100%;
+      box-sizing: border-box;
+    }
+    .board-card {
+      background: #1e293b;
+      border-radius: 8px;
+      padding: 6px;
+      display: flex;
+      flex-direction: column;
+      gap: 3px;
+      align-items: center;
+      justify-content: center;
+      border: 1px solid #334155;
+    }
+    .board-card.solved {
+      border-color: #22c55e;
+      background: #064e3b;
+    }
+    .board-row {
+      display: flex;
+      gap: 3px;
+    }
+    .board-cell {
+      width: 26px;
+      height: 26px;
+      border: 1px solid #475569;
+      border-radius: 3px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 13px;
+      font-weight: bold;
+      color: #f8fafc;
+      text-transform: uppercase;
+      background: #0f172a;
+    }
+    .cell-correct { background: #22c55e !important; border-color: #22c55e !important; }
+    .cell-present { background: #eab308 !important; border-color: #eab308 !important; }
+    .cell-absent  { background: #334155 !important; border-color: #334155 !important; color: #94a3b8; }
+
+    .virtual-kb {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+      padding: 6px;
+      background: #0f172a;
+      align-items: center;
+    }
+    .kb-row {
+      display: flex;
+      gap: 4px;
+    }
+    .kb-key {
+      min-width: 28px;
+      height: 38px;
+      padding: 0 4px;
+      background: #334155;
+      color: #fff;
+      border: none;
+      border-radius: 4px;
+      font-size: 13px;
+      font-weight: bold;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .kb-key:active {
+      background: #38bdf8;
+      color: #0f172a;
+    }
+    .modal {
+      position: absolute;
+      inset: 0;
+      background: rgba(15, 23, 42, 0.9);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      z-index: 50;
+    }
+    .modal.hidden { display: none; }
+    .modal h2 { font-size: 26px; margin: 0 0 10px 0; color: #facc15; }
+    .modal p { font-size: 15px; color: #cbd5e1; margin: 4px 0; }
+    .btn-restart {
+      margin-top: 16px;
+      padding: 10px 24px;
+      background: #2563eb;
+      color: #fff;
+      border: none;
+      border-radius: 8px;
+      font-weight: bold;
+      cursor: pointer;
+    }
+  </style>
+</head>
+<body>
+  <div class="hud">
+    <div>🧩 四词同猜 (Quordle)</div>
+    <div>机会: <span id="attempt-el" class="hud-stat">1 / 9</span></div>
+    <div>解出: <span id="solved-el" class="hud-stat">0 / 4</span></div>
+  </div>
+
+  <div class="quad-container">
+    <div class="board-card" id="board-0"></div>
+    <div class="board-card" id="board-1"></div>
+    <div class="board-card" id="board-2"></div>
+    <div class="board-card" id="board-3"></div>
+  </div>
+
+  <div class="virtual-kb" id="keyboard"></div>
+
+  <div class="modal hidden" id="modal">
+    <h2 id="modal-title">🎉 全部猜中！</h2>
+    <p id="modal-words">答案: APPLE, TRAIN, GHOST, BEACH</p>
+    <button class="btn-restart" id="btn-restart">再来一局</button>
+  </div>
+
+  <script src="game.js"></script>
+</body>
+</html>

@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>记忆翻牌 (Memory Match) - OmniGame</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <div class="mm-container">
+    <header class="mm-header">
+      <div class="mm-title-row">
+        <h1 class="mm-title">记忆翻牌 <span>Memory Match</span></h1>
+        <div class="mm-tools">
+          <button id="soundBtn" class="mm-icon-btn" title="声音开关">🔊</button>
+          <button id="restartBtn" class="mm-btn mm-btn-accent" title="重新开始">洗牌</button>
+        </div>
+      </div>
+
+      <div class="mm-status-row">
+        <div class="mm-diff-wrap">
+          <select id="diffSelect" class="mm-select">
+            <option value="4x4" selected>4×4 (8 对)</option>
+            <option value="6x4">6×4 (12 对)</option>
+            <option value="6x6">6×6 (18 对)</option>
+          </select>
+        </div>
+        <div class="mm-badge">翻牌: <span id="flipCount">0</span> 次</div>
+        <div class="mm-badge timer">时间: <span id="timerText">00:00</span></div>
+      </div>
+    </header>
+
+    <div class="mm-board-wrap">
+      <div class="mm-board" id="board">
+        <!-- Cards dynamically injected -->
+      </div>
+    </div>
+
+    <footer class="mm-footer">
+      <div class="mm-hint">翻转卡片找出所有成对相同图案 · 连续配对触发连击加成</div>
+    </footer>
+  </div>
+
+  <div class="modal-overlay" id="mmModal">
+    <div class="modal-card">
+      <div class="modal-emoji" id="modalEmoji">🎉</div>
+      <h2 class="modal-title" id="modalTitle">记忆大师！</h2>
+      <p class="modal-desc" id="modalDesc">用时 00:32 · 翻牌 18 次配对完成！</p>
+      <div class="modal-actions">
+        <button id="modalRestartBtn" class="modal-btn modal-btn-primary">再玩一局</button>
+      </div>
+    </div>
+  </div>
+
+  <script src="game.js"></script>
+</body>
+</html>

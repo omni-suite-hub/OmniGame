@@ -1,0 +1,202 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+  <title>摇骰对决 (Dice Duel) - OmniGame</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <div class="dice-container">
+    <!-- Header -->
+    <header class="dice-header">
+      <div class="header-top">
+        <h1 class="game-title">
+          <span class="title-emoji">🎲</span>
+          <span class="title-text">摇骰对决</span>
+          <span class="title-badge">摸鱼联机</span>
+        </h1>
+        <div class="header-actions">
+          <button id="soundBtn" class="icon-btn" title="声音开关">🔊</button>
+          <button id="rulesBtn" class="icon-btn" title="玩法规则">❓</button>
+          <button id="onlineBtn" class="btn btn-accent" title="发起/加入联机">🌐 联机对战</button>
+        </div>
+      </div>
+
+      <!-- Match Settings Bar -->
+      <div class="settings-bar">
+        <div class="mode-pills" id="gameModePills">
+          <button class="pill active" data-submode="sum5">5颗比总和</button>
+          <button class="pill" data-submode="blitz1">1颗定胜负</button>
+          <button class="pill" data-submode="liar">极简吹牛</button>
+        </div>
+        <div class="player-mode-select">
+          <button id="opponentTypeBtn" class="pill pill-outline">🤖 人机: 摸鱼小王</button>
+        </div>
+      </div>
+
+      <!-- Scoreboard -->
+      <div class="scoreboard">
+        <div class="score-card player-card" id="p1Card">
+          <div class="avatar" id="p1Avatar">🐱</div>
+          <div class="meta">
+            <div class="name" id="p1Name">你</div>
+            <div class="score"><span id="p1Score">0</span> 胜</div>
+          </div>
+        </div>
+
+        <div class="match-info">
+          <div class="vs-text">VS</div>
+          <div class="round-text" id="roundText">第 1 局</div>
+        </div>
+
+        <div class="score-card opp-card" id="p2Card">
+          <div class="meta text-right">
+            <div class="name" id="p2Name">摸鱼小王</div>
+            <div class="score"><span id="p2Score">0</span> 胜</div>
+          </div>
+          <div class="avatar" id="p2Avatar">🤖</div>
+        </div>
+      </div>
+    </header>
+
+    <!-- Arena Stage -->
+    <main class="arena-stage" id="arenaStage">
+      <!-- Opponent Cup Area -->
+      <section class="player-zone opp-zone" id="oppZone">
+        <div class="character-row opp-char">
+          <div class="character-avatar" id="oppAvatarMood">😏</div>
+          <div class="speech-bubble" id="oppBubble">看我摇个大的！</div>
+        </div>
+        <div class="zone-label">对方骰盅</div>
+        <div class="cup-wrap" id="oppCupWrap">
+          <div class="human-hands opp-hands" id="oppHands">
+            <span class="hand-left">🫲</span>
+            <span class="hand-right">🫱</span>
+          </div>
+          <div class="dice-cup opp-cup" id="oppCup">
+            <div class="cup-lid"></div>
+            <div class="cup-body">
+              <span class="cup-pattern">🎲</span>
+            </div>
+          </div>
+          <div class="dice-tray" id="oppDiceTray">
+            <!-- Rendered dice -->
+          </div>
+        </div>
+        <div class="zone-status" id="oppStatusText">等待摇骰…</div>
+      </section>
+
+      <!-- Center Action & Clash Message -->
+      <div class="arena-center">
+        <div class="clash-badge" id="clashBadge">请摇动骰盅</div>
+        <div class="slam-ring hidden" id="slamRing"></div>
+      </div>
+
+      <!-- Player Cup Area -->
+      <section class="player-zone my-zone" id="myZone">
+        <div class="zone-status" id="myStatusText">点击“摇动骰盅”开始</div>
+        <div class="cup-wrap" id="myCupWrap">
+          <div class="human-hands my-hands" id="myHands">
+            <span class="hand-left">🫲</span>
+            <span class="hand-right">🫱</span>
+          </div>
+          <div class="dice-cup my-cup" id="myCup">
+            <div class="cup-lid"></div>
+            <div class="cup-body">
+              <span class="cup-pattern">🎲</span>
+            </div>
+          </div>
+          <div class="dice-tray" id="myDiceTray">
+            <!-- Rendered dice -->
+          </div>
+        </div>
+        <div class="zone-label">你的骰盅</div>
+        <div class="character-row my-char">
+          <div class="character-avatar" id="myAvatarMood">🐱</div>
+          <div class="speech-bubble" id="myBubble">今天我必赢！</div>
+        </div>
+      </section>
+    </main>
+
+    <!-- Controls Toolbar -->
+    <footer class="dice-controls">
+      <button id="shakeBtn" class="control-btn btn-shake">
+        <span class="btn-icon">🤹</span>
+        <span class="btn-txt">摇动骰盅</span>
+      </button>
+      <button id="peekBtn" class="control-btn btn-peek" disabled>
+        <span class="btn-icon">👀</span>
+        <span class="btn-txt">悄悄偷看</span>
+      </button>
+      <button id="openBtn" class="control-btn btn-open" disabled>
+        <span class="btn-icon">✨</span>
+        <span class="btn-txt">揭盅开牌!</span>
+      </button>
+    </footer>
+  </div>
+
+  <!-- Penalty Wheel Modal -->
+  <div class="modal-overlay hidden" id="penaltyModal">
+    <div class="modal-card penalty-card">
+      <div class="modal-emoji">🥤⚖️</div>
+      <h2 class="modal-title" id="penaltyTitle">对决结束！抽取输家惩罚</h2>
+      <p class="modal-desc" id="penaltyDesc">输家请接受办公室命运的安排！</p>
+      
+      <!-- Mini Wheel Canvas -->
+      <div class="wheel-box">
+        <div class="wheel-pointer">▼</div>
+        <canvas id="wheelCanvas" width="240" height="240"></canvas>
+      </div>
+
+      <div class="penalty-result hidden" id="penaltyResult">
+        <div class="res-highlight" id="penaltyResultText">请赢家喝一杯奶茶！</div>
+      </div>
+
+      <div class="modal-actions">
+        <button id="spinWheelBtn" class="modal-btn btn-primary">转动命运轮盘 🎡</button>
+        <button id="closePenaltyBtn" class="modal-btn btn-ghost">下一局对决 ⏩</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Rules Modal -->
+  <div class="modal-overlay hidden" id="rulesModal">
+    <div class="modal-card rules-card">
+      <div class="rules-header">
+        <h3 class="rules-title">🎲 摇骰对决 · 规则秘籍</h3>
+        <button id="closeRulesBtn" class="modal-close">&times;</button>
+      </div>
+      <div class="rules-body">
+        <div class="rule-item">
+          <span class="rule-icon">🏆</span>
+          <div><strong>5颗比总和</strong>：双方各自摇出 5 颗骰子，揭盅比点数总和！摇出“豹子”（点数全同）直接获得满分暴击！</div>
+        </div>
+        <div class="rule-item">
+          <span class="rule-icon">⚡</span>
+          <div><strong>1颗定胜负</strong>：经典极简闪电决断！1颗骰子一摇定音，谁点数小谁下楼拿外卖！</div>
+        </div>
+        <div class="rule-item">
+          <span class="rule-icon">👀</span>
+          <div><strong>偷看机制</strong>：摇完骰盅后可点击“偷看”独自查看点数，对手无法看到。确认后点击“揭盅”双方同时亮出！</div>
+        </div>
+        <div class="rule-item">
+          <span class="rule-icon">🥤</span>
+          <div><strong>办公室惩罚转盘</strong>：决出胜负后，可一键唤出惩罚转盘：“请喝奶茶”、“拿快递”、“群里发红包”，乐趣拉满！</div>
+        </div>
+        <div class="rule-item">
+          <span class="rule-icon">🌐</span>
+          <div><strong>联机与同屏</strong>：支持局域网同 Wi-Fi 秒连、6 位房间码跨网对决、同屏轮流对战与智能人机对练！</div>
+        </div>
+      </div>
+      <div class="modal-actions">
+        <button id="knowRulesBtn" class="modal-btn btn-primary">开始摇骰！</button>
+      </div>
+    </div>
+  </div>
+
+  <script src="../_shared/storage.js"></script>
+  <script src="../_shared/omni-net.js"></script>
+  <script src="game.js"></script>
+</body>
+</html>

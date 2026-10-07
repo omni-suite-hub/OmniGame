@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>酷滑滑雪 (Groovy Ski) - OmniGame</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <div class="ski-container">
+    <header class="ski-header">
+      <div class="ski-title-row">
+        <h1 class="ski-title">酷滑滑雪 <span>Groovy Ski</span></h1>
+        <div class="ski-tools">
+          <button id="soundBtn" class="ski-icon-btn" title="声音">🔊</button>
+          <button id="restartBtn" class="ski-btn ski-btn-accent">重滑</button>
+        </div>
+      </div>
+      <div class="ski-status-row">
+        <div class="ski-badge">下滑距离: <span id="distText">0m</span></div>
+        <div class="ski-badge">过旗得分: <span id="scoreText">0</span></div>
+        <div class="ski-badge">连击: <span id="comboText">0x</span></div>
+      </div>
+    </header>
+
+    <div class="canvas-wrap">
+      <canvas id="gameCanvas" width="360" height="380"></canvas>
+      <div class="ski-overlay-hint" id="overlayHint">← → 转弯变向 · 空格起跳避障</div>
+    </div>
+
+    <!-- Onscreen buttons -->
+    <div class="touch-controls">
+      <button class="t-btn" id="btnLeft">← 左拐</button>
+      <button class="t-btn" id="btnJump">跳跃 🦘</button>
+      <button class="t-btn" id="btnRight">右拐 →</button>
+    </div>
+
+    <footer class="ski-footer">
+      <div class="ski-hint">穿行红蓝旗门累积高额连击 · 避开松树与雪人 · 跳板飞跃积雪巨石！</div>
+    </footer>
+  </div>
+
+  <div class="modal-overlay" id="gameOverModal">
+    <div class="modal-card">
+      <div class="modal-emoji" id="modalEmoji">🌲</div>
+      <h2 class="modal-title" id="modalTitle">撞树栽倒在雪堆！</h2>
+      <p class="modal-desc" id="modalDesc">总滑行 580 米，过旗得分 1450 分！</p>
+      <div class="modal-actions">
+        <button id="modalRestartBtn" class="modal-btn">重整雪板</button>
+      </div>
+    </div>
+  </div>
+
+  <script src="game.js"></script>
+</body>
+</html>

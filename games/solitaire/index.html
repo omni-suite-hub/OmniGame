@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>纸牌接龙 (Solitaire) - OmniGame</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <div class="sol-container">
+    <header class="sol-header">
+      <div class="sol-title-row">
+        <h1 class="sol-title">纸牌接龙 <span>Klondike</span></h1>
+        <div class="sol-tools">
+          <button id="soundBtn" class="sol-icon-btn" title="声音开关">🔊</button>
+          <button id="undoBtn" class="sol-btn sol-btn-ghost" title="撤销一步">撤销</button>
+          <button id="autoCompleteBtn" class="sol-btn sol-btn-auto" title="自动归位">⚡ 归位</button>
+          <button id="restartBtn" class="sol-btn sol-btn-accent" title="新洗牌">新局</button>
+        </div>
+      </div>
+
+      <div class="sol-status-row">
+        <div class="sol-badge">得分: <span id="scoreText">0</span></div>
+        <div class="sol-badge">步数: <span id="movesText">0</span></div>
+        <div class="sol-badge timer">时间: <span id="timerText">00:00</span></div>
+      </div>
+    </header>
+
+    <div class="sol-table" id="table">
+      <!-- Top row: Stock, Waste, and 4 Foundations -->
+      <div class="sol-top-row">
+        <div class="sol-stock-waste">
+          <div class="card-slot stock-slot" id="stockSlot">
+            <div class="card-back-icon">🂠</div>
+          </div>
+          <div class="card-slot waste-slot" id="wasteSlot"></div>
+        </div>
+
+        <div class="sol-foundations">
+          <div class="card-slot foundation-slot" data-f="0" id="found0"><span>♠</span></div>
+          <div class="card-slot foundation-slot" data-f="1" id="found1"><span>♥</span></div>
+          <div class="card-slot foundation-slot" data-f="2" id="found2"><span>♣</span></div>
+          <div class="card-slot foundation-slot" data-f="3" id="found3"><span>♦</span></div>
+        </div>
+      </div>
+
+      <!-- Bottom row: 7 Tableau columns -->
+      <div class="sol-tableau-row" id="tableauRow">
+        <div class="tableau-col" data-c="0"></div>
+        <div class="tableau-col" data-c="1"></div>
+        <div class="tableau-col" data-c="2"></div>
+        <div class="tableau-col" data-c="3"></div>
+        <div class="tableau-col" data-c="4"></div>
+        <div class="tableau-col" data-c="5"></div>
+        <div class="tableau-col" data-c="6"></div>
+      </div>
+    </div>
+
+    <footer class="sol-footer">
+      <div class="sol-hint">红黑交替降序排列 · A 到 K 按花色归入右上角目标堆 · 双击卡牌快速归位</div>
+    </footer>
+  </div>
+
+  <div class="modal-overlay" id="solModal">
+    <div class="modal-card">
+      <div class="modal-emoji" id="modalEmoji">👑</div>
+      <h2 class="modal-title" id="modalTitle">全盘接龙大获全胜！</h2>
+      <p class="modal-desc" id="modalDesc">用时 03:15 · 积分 820 分</p>
+      <div class="modal-actions">
+        <button id="modalRestartBtn" class="modal-btn modal-btn-primary">再战一局</button>
+      </div>
+    </div>
+  </div>
+
+  <script src="game.js"></script>
+</body>
+</html>

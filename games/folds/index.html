@@ -1,0 +1,304 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no, viewport-fit=cover">
+<title>空间折纸 - OmniGame</title>
+<link rel="stylesheet" href="../_shared/game-layout.css">
+<style>
+  :root {
+    --bg: #0b0d19;
+    --card: #15182e;
+    --paper: #f1f5f9;
+    --fold: #38bdf8;
+    --fold-glow: rgba(56, 189, 248, 0.4);
+    --gold: #f59e0b;
+    --text: #f8fafc;
+    --text-dim: #94a3b8;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; user-select: none; -webkit-user-select: none; }
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    overflow: hidden;
+    height: 100vh;
+    display: flex;
+    flex-direction: column;
+  }
+  #gameContainer {
+    position: relative;
+    width: 100%;
+    height: 100%;
+    max-width: 540px;
+    margin: 0 auto;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    background: radial-gradient(ellipse at 50% 25%, #181d3d 0%, #0b0d19 80%);
+  }
+  /* Top HUD */
+  .top-hud {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    z-index: 20;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 10px 16px;
+    background: linear-gradient(180deg, rgba(11, 13, 25, 0.95) 0%, transparent 100%);
+    pointer-events: none;
+  }
+  .hud-stat {
+    display: flex;
+    flex-direction: column;
+  }
+  .hud-label {
+    font-size: 10px;
+    font-weight: 700;
+    color: var(--text-dim);
+    letter-spacing: 1px;
+    text-transform: uppercase;
+  }
+  .hud-val {
+    font-size: 17px;
+    font-weight: 800;
+    color: #fff;
+    text-shadow: 0 0 10px var(--fold-glow);
+  }
+  .btn-reset-chamber {
+    pointer-events: auto;
+    padding: 6px 12px;
+    border-radius: 999px;
+    border: 1px solid rgba(255, 255, 255, 0.15);
+    background: rgba(255, 255, 255, 0.06);
+    color: var(--text-dim);
+    font-size: 11px;
+    font-weight: 700;
+    cursor: pointer;
+    transition: all 0.15s ease;
+  }
+  .btn-reset-chamber:active {
+    background: rgba(255, 255, 255, 0.2);
+    color: #fff;
+    transform: scale(0.95);
+  }
+  /* Canvas */
+  #gameCanvas {
+    width: 100%;
+    height: 100%;
+    display: block;
+  }
+  /* Bottom Control Deck */
+  .control-deck {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    height: 130px;
+    z-index: 15;
+    pointer-events: none;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0 20px 16px;
+  }
+  .d-pad {
+    display: flex;
+    gap: 10px;
+    pointer-events: auto;
+  }
+  .ctrl-btn {
+    width: 58px;
+    height: 58px;
+    border-radius: 16px;
+    background: rgba(255, 255, 255, 0.08);
+    border: 1px solid rgba(255, 255, 255, 0.18);
+    color: #fff;
+    font-size: 20px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    touch-action: manipulation;
+    transition: transform 0.08s ease;
+  }
+  .ctrl-btn:active, .ctrl-btn.active {
+    background: rgba(56, 189, 248, 0.35);
+    border-color: var(--fold);
+    transform: scale(0.92);
+  }
+  .actions {
+    display: flex;
+    gap: 12px;
+    align-items: center;
+    pointer-events: auto;
+  }
+  .btn-jump {
+    width: 58px;
+    height: 58px;
+    border-radius: 16px;
+    background: rgba(245, 158, 11, 0.15);
+    border: 1px solid rgba(245, 158, 11, 0.4);
+    color: var(--gold);
+    font-size: 14px;
+    font-weight: 800;
+  }
+  .btn-fold {
+    width: 80px;
+    height: 64px;
+    border-radius: 18px;
+    background: linear-gradient(135deg, #38bdf8, #818cf8);
+    border: 0;
+    color: #fff;
+    font-weight: 800;
+    font-size: 13px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 2px;
+    cursor: pointer;
+    box-shadow: 0 4px 18px rgba(56, 189, 248, 0.5);
+    touch-action: manipulation;
+    transition: transform 0.08s ease;
+  }
+  .btn-fold:active, .btn-fold.active {
+    transform: scale(0.92);
+  }
+  /* Overlay */
+  .overlay {
+    position: absolute;
+    inset: 0;
+    background: rgba(11, 13, 25, 0.92);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    z-index: 30;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 24px;
+    text-align: center;
+  }
+  .overlay.hidden { display: none; }
+  .modal-title {
+    font-size: 26px;
+    font-weight: 800;
+    color: #fff;
+    margin-bottom: 8px;
+    text-shadow: 0 0 20px var(--fold-glow);
+  }
+  .modal-sub {
+    font-size: 13px;
+    color: var(--text-dim);
+    margin-bottom: 24px;
+    line-height: 1.6;
+    max-width: 320px;
+  }
+  .btn-action {
+    padding: 12px 36px;
+    border-radius: 999px;
+    border: 0;
+    background: linear-gradient(135deg, #38bdf8, #818cf8);
+    color: #fff;
+    font-size: 16px;
+    font-weight: 800;
+    cursor: pointer;
+    box-shadow: 0 4px 20px rgba(56, 189, 248, 0.4);
+    transition: all 0.15s ease;
+  }
+  .btn-action:hover { transform: translateY(-2px); }
+  .btn-action:active { transform: scale(0.97); }
+  .score-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+    width: 100%;
+    max-width: 280px;
+    margin-bottom: 24px;
+  }
+  .score-card {
+    background: rgba(255, 255, 255, 0.04);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    border-radius: 12px;
+    padding: 10px;
+  }
+  .score-card-num {
+    font-size: 20px;
+    font-weight: 800;
+    color: var(--fold);
+  }
+  .score-card-lbl {
+    font-size: 11px;
+    color: var(--text-dim);
+    font-weight: 600;
+  }
+</style>
+</head>
+<body>
+<div id="gameContainer">
+  <div class="top-hud">
+    <div class="hud-stat">
+      <span class="hud-label">折纸密室</span>
+      <span id="chamberVal" class="hud-val">第 1 关</span>
+    </div>
+    <button id="btnResetChamber" class="btn-reset-chamber">🔄 重置密室 (Z)</button>
+    <div class="hud-stat" style="text-align: right;">
+      <span class="hud-label">空间折叠</span>
+      <span id="foldStatusVal" class="hud-val" style="color: var(--fold);">平展</span>
+    </div>
+  </div>
+
+  <canvas id="gameCanvas"></canvas>
+
+  <div class="control-deck">
+    <div class="d-pad">
+      <button id="btnLeft" class="ctrl-btn">◀</button>
+      <button id="btnRight" class="ctrl-btn">▶</button>
+    </div>
+    <div class="actions">
+      <button id="btnJump" class="ctrl-btn btn-jump">跳跃</button>
+      <button id="btnFold" class="btn-fold">
+        <span>📄 折叠</span>
+        <span style="font-size:9px; opacity:0.85;">F 键 / 触控</span>
+      </button>
+    </div>
+  </div>
+
+  <!-- Start Overlay -->
+  <div id="startOverlay" class="overlay">
+    <h1 class="modal-title">📜 空间折纸</h1>
+    <p class="modal-sub">
+      折叠空间 · 缩地成桥！<br>
+      当远处的平台隔着无法逾越的深渊时，按<b>【折叠】</b>将空间对折贴合！<br>
+      原本遥不可及的彼岸将近在眼前，助你直达千纸鹤终点！<br>
+      方向键移动 · 空格/W跳跃 · F键对折空间 · Z重置
+    </p>
+    <button id="startBtn" class="btn-action">展开画卷</button>
+  </div>
+
+  <!-- Victory / Clear Overlay -->
+  <div id="clearOverlay" class="overlay hidden">
+    <h2 class="modal-title" id="clearTitle">折纸成桥！</h2>
+    <p class="modal-sub" id="clearSub">精妙的空间拓扑折叠，顺利通关！</p>
+    <div class="score-grid">
+      <div class="score-card">
+        <div id="finalChamber" class="score-card-num">1</div>
+        <div class="score-card-lbl">完成关卡</div>
+      </div>
+      <div class="score-card">
+        <div id="finalFolds" class="score-card-num">2</div>
+        <div class="score-card-lbl">折叠次数</div>
+      </div>
+    </div>
+    <button id="nextBtn" class="btn-action">下一密室</button>
+  </div>
+</div>
+
+<script src="../_shared/storage.js"></script>
+<script src="game.js"></script>
+</body>
+</html>

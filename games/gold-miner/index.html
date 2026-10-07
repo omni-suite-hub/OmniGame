@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>黄金矿工 - OmniGame</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <div class="gm-container">
+    <header class="gm-header">
+      <div class="gm-title-row">
+        <h1 class="gm-title">黄金矿工 <span>Gold Miner</span></h1>
+        <div class="gm-tools">
+          <button id="soundBtn" class="gm-icon-btn" title="声音开关">🔊</button>
+          <button id="dynamiteBtn" class="gm-btn gm-btn-bomb" title="投掷炸药">🧨 炸药 (<span id="bombCount">1</span>)</button>
+          <button id="restartBtn" class="gm-btn gm-btn-accent" title="重开游戏">重玩</button>
+        </div>
+      </div>
+
+      <div class="gm-status-row">
+        <div class="gm-badge">关卡: <span id="levelText">1</span></div>
+        <div class="gm-badge">目标: $<span id="targetText">650</span></div>
+        <div class="gm-badge highlight">金钱: $<span id="moneyText">0</span></div>
+        <div class="gm-badge timer">时间: <span id="timeText">60</span>s</div>
+      </div>
+    </header>
+
+    <div class="gm-canvas-wrap">
+      <canvas id="gameCanvas" width="360" height="480"></canvas>
+    </div>
+
+    <footer class="gm-footer">
+      <div class="gm-hint">点击屏幕或按 ↓ / 空格键发射钩爪 · 抓到重石头可点 🧨 炸掉</div>
+    </footer>
+  </div>
+
+  <div class="modal-overlay" id="gmModal">
+    <div class="modal-card">
+      <div class="modal-emoji" id="modalEmoji">💰</div>
+      <h2 class="modal-title" id="modalTitle">达标通关！</h2>
+      <p class="modal-desc" id="modalDesc">本关收获金币: $850 · 达成本关指标</p>
+      <div class="modal-actions">
+        <button id="modalActionBtn" class="modal-btn modal-btn-primary">进入下一关</button>
+      </div>
+    </div>
+  </div>
+
+  <script src="game.js"></script>
+</body>
+</html>

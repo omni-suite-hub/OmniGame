@@ -1,0 +1,267 @@
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+  user-select: none;
+  -webkit-user-select: none;
+}
+
+html, body {
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  background: #0e1020;
+  color: #eef1ff;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "PingFang SC", sans-serif;
+  -webkit-font-smoothing: antialiased;
+}
+
+.app-wrap {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  height: 100%;
+  max-width: 580px;
+  margin: 0 auto;
+  padding: 10px 12px;
+}
+
+.head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex: 0 0 auto;
+  gap: 8px;
+  padding-bottom: 8px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.title-wrap {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.logo-emoji {
+  font-size: 20px;
+}
+
+.game-name {
+  font-size: 16px;
+  font-weight: 700;
+}
+
+.turn-badge {
+  font-size: 11px;
+  font-weight: 700;
+  padding: 2px 8px;
+  border-radius: 999px;
+  transition: all 0.2s ease;
+}
+
+.turn-badge.black-turn {
+  background: #1e293b;
+  color: #f8fafc;
+  border: 1px solid #475569;
+}
+
+.turn-badge.white-turn {
+  background: #f1f5f9;
+  color: #0f172a;
+  border: 1px solid #cbd5e1;
+}
+
+.actions {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.btn-icon {
+  width: 32px;
+  height: 32px;
+  border-radius: 8px;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  background: #181d38;
+  color: #fff;
+  font-size: 14px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background 0.12s ease;
+}
+
+.btn-icon:hover {
+  background: #252c54;
+}
+
+.btn-pill {
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  background: #181d38;
+  color: #eef1ff;
+  border-radius: 8px;
+  padding: 6px 10px;
+  font-size: 12px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.12s ease;
+}
+
+.btn-pill:hover {
+  background: #252c54;
+}
+
+.btn-accent {
+  background: linear-gradient(135deg, #0e7490, #3b82f6);
+  border-color: transparent;
+  color: #fff;
+}
+
+.btn-accent:hover {
+  filter: brightness(1.1);
+}
+
+.mode-bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  flex: 0 0 auto;
+  padding: 8px 0;
+}
+
+.mode-group {
+  display: flex;
+  background: #181d38;
+  border-radius: 8px;
+  padding: 2px;
+  border: 1px solid rgba(255, 255, 255, 0.06);
+}
+
+.mode-btn, .diff-btn {
+  border: none;
+  background: transparent;
+  color: #8b92b6;
+  font-size: 11px;
+  font-weight: 600;
+  padding: 4px 8px;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: all 0.12s ease;
+}
+
+.mode-btn.active, .diff-btn.active {
+  background: #3b82f6;
+  color: #fff;
+}
+
+.board-wrap {
+  flex: 1 1 auto;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 0;
+  padding: 4px;
+}
+
+#boardCanvas {
+  max-width: 100%;
+  max-height: 100%;
+  border-radius: 12px;
+  box-shadow: 0 12px 35px rgba(0, 0, 0, 0.6), 0 0 0 1px rgba(255, 255, 255, 0.1);
+  cursor: pointer;
+  touch-action: none;
+}
+
+.foot {
+  flex: 0 0 auto;
+  padding: 6px 0 2px;
+  text-align: center;
+}
+
+.status-msg {
+  font-size: 12px;
+  color: #a6abce;
+}
+
+/* Modal */
+.modal-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(8, 10, 24, 0.85);
+  backdrop-filter: blur(6px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 999;
+  animation: modal-fade 0.2s ease-out;
+}
+
+.modal-overlay.hidden {
+  display: none !important;
+}
+
+.modal-box {
+  background: #181d38;
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  border-radius: 18px;
+  padding: 24px 28px;
+  text-align: center;
+  box-shadow: 0 20px 50px rgba(0, 0, 0, 0.6);
+  max-width: 300px;
+  width: 90%;
+  animation: modal-pop 0.25s cubic-bezier(0.18, 0.9, 0.3, 1.2);
+}
+
+.modal-emoji {
+  font-size: 44px;
+  margin-bottom: 6px;
+}
+
+.modal-title {
+  font-size: 18px;
+  font-weight: 700;
+  color: #fff;
+  margin-bottom: 6px;
+}
+
+.modal-desc {
+  font-size: 13px;
+  color: #a6abce;
+  margin-bottom: 18px;
+}
+
+.modal-actions {
+  display: flex;
+  gap: 10px;
+}
+
+.modal-btn {
+  flex: 1;
+  border: none;
+  border-radius: 10px;
+  padding: 10px 0;
+  font-size: 14px;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.modal-btn-primary {
+  background: linear-gradient(135deg, #0e7490, #3b82f6);
+  color: #fff;
+}
+
+.modal-btn-primary:hover {
+  filter: brightness(1.1);
+}
+
+@keyframes modal-fade {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes modal-pop {
+  from { opacity: 0; transform: scale(0.85); }
+  to { opacity: 1; transform: scale(1); }
+}

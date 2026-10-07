@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>开心消消乐 (Happy Match-3) - OmniGame</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <div class="hm-container">
+    <header class="hm-header">
+      <div class="hm-title-row">
+        <h1 class="hm-title">开心消消乐 <span>Happy Match</span></h1>
+        <div class="hm-tools">
+          <button id="soundBtn" class="hm-icon-btn" title="声音">🔊</button>
+          <button id="restartBtn" class="hm-btn hm-btn-accent">新关卡</button>
+        </div>
+      </div>
+      <div class="hm-status-row">
+        <div class="hm-badge">剩余步数: <span id="movesText">25</span></div>
+        <div class="hm-badge">目标得分: <span id="targetScoreText">2000</span></div>
+        <div class="hm-badge">当前得分: <span id="scoreText">0</span></div>
+      </div>
+    </header>
+
+    <div class="board-wrap">
+      <div class="match-board" id="board"></div>
+    </div>
+
+    <footer class="hm-footer">
+      <div class="hm-hint">点击相邻萌宠互换位置 · 凑齐 3 个横竖消除 · 4 连/5 连生成超级爆破炸弹！</div>
+    </footer>
+  </div>
+
+  <div class="modal-overlay" id="gameOverModal">
+    <div class="modal-card">
+      <div class="modal-emoji" id="modalEmoji">🌟</div>
+      <h2 class="modal-title" id="modalTitle">闯关大成功！</h2>
+      <p class="modal-desc" id="modalDesc">总得分 3580，获得三星通关！</p>
+      <div class="modal-actions">
+        <button id="modalRestartBtn" class="modal-btn">再玩一局</button>
+      </div>
+    </div>
+  </div>
+
+  <script src="game.js"></script>
+</body>
+</html>

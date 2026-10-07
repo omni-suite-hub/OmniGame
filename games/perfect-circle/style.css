@@ -1,0 +1,70 @@
+/* 画个完美的圆 — OmniGame (signature toy) */
+* { box-sizing: border-box; }
+html, body {
+  margin: 0;
+  height: 100%;
+  overflow: hidden;
+  background: #0e1020; color: #eef1ff;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC",
+    "Hiragino Sans GB", "Microsoft YaHei", Roboto, Helvetica, Arial, sans-serif;
+}
+.wrap {
+  height: 100%;
+  display: flex; flex-direction: column; align-items: center;
+  padding: 10px 14px 8px; gap: 8px;
+  box-sizing: border-box;
+}
+.head {
+  width: 100%; max-width: min(94vw, 760px);
+  display: flex; align-items: center; justify-content: space-between; gap: 10px;
+}
+.back {
+  border: 0; background: #242844; color: #eef1ff;
+  border-radius: 10px; padding: 8px 12px; font-size: 14px; cursor: pointer;
+}
+.back:hover { background: #2e3358; }
+.title { font-weight: 700; font-size: 16px; }
+.best { font-size: 13px; color: #a6abce; }
+.best b { color: #ff7eb6; font-size: 15px; }
+
+.hint {
+  width: 100%; max-width: min(94vw, 760px); text-align: center;
+  color: #a6abce; font-size: 13px; margin: 0;
+}
+.stage {
+  width: 100%; max-width: min(94vw, 760px);
+  flex: 1 1 auto; min-height: 0;
+  display: flex; align-items: center; justify-content: center;
+  border-radius: 16px; overflow: hidden;
+  background: radial-gradient(circle at 50% 40%, #1a1d35, #0e1020 75%);
+  box-shadow: 0 10px 30px rgba(0,0,0,0.4); touch-action: none;
+}
+#cv { display: block; width: 100%; height: 100%; cursor: crosshair; }
+
+.result {
+  width: 100%; max-width: min(94vw, 760px);
+  display: flex; flex-direction: column; align-items: center; gap: 10px;
+}
+.result[hidden] { display: none; }
+.score {
+  font-size: 64px; font-weight: 800; line-height: 1;
+  background: linear-gradient(135deg,#ff7eb6,#ff5e8a);
+  -webkit-background-clip: text; background-clip: text; color: transparent;
+}
+.score-sub { color: #a6abce; font-size: 13px; text-align: center; }
+.share-row { display: flex; gap: 8px; width: 100%; }
+.share {
+  flex: 1 1 auto; resize: none; height: 52px; border-radius: 10px;
+  border: 1px solid #2e3358; background: #141831; color: #eef1ff;
+  padding: 8px 10px; font-size: 13px; line-height: 1.4; font-family: inherit;
+}
+.copy {
+  flex: 0 0 auto; border: 0; background: #6c8cff; color: #fff;
+  border-radius: 10px; padding: 0 16px; font-size: 14px; font-weight: 700; cursor: pointer;
+}
+.copy:hover { filter: brightness(1.08); }
+.again {
+  border: 0; background: #242844; color: #eef1ff;
+  border-radius: 12px; padding: 11px 26px; font-size: 15px; font-weight: 700; cursor: pointer;
+}
+.again:hover { background: #2e3358; }

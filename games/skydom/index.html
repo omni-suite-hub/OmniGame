@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>天空之城 (Skydom) - OmniGame</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <div class="sky-container">
+    <header class="sky-header">
+      <div class="sky-title-row">
+        <h1 class="sky-title">天空之城 <span>Skydom</span></h1>
+        <div class="sky-tools">
+          <button id="soundBtn" class="sky-icon-btn" title="声音">🔊</button>
+          <button id="restartBtn" class="sky-btn sky-btn-accent">新关卡</button>
+        </div>
+      </div>
+      <div class="sky-status-row">
+        <div class="sky-badge">剩余步数: <span id="movesText">22</span></div>
+        <div class="sky-badge">破冰目标: <span id="iceTargetText">10</span> 🧊</div>
+        <div class="sky-badge">得分: <span id="scoreText">0</span></div>
+      </div>
+    </header>
+
+    <div class="board-wrap">
+      <div class="sky-board" id="board"></div>
+    </div>
+
+    <footer class="sky-footer">
+      <div class="sky-hint">交换天空符文三消 · 在冰封格旁消除碎裂寒冰 · 步数内破除所有冰封！</div>
+    </footer>
+  </div>
+
+  <div class="modal-overlay" id="gameOverModal">
+    <div class="modal-card">
+      <div class="modal-emoji" id="modalEmoji">🏰</div>
+      <h2 class="modal-title" id="modalTitle">天空之城破封！</h2>
+      <p class="modal-desc" id="modalDesc">成功驱散所有冰封，斩获 3400 分！</p>
+      <div class="modal-actions">
+        <button id="modalRestartBtn" class="modal-btn">再登云霄</button>
+      </div>
+    </div>
+  </div>
+
+  <script src="game.js"></script>
+</body>
+</html>

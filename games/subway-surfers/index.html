@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>地铁跑酷 (Subway Surfers) - OmniGame</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <div class="ss-container">
+    <header class="ss-header">
+      <div class="ss-title-row">
+        <h1 class="ss-title">地铁跑酷 <span>Subway Surfers</span></h1>
+        <div class="ss-tools">
+          <button id="soundBtn" class="ss-icon-btn" title="声音">🔊</button>
+          <button id="restartBtn" class="ss-btn ss-btn-accent">重来</button>
+        </div>
+      </div>
+      <div class="ss-status-row">
+        <div class="ss-badge">距离: <span id="distText">0m</span></div>
+        <div class="ss-badge">金币: <span id="coinsText">0</span> 🪙</div>
+        <div class="ss-badge">得分: <span id="scoreText">0</span></div>
+      </div>
+    </header>
+
+    <div class="canvas-wrap">
+      <canvas id="gameCanvas" width="360" height="420"></canvas>
+      <div class="ss-overlay-hint" id="overlayHint">按 ← → 换道 · ↑ 跳跃 · ↓ 翻滚</div>
+    </div>
+
+    <!-- Onscreen Touch Controls for mobile/side-panel -->
+    <div class="touch-controls">
+      <button class="t-btn" id="btnLeft">← 左</button>
+      <button class="t-btn" id="btnJump">↑ 跳</button>
+      <button class="t-btn" id="btnRoll">↓ 滚</button>
+      <button class="t-btn" id="btnRight">右 →</button>
+    </div>
+
+    <footer class="ss-footer">
+      <div class="ss-hint">键盘方向键或滑动屏幕控制 · 避开列车与路障 · 收集金币与磁铁道具！</div>
+    </footer>
+  </div>
+
+  <div class="modal-overlay" id="gameOverModal">
+    <div class="modal-card">
+      <div class="modal-emoji" id="modalEmoji">💥</div>
+      <h2 class="modal-title" id="modalTitle">撞车绊倒！</h2>
+      <p class="modal-desc" id="modalDesc">总奔跑 380 米，收获 42 枚金币！</p>
+      <div class="modal-actions">
+        <button id="modalRestartBtn" class="modal-btn">再次起跑</button>
+      </div>
+    </div>
+  </div>
+
+  <script src="game.js"></script>
+</body>
+</html>

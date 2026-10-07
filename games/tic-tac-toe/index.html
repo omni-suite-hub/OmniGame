@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>井字棋 - OmniGame</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <div class="ttt-container">
+    <header class="ttt-header">
+      <div class="ttt-title-row">
+        <h1 class="ttt-title">井字棋 <span>Tic-Tac-Toe</span></h1>
+        <div class="ttt-tools">
+          <button id="soundBtn" class="ttt-icon-btn" title="声音开关">🔊</button>
+          <button id="restartBtn" class="ttt-btn ttt-btn-accent" title="新对局">新局</button>
+        </div>
+      </div>
+      
+      <div class="ttt-controls-row">
+        <div class="ttt-seg-control" id="modeControl">
+          <button class="seg-btn active" data-mode="ai">人机对战</button>
+          <button class="seg-btn" data-mode="pvp">双人同屏</button>
+        </div>
+        <div class="ttt-diff-control" id="diffControl">
+          <select id="diffSelect" class="ttt-select">
+            <option value="easy">入门 AI</option>
+            <option value="medium">进阶 AI</option>
+            <option value="unbeatable" selected>无敌 AI (Minimax)</option>
+          </select>
+        </div>
+      </div>
+    </header>
+
+    <div class="ttt-scoreboard">
+      <div class="score-card score-x active" id="cardX">
+        <div class="player-label">X 选手</div>
+        <div class="player-score" id="scoreX">0</div>
+      </div>
+      <div class="score-card score-tie" id="cardTie">
+        <div class="player-label">平局</div>
+        <div class="player-score" id="scoreTie">0</div>
+      </div>
+      <div class="score-card score-o" id="cardO">
+        <div class="player-label">O 选手</div>
+        <div class="player-score" id="scoreO">0</div>
+      </div>
+    </div>
+
+    <div class="ttt-status-bar">
+      <div id="statusText" class="status-text">轮到 X (你) 落子</div>
+    </div>
+
+    <div class="ttt-board-wrap">
+      <div class="ttt-board" id="board">
+        <div class="cell" data-idx="0"></div>
+        <div class="cell" data-idx="1"></div>
+        <div class="cell" data-idx="2"></div>
+        <div class="cell" data-idx="3"></div>
+        <div class="cell" data-idx="4"></div>
+        <div class="cell" data-idx="5"></div>
+        <div class="cell" data-idx="6"></div>
+        <div class="cell" data-idx="7"></div>
+        <div class="cell" data-idx="8"></div>
+        <div class="win-strike" id="winStrike"></div>
+      </div>
+    </div>
+
+    <footer class="ttt-footer">
+      <button id="resetScoreBtn" class="ttt-text-btn">清空积分</button>
+      <div class="ttt-hint">率先完成横、竖、斜 3 连即获胜</div>
+    </footer>
+  </div>
+
+  <div class="modal-overlay" id="gameOverModal">
+    <div class="modal-card">
+      <div class="modal-emoji" id="modalEmoji">🎉</div>
+      <h2 class="modal-title" id="modalTitle">X 选手获胜！</h2>
+      <p class="modal-desc" id="modalDesc">精准推演，神之一手！</p>
+      <div class="modal-actions">
+        <button id="modalRestartBtn" class="modal-btn modal-btn-primary">再来一局</button>
+      </div>
+    </div>
+  </div>
+
+  <script src="game.js"></script>
+</body>
+</html>

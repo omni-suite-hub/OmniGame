@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>隧道冲刺 (Tunnel Rush) - OmniGame</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <div class="tr-container">
+    <header class="tr-header">
+      <div class="tr-title-row">
+        <h1 class="tr-title">隧道冲刺 <span>Tunnel Rush</span></h1>
+        <div class="tr-tools">
+          <button id="soundBtn" class="tr-icon-btn" title="声音">🔊</button>
+          <button id="restartBtn" class="tr-btn tr-btn-accent">重来</button>
+        </div>
+      </div>
+      <div class="tr-status-row">
+        <div class="tr-badge">冲刺距离: <span id="distText">0m</span></div>
+        <div class="tr-badge">当前速度: <span id="speedText">1.0x</span></div>
+        <div class="tr-badge">最佳: <span id="bestText">0m</span></div>
+      </div>
+    </header>
+
+    <div class="canvas-wrap">
+      <canvas id="gameCanvas" width="360" height="380"></canvas>
+      <div class="tr-overlay-hint" id="overlayHint">按 ← → 或滑动屏幕旋转穿梭</div>
+    </div>
+
+    <!-- Onscreen rotation touch pads -->
+    <div class="touch-controls">
+      <button class="t-btn" id="btnLeft">↺ 逆时针</button>
+      <button class="t-btn" id="btnRight">顺时针 ↻</button>
+    </div>
+
+    <footer class="tr-footer">
+      <div class="tr-hint">按住方向键或滑动屏幕沿隧道圆周 360° 旋转 · 从旋转扇形空隙中穿过！</div>
+    </footer>
+  </div>
+
+  <div class="modal-overlay" id="gameOverModal">
+    <div class="modal-card">
+      <div class="modal-emoji" id="modalEmoji">💥</div>
+      <h2 class="modal-title" id="modalTitle">撞击隧道障碍！</h2>
+      <p class="modal-desc" id="modalDesc">极限冲刺 460 米！</p>
+      <div class="modal-actions">
+        <button id="modalRestartBtn" class="modal-btn">再次穿梭</button>
+      </div>
+    </div>
+  </div>
+
+  <script src="game.js"></script>
+</body>
+</html>

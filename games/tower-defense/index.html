@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+  <title>极简塔防 - OmniGame</title>
+  <link rel="stylesheet" href="../_shared/game-layout.css">
+  <style>
+    body {
+      background: #0f172a;
+      color: #f8fafc;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      margin: 0;
+      padding: 0;
+      display: flex;
+      flex-direction: column;
+      height: 100vh;
+      overflow: hidden;
+      touch-action: none;
+      user-select: none;
+    }
+    .hud {
+      display: flex;
+      justify-content: space-around;
+      align-items: center;
+      padding: 8px 12px;
+      background: #1e293b;
+      border-bottom: 2px solid #334155;
+      font-size: 13px;
+      z-index: 10;
+    }
+    .hud-val {
+      font-weight: bold;
+      color: #facc15;
+    }
+    .tower-bar {
+      display: flex;
+      justify-content: center;
+      gap: 10px;
+      padding: 6px;
+      background: #0f172a;
+      border-bottom: 1px solid #334155;
+    }
+    .tower-card {
+      padding: 6px 14px;
+      background: #1e293b;
+      border: 2px solid #475569;
+      color: #fff;
+      border-radius: 8px;
+      font-size: 13px;
+      font-weight: bold;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .tower-card.selected {
+      background: #334155;
+      border-color: #facc15;
+      transform: translateY(-2px);
+    }
+    .tower-card.disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+    }
+    .arena-container {
+      flex: 1;
+      position: relative;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      background: #020617;
+      overflow: hidden;
+    }
+    canvas {
+      background: #0f172a;
+      box-shadow: 0 4px 25px rgba(0,0,0,0.8);
+      border-radius: 10px;
+      touch-action: none;
+    }
+    .modal {
+      position: absolute;
+      inset: 0;
+      background: rgba(15, 23, 42, 0.92);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      z-index: 50;
+    }
+    .modal.hidden { display: none; }
+    .modal h2 { font-size: 28px; margin: 0 0 10px 0; color: #facc15; }
+    .btn-action {
+      margin-top: 16px;
+      padding: 10px 24px;
+      background: #2563eb;
+      color: #fff;
+      border: none;
+      border-radius: 8px;
+      font-weight: bold;
+      font-size: 15px;
+      cursor: pointer;
+    }
+  </style>
+</head>
+<body>
+  <div class="hud">
+    <div>🪙 金币: <span id="gold-el" class="hud-val">150</span></div>
+    <div>💎 水晶生命: <span id="hp-el" class="hud-val" style="color:#ef4444;">10</span></div>
+    <div>🌊 波次: <span id="wave-el" class="hud-val">1 / 5</span></div>
+    <div>👾 剩余敌人: <span id="creeps-el" class="hud-val">0</span></div>
+  </div>
+
+  <div class="tower-bar" id="tower-bar">
+    <div class="tower-card" data-type="arrow">
+      <span>🏹 机枪塔</span>
+      <span style="color:#facc15;">$100</span>
+    </div>
+    <div class="tower-card" data-type="cannon">
+      <span>💣 加农炮</span>
+      <span style="color:#facc15;">$125</span>
+    </div>
+    <div class="tower-card" data-type="frost">
+      <span>❄️ 减速塔</span>
+      <span style="color:#facc15;">$75</span>
+    </div>
+  </div>
+
+  <div class="arena-container" id="container">
+    <canvas id="game-canvas"></canvas>
+
+    <div class="modal hidden" id="game-modal">
+      <h2 id="modal-title">🏆 防守大捷！</h2>
+      <p id="modal-desc" style="font-size:16px;">所有魔物波次已被全歼，水晶完好！</p>
+      <button class="btn-action" id="btn-restart">再次保卫</button>
+    </div>
+  </div>
+
+  <script src="game.js"></script>
+</body>
+</html>

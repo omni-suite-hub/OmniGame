@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover"
+    />
+    <title>画个完美的圆 · OmniGame</title>
+    <link rel="stylesheet" href="style.css" />
+  </head>
+  <body>
+    <div class="wrap">
+      <div class="head">
+        <div class="title">画个完美的圆</div>
+        <div class="best">最佳 <b id="best">—</b></div>
+      </div>
+
+      <p class="hint" id="hint">用手指 / 鼠标画一个完整的圆，松手即评分</p>
+
+      <div class="stage">
+        <canvas id="cv"></canvas>
+      </div>
+
+      <div class="result" id="result" hidden>
+        <div class="score" id="score">0%</div>
+        <div class="score-sub" id="scoreSub"></div>
+        <div class="share-row">
+          <textarea id="shareText" class="share" readonly></textarea>
+          <button id="copyBtn" class="copy">复制</button>
+        </div>
+        <button id="againBtn" class="again">再画一次</button>
+      </div>
+    </div>
+
+    <script src="../_shared/storage.js"></script>
+    <script src="game.js"></script>
+  </body>
+</html>

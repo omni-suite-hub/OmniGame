@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>打字测速 (Monkeytype) - OmniGame</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <div class="type-container">
+    <header class="type-header">
+      <div class="type-title-row">
+        <h1 class="type-title">打字测速 <span>Monkeytype</span></h1>
+        <div class="type-tools">
+          <button id="soundBtn" class="type-icon-btn" title="按键音效">🔊</button>
+          <button id="restartBtn" class="type-btn type-btn-accent" title="重测 (Tab)">重新测速</button>
+        </div>
+      </div>
+
+      <div class="mode-selector">
+        <button class="mode-btn active" data-time="15">15 秒</button>
+        <button class="mode-btn" data-time="30">30 秒</button>
+        <button class="mode-btn" data-time="60">60 秒</button>
+      </div>
+
+      <div class="type-status-row">
+        <div class="type-stat">
+          <span class="stat-label">WPM</span>
+          <span class="stat-val" id="wpmText">0</span>
+        </div>
+        <div class="type-stat">
+          <span class="stat-label">准确率</span>
+          <span class="stat-val" id="accText">100%</span>
+        </div>
+        <div class="type-stat timer">
+          <span class="stat-label">剩余时间</span>
+          <span class="stat-val" id="timeLeftText">15s</span>
+        </div>
+      </div>
+    </header>
+
+    <!-- Typing Stream Area -->
+    <div class="words-container" id="wordsContainer" tabindex="0">
+      <div class="caret" id="caret"></div>
+      <div class="words-list" id="wordsList"></div>
+      <input type="text" id="hiddenInput" autocomplete="off" autocapitalize="off" spellcheck="false">
+    </div>
+
+    <footer class="type-footer">
+      <div class="type-hint">点击文字区聚焦开始盲打 · 按空格切换下个词 · Tab 或 点击重置</div>
+    </footer>
+  </div>
+
+  <div class="modal-overlay" id="resultModal">
+    <div class="modal-card">
+      <div class="modal-emoji" id="modalEmoji">⚡</div>
+      <h2 class="modal-title" id="modalTitle">测速完成！</h2>
+      <div class="modal-stats">
+        <div class="modal-stat-box">
+          <div class="box-title">WPM 速度</div>
+          <div class="box-val highlight" id="modalWpm">0</div>
+        </div>
+        <div class="modal-stat-box">
+          <div class="box-title">准确率</div>
+          <div class="box-val" id="modalAcc">100%</div>
+        </div>
+        <div class="modal-stat-box">
+          <div class="box-title">击键正确/错误</div>
+          <div class="box-val" id="modalChars">0 / 0</div>
+        </div>
+      </div>
+      <div class="modal-actions">
+        <button id="modalRestartBtn" class="modal-btn modal-btn-primary">再测一次</button>
+      </div>
+    </div>
+  </div>
+
+  <script src="game.js"></script>
+</body>
+</html>

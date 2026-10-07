@@ -1,0 +1,322 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no, viewport-fit=cover">
+<title>和弦风暴 - OmniGame</title>
+<link rel="stylesheet" href="../_shared/game-layout.css">
+<style>
+  :root {
+    --bg: #090b14;
+    --surface: #121629;
+    --accent: #22d3ee;
+    --accent-glow: rgba(34, 211, 238, 0.4);
+    --gold: #fbbf24;
+    --rose: #f43f5e;
+    --purple: #a855f7;
+    --text: #f1f5f9;
+    --text-dim: #94a3b8;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; user-select: none; -webkit-user-select: none; }
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    overflow: hidden;
+    height: 100vh;
+    display: flex;
+    flex-direction: column;
+  }
+  #gameContainer {
+    position: relative;
+    width: 100%;
+    height: 100%;
+    max-width: 540px;
+    margin: 0 auto;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    background: radial-gradient(ellipse at 50% 20%, #161b36 0%, #090b14 75%);
+  }
+  /* Top HUD */
+  .top-hud {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    z-index: 20;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 10px 16px;
+    background: linear-gradient(180deg, rgba(9, 11, 20, 0.85) 0%, transparent 100%);
+    pointer-events: none;
+  }
+  .hud-stat {
+    display: flex;
+    flex-direction: column;
+  }
+  .hud-label {
+    font-size: 10px;
+    font-weight: 700;
+    color: var(--text-dim);
+    letter-spacing: 1px;
+    text-transform: uppercase;
+  }
+  .hud-val {
+    font-size: 18px;
+    font-weight: 800;
+    color: #fff;
+    text-shadow: 0 0 10px var(--accent-glow);
+  }
+  .hud-chord-badge {
+    padding: 3px 10px;
+    border-radius: 999px;
+    background: rgba(34, 211, 238, 0.15);
+    border: 1px solid var(--accent);
+    color: var(--accent);
+    font-size: 13px;
+    font-weight: 700;
+    letter-spacing: 0.5px;
+    transition: all 0.1s ease;
+  }
+  /* Canvas */
+  #gameCanvas {
+    width: 100%;
+    height: 100%;
+    display: block;
+  }
+  /* Touch Hit Area at bottom */
+  .touch-controls {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    height: 110px;
+    display: flex;
+    gap: 4px;
+    padding: 6px 12px 14px;
+    z-index: 15;
+    pointer-events: auto;
+  }
+  .touch-track-btn {
+    flex: 1;
+    background: rgba(255, 255, 255, 0.04);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 12px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 2px;
+    color: var(--text-dim);
+    cursor: pointer;
+    transition: all 0.08s ease;
+    touch-action: manipulation;
+  }
+  .touch-track-btn:active, .touch-track-btn.active {
+    background: rgba(34, 211, 238, 0.28);
+    border-color: var(--accent);
+    color: #fff;
+    transform: scale(0.96);
+    box-shadow: 0 0 16px var(--accent-glow);
+  }
+  .touch-key-name {
+    font-size: 15px;
+    font-weight: 800;
+    color: #fff;
+  }
+  .touch-chord-note {
+    font-size: 10px;
+    color: var(--accent);
+    font-weight: 600;
+  }
+  /* Start / Over Overlay */
+  .overlay {
+    position: absolute;
+    inset: 0;
+    background: rgba(9, 11, 20, 0.88);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    z-index: 30;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 24px;
+    text-align: center;
+  }
+  .overlay.hidden { display: none; }
+  .modal-title {
+    font-size: 26px;
+    font-weight: 800;
+    color: #fff;
+    margin-bottom: 8px;
+    letter-spacing: -0.5px;
+    text-shadow: 0 0 20px var(--accent-glow);
+  }
+  .modal-sub {
+    font-size: 13px;
+    color: var(--text-dim);
+    margin-bottom: 24px;
+    line-height: 1.5;
+    max-width: 320px;
+  }
+  .song-selector {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    width: 100%;
+    max-width: 280px;
+    margin-bottom: 24px;
+  }
+  .song-btn {
+    padding: 10px 14px;
+    border-radius: 10px;
+    border: 1px solid rgba(255, 255, 255, 0.12);
+    background: rgba(255, 255, 255, 0.05);
+    color: #fff;
+    font-size: 13px;
+    font-weight: 600;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    transition: all 0.15s ease;
+  }
+  .song-btn.active, .song-btn:hover {
+    background: rgba(34, 211, 238, 0.2);
+    border-color: var(--accent);
+    color: #fff;
+    box-shadow: 0 0 12px var(--accent-glow);
+  }
+  .action-btn {
+    padding: 12px 36px;
+    border-radius: 999px;
+    border: 0;
+    background: linear-gradient(135deg, #06b6d4, #3b82f6);
+    color: #fff;
+    font-size: 16px;
+    font-weight: 700;
+    cursor: pointer;
+    box-shadow: 0 4px 20px rgba(6, 182, 212, 0.4);
+    transition: all 0.15s ease;
+  }
+  .action-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 24px rgba(6, 182, 212, 0.6);
+  }
+  .action-btn:active { transform: scale(0.97); }
+  /* Score Over Board */
+  .score-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+    width: 100%;
+    max-width: 280px;
+    margin-bottom: 24px;
+  }
+  .score-card {
+    background: rgba(255, 255, 255, 0.04);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    border-radius: 12px;
+    padding: 10px;
+  }
+  .score-card-num {
+    font-size: 20px;
+    font-weight: 800;
+    color: var(--accent);
+  }
+  .score-card-lbl {
+    font-size: 11px;
+    color: var(--text-dim);
+    font-weight: 600;
+  }
+</style>
+</head>
+<body>
+<div id="gameContainer">
+  <div class="top-hud">
+    <div class="hud-stat">
+      <span class="hud-label">得分</span>
+      <span id="scoreVal" class="hud-val">0</span>
+    </div>
+    <div id="chordBadge" class="hud-chord-badge">C Maj</div>
+    <div class="hud-stat" style="text-align: right;">
+      <span class="hud-label">连击</span>
+      <span id="comboVal" class="hud-val" style="color: var(--gold);">0</span>
+    </div>
+  </div>
+
+  <canvas id="gameCanvas"></canvas>
+
+  <div class="touch-controls">
+    <button class="touch-track-btn" data-track="0">
+      <span class="touch-key-name">D</span>
+      <span class="touch-chord-note">C4 / 低音</span>
+    </button>
+    <button class="touch-track-btn" data-track="1">
+      <span class="touch-key-name">F</span>
+      <span class="touch-chord-note">E4 / 三音</span>
+    </button>
+    <button class="touch-track-btn" data-track="2">
+      <span class="touch-key-name">J</span>
+      <span class="touch-chord-note">G4 / 五音</span>
+    </button>
+    <button class="touch-track-btn" data-track="3">
+      <span class="touch-key-name">K</span>
+      <span class="touch-chord-note">B4 / 导音</span>
+    </button>
+  </div>
+
+  <!-- Start Overlay -->
+  <div id="startOverlay" class="overlay">
+    <h1 class="modal-title">🎹 和弦风暴</h1>
+    <p class="modal-sub">4 轨节奏打击 · 随节拍下落敲击<br>多轨同押触发华丽【和弦共鸣】！<br>键盘支持 D-F-J-K 或 ← ↓ ↑ →</p>
+    <div class="song-selector">
+      <button class="song-btn active" data-song="0">
+        <span>01. 晨曦微风 (Lofi Dawn)</span>
+        <span style="font-size:11px; color:var(--accent);">轻松 85 BPM</span>
+      </button>
+      <button class="song-btn" data-song="1">
+        <span>02. 霓虹回响 (Neon Beats)</span>
+        <span style="font-size:11px; color:var(--accent);">律动 115 BPM</span>
+      </button>
+      <button class="song-btn" data-song="2">
+        <span>03. 赛博疾风 (Cyber Rush)</span>
+        <span style="font-size:11px; color:var(--accent);">极速 140 BPM</span>
+      </button>
+    </div>
+    <button id="startBtn" class="action-btn">开始演奏</button>
+  </div>
+
+  <!-- Game Over Overlay -->
+  <div id="overOverlay" class="overlay hidden">
+    <h2 class="modal-title" id="evalRank">PERFECT!</h2>
+    <p class="modal-sub" id="evalDesc">和弦共鸣达到巅峰！</p>
+    <div class="score-grid">
+      <div class="score-card">
+        <div id="finalScore" class="score-card-num">0</div>
+        <div class="score-card-lbl">最终得分</div>
+      </div>
+      <div class="score-card">
+        <div id="finalMaxCombo" class="score-card-num">0</div>
+        <div class="score-card-lbl">最高连击</div>
+      </div>
+      <div class="score-card">
+        <div id="finalAcc" class="score-card-num">100%</div>
+        <div class="score-card-lbl">精准度</div>
+      </div>
+      <div class="score-card">
+        <div id="finalChords" class="score-card-num">0</div>
+        <div class="score-card-lbl">和弦共鸣</div>
+      </div>
+    </div>
+    <button id="retryBtn" class="action-btn">再来一曲</button>
+  </div>
+</div>
+
+<script src="../_shared/storage.js"></script>
+<script src="game.js"></script>
+</body>
+</html>

@@ -1,0 +1,214 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no, viewport-fit=cover">
+<title>差分特工 - OmniGame</title>
+<link rel="stylesheet" href="../_shared/game-layout.css">
+<style>
+  :root {
+    --bg: #070914;
+    --card: #10142a;
+    --cyan: #00f2fe;
+    --cyan-glow: rgba(0, 242, 254, 0.45);
+    --pink: #ff007f;
+    --gold: #fbc531;
+    --text: #f5f6fa;
+    --text-dim: #7f8fa6;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; user-select: none; -webkit-user-select: none; }
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    overflow: hidden;
+    height: 100vh;
+    display: flex;
+    flex-direction: column;
+  }
+  #gameContainer {
+    position: relative;
+    width: 100%;
+    height: 100%;
+    max-width: 520px;
+    margin: 0 auto;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    background: radial-gradient(ellipse at 50% 20%, #151b38 0%, #070914 85%);
+  }
+  /* Top HUD */
+  .top-hud {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    z-index: 20;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 10px 16px;
+    background: linear-gradient(180deg, rgba(7, 9, 20, 0.95) 0%, transparent 100%);
+    pointer-events: none;
+  }
+  .hud-stat {
+    display: flex;
+    flex-direction: column;
+  }
+  .hud-label {
+    font-size: 10px;
+    font-weight: 700;
+    color: var(--text-dim);
+    letter-spacing: 1px;
+    text-transform: uppercase;
+  }
+  .hud-val {
+    font-size: 17px;
+    font-weight: 800;
+    color: #fff;
+    text-shadow: 0 0 10px var(--cyan-glow);
+  }
+  .timer-val {
+    font-size: 20px;
+    font-weight: 900;
+    color: var(--gold);
+    font-family: ui-monospace, monospace;
+  }
+  /* Canvas */
+  #gameCanvas {
+    width: 100%;
+    height: 100%;
+    display: block;
+    cursor: crosshair;
+  }
+  /* Overlay */
+  .overlay {
+    position: absolute;
+    inset: 0;
+    background: rgba(7, 9, 20, 0.92);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    z-index: 30;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 24px;
+    text-align: center;
+  }
+  .overlay.hidden { display: none; }
+  .modal-title {
+    font-size: 26px;
+    font-weight: 800;
+    color: #fff;
+    margin-bottom: 8px;
+    text-shadow: 0 0 20px var(--cyan-glow);
+  }
+  .modal-sub {
+    font-size: 13px;
+    color: var(--text-dim);
+    margin-bottom: 24px;
+    line-height: 1.6;
+    max-width: 320px;
+  }
+  .btn-start {
+    padding: 12px 36px;
+    border-radius: 999px;
+    border: 0;
+    background: linear-gradient(135deg, #00f2fe, #4facfe);
+    color: #070914;
+    font-size: 16px;
+    font-weight: 900;
+    cursor: pointer;
+    box-shadow: 0 4px 20px rgba(0, 242, 254, 0.4);
+    transition: all 0.15s ease;
+  }
+  .btn-start:hover { transform: translateY(-2px); }
+  .btn-start:active { transform: scale(0.97); }
+  .score-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+    width: 100%;
+    max-width: 280px;
+    margin-bottom: 24px;
+  }
+  .score-card {
+    background: rgba(255, 255, 255, 0.04);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    border-radius: 12px;
+    padding: 10px;
+  }
+  .score-card-num {
+    font-size: 20px;
+    font-weight: 800;
+    color: var(--cyan);
+  }
+  .score-card-lbl {
+    font-size: 11px;
+    color: var(--text-dim);
+    font-weight: 600;
+  }
+</style>
+</head>
+<body>
+<div id="gameContainer">
+  <div class="top-hud">
+    <div class="hud-stat">
+      <span class="hud-label">全息扇区</span>
+      <span id="sectorVal" class="hud-val">第 1 扇区</span>
+    </div>
+    <div class="hud-stat" style="align-items: center;">
+      <span class="hud-label">勘探倒计时</span>
+      <span id="timerVal" class="timer-val">30.0s</span>
+    </div>
+    <div class="hud-stat" style="text-align: right;">
+      <span class="hud-label">异常标记</span>
+      <span id="anomalyVal" class="hud-val" style="color: var(--pink);">0 / 3</span>
+    </div>
+  </div>
+
+  <canvas id="gameCanvas"></canvas>
+
+  <!-- Start Overlay -->
+  <div id="startOverlay" class="overlay">
+    <h1 class="modal-title">🕵️ 差分特工</h1>
+    <p class="modal-sub">
+      赛博全息探查 · 揪出隐藏的篡改节点！<br>
+      在全息矩阵监控画面中，找出被黑客篡改的<b>【异常节点】</b>（形态、符号、色彩畸变）<br>
+      点击锁定排查异常，误点会触发警报扣除侦查时间！<br>
+      直接点击/触控节点排查
+    </p>
+    <button id="startBtn" class="btn-start">接入扇区</button>
+  </div>
+
+  <!-- Over Overlay -->
+  <div id="overOverlay" class="overlay hidden">
+    <h2 class="modal-title" id="overTitle">侦查完毕</h2>
+    <p class="modal-sub" id="overSub">扇区数据安全审计完成</p>
+    <div class="score-grid">
+      <div class="score-card">
+        <div id="finalScore" class="score-card-num">0</div>
+        <div class="score-card-lbl">特工评分</div>
+      </div>
+      <div class="score-card">
+        <div id="finalSectors" class="score-card-num">1</div>
+        <div class="score-card-lbl">净化扇区</div>
+      </div>
+      <div class="score-card">
+        <div id="finalAnomalies" class="score-card-num">0</div>
+        <div class="score-card-lbl">清除异常</div>
+      </div>
+      <div class="score-card">
+        <div id="finalAcc" class="score-card-num">100%</div>
+        <div class="score-card-lbl">命中准确率</div>
+      </div>
+    </div>
+    <button id="retryBtn" class="btn-start">重新调查</button>
+  </div>
+</div>
+
+<script src="../_shared/storage.js"></script>
+<script src="game.js"></script>
+</body>
+</html>

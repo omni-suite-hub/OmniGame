@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>同色消除 (消灭星星) - OmniGame</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <div class="sg-container">
+    <header class="sg-header">
+      <div class="sg-title-row">
+        <h1 class="sg-title">同色消除 <span>SameGame</span></h1>
+        <div class="sg-tools">
+          <button id="soundBtn" class="sg-icon-btn" title="声音开关">🔊</button>
+          <button id="undoBtn" class="sg-btn sg-btn-ghost" title="撤销一步">撤销</button>
+          <button id="restartBtn" class="sg-btn sg-btn-accent" title="重开游戏">重玩</button>
+        </div>
+      </div>
+
+      <div class="sg-status-row">
+        <div class="sg-badge">关卡: <span id="levelText">1</span></div>
+        <div class="sg-badge">目标: <span id="targetText">1,000</span></div>
+        <div class="sg-badge highlight">总分: <span id="scoreText">0</span></div>
+      </div>
+    </header>
+
+    <div class="sg-board-wrap">
+      <div class="sg-board" id="board">
+        <!-- 10x10 block grid -->
+      </div>
+      <div class="sg-hover-tip" id="hoverTip">选定 5 块 · 获得 125 分</div>
+    </div>
+
+    <footer class="sg-footer">
+      <div class="sg-hint">点击 2 个及以上相连同色星星消除 · 连消越多得分越暴击 · 剩余越少奖励越高</div>
+    </footer>
+  </div>
+
+  <div class="modal-overlay" id="sgModal">
+    <div class="modal-card">
+      <div class="modal-emoji" id="modalEmoji">⭐</div>
+      <h2 class="modal-title" id="modalTitle">过关大捷！</h2>
+      <p class="modal-desc" id="modalDesc">本关通关 · 剩余 2 颗 · 奖励 +1,920 分</p>
+      <div class="modal-actions">
+        <button id="modalActionBtn" class="modal-btn modal-btn-primary">进入下一关</button>
+      </div>
+    </div>
+  </div>
+
+  <script src="game.js"></script>
+</body>
+</html>

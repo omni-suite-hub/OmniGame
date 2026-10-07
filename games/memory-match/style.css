@@ -1,0 +1,324 @@
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+  user-select: none;
+  -webkit-user-select: none;
+}
+
+body {
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", sans-serif;
+  background: radial-gradient(circle at top, #1e293b, #0f172a);
+  color: #f1f5f9;
+  min-height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 8px;
+  overflow-x: hidden;
+}
+
+.mm-container {
+  width: 100%;
+  max-width: 420px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+}
+
+.mm-header {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.mm-title-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: 100%;
+}
+
+.mm-title {
+  font-size: 20px;
+  font-weight: 800;
+  letter-spacing: -0.5px;
+  color: #f8fafc;
+  display: flex;
+  align-items: baseline;
+  gap: 8px;
+}
+
+.mm-title span {
+  font-size: 13px;
+  font-weight: 500;
+  color: #64748b;
+  text-transform: uppercase;
+}
+
+.mm-tools {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+}
+
+.mm-icon-btn {
+  background: rgba(255, 255, 255, 0.08);
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  border-radius: 8px;
+  font-size: 15px;
+  width: 32px;
+  height: 32px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  color: #cbd5e1;
+  transition: all 0.18s;
+}
+
+.mm-icon-btn:hover {
+  background: rgba(255, 255, 255, 0.16);
+  transform: translateY(-1px);
+}
+
+.mm-btn {
+  border: none;
+  border-radius: 8px;
+  padding: 6px 12px;
+  font-size: 12px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.18s;
+}
+
+.mm-btn-accent {
+  background: linear-gradient(135deg, #8b5cf6, #6d28d9);
+  color: #ffffff;
+  box-shadow: 0 4px 12px rgba(139, 92, 246, 0.3);
+}
+
+.mm-btn-accent:hover {
+  background: linear-gradient(135deg, #a78bfa, #5b21b6);
+  transform: translateY(-1px);
+}
+
+.mm-status-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background: rgba(15, 23, 42, 0.6);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 8px;
+  padding: 6px 12px;
+  font-size: 12px;
+  font-weight: 600;
+}
+
+.mm-diff-wrap select {
+  background: transparent;
+  border: none;
+  color: #a78bfa;
+  font-size: 12px;
+  font-weight: 700;
+  outline: none;
+  cursor: pointer;
+}
+
+.mm-diff-wrap select option {
+  background: #1e293b;
+  color: #f8fafc;
+}
+
+.mm-badge {
+  color: #94a3b8;
+}
+
+.mm-badge span {
+  color: #f8fafc;
+  font-weight: 700;
+}
+
+.mm-badge.timer span {
+  color: #38bdf8;
+  font-family: monospace;
+  font-size: 13px;
+}
+
+/* Board Wrap */
+.mm-board-wrap {
+  width: 100%;
+  aspect-ratio: 1 / 1;
+  max-width: 380px;
+  background: rgba(15, 23, 42, 0.8);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 16px;
+  padding: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 12px 32px rgba(0, 0, 0, 0.4);
+}
+
+.mm-board {
+  width: 100%;
+  height: 100%;
+  display: grid;
+  gap: 8px;
+  perspective: 1000px;
+}
+
+/* Card */
+.mm-card {
+  width: 100%;
+  height: 100%;
+  position: relative;
+  cursor: pointer;
+  transform-style: preserve-3d;
+}
+
+.card-inner {
+  width: 100%;
+  height: 100%;
+  position: relative;
+  transform-style: preserve-3d;
+  transition: transform 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+  border-radius: 10px;
+}
+
+.mm-card.flipped .card-inner {
+  transform: rotateY(180deg);
+}
+
+.card-front, .card-back {
+  position: absolute;
+  inset: 0;
+  border-radius: 10px;
+  backface-visibility: hidden;
+  -webkit-backface-visibility: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+}
+
+.card-back {
+  background: linear-gradient(135deg, #1e293b, #0f172a);
+  border: 2px solid rgba(255, 255, 255, 0.15);
+  color: #64748b;
+  font-size: 20px;
+}
+
+.card-back::after {
+  content: '✦';
+  font-size: 16px;
+  color: #475569;
+}
+
+.card-front {
+  background: linear-gradient(135deg, #334155, #1e293b);
+  border: 2px solid #8b5cf6;
+  font-size: 24px;
+  transform: rotateY(180deg);
+}
+
+.mm-card.matched .card-front {
+  border-color: #10b981;
+  background: linear-gradient(135deg, #065f46, #047857);
+  box-shadow: 0 0 14px rgba(16, 185, 129, 0.4);
+}
+
+.mm-footer {
+  width: 100%;
+  text-align: center;
+}
+
+.mm-hint {
+  font-size: 11px;
+  color: #64748b;
+}
+
+/* Modal */
+.modal-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(15, 23, 42, 0.75);
+  backdrop-filter: blur(6px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 16px;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.25s ease;
+  z-index: 99;
+}
+
+.modal-overlay.show {
+  opacity: 1;
+  pointer-events: auto;
+}
+
+.modal-card {
+  background: #1e293b;
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  border-radius: 18px;
+  padding: 24px 20px;
+  text-align: center;
+  max-width: 320px;
+  width: 100%;
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.6);
+  transform: translateY(20px) scale(0.95);
+  transition: transform 0.25s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+.modal-overlay.show .modal-card {
+  transform: translateY(0) scale(1);
+}
+
+.modal-emoji {
+  font-size: 44px;
+  margin-bottom: 8px;
+}
+
+.modal-title {
+  font-size: 20px;
+  font-weight: 800;
+  color: #f8fafc;
+  margin-bottom: 6px;
+}
+
+.modal-desc {
+  font-size: 14px;
+  color: #94a3b8;
+  margin-bottom: 18px;
+  line-height: 1.4;
+}
+
+.modal-actions {
+  display: flex;
+  justify-content: center;
+}
+
+.modal-btn {
+  border: none;
+  border-radius: 10px;
+  padding: 10px 24px;
+  font-size: 14px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.18s;
+}
+
+.modal-btn-primary {
+  background: linear-gradient(135deg, #8b5cf6, #6d28d9);
+  color: #ffffff;
+  box-shadow: 0 4px 14px rgba(139, 92, 246, 0.35);
+}
+
+.modal-btn-primary:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 6px 18px rgba(139, 92, 246, 0.45);
+}

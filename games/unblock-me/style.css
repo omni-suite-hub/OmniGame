@@ -1,0 +1,328 @@
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+  user-select: none;
+  -webkit-user-select: none;
+}
+
+body {
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", sans-serif;
+  background: radial-gradient(circle at top, #1e293b, #0f172a);
+  color: #f1f5f9;
+  min-height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 8px;
+  overflow-x: hidden;
+}
+
+.ub-container {
+  width: 100%;
+  max-width: 420px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+}
+
+.ub-header {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.ub-title-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: 100%;
+}
+
+.ub-title {
+  font-size: 20px;
+  font-weight: 800;
+  letter-spacing: -0.5px;
+  color: #f8fafc;
+  display: flex;
+  align-items: baseline;
+  gap: 8px;
+}
+
+.ub-title span {
+  font-size: 13px;
+  font-weight: 500;
+  color: #64748b;
+  text-transform: uppercase;
+}
+
+.ub-tools {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+}
+
+.ub-icon-btn {
+  background: rgba(255, 255, 255, 0.08);
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  border-radius: 8px;
+  font-size: 15px;
+  width: 32px;
+  height: 32px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  color: #cbd5e1;
+  transition: all 0.18s;
+}
+
+.ub-icon-btn:hover {
+  background: rgba(255, 255, 255, 0.16);
+  transform: translateY(-1px);
+}
+
+.ub-btn {
+  border: none;
+  border-radius: 8px;
+  padding: 6px 12px;
+  font-size: 12px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.18s;
+}
+
+.ub-btn-ghost {
+  background: rgba(255, 255, 255, 0.08);
+  color: #cbd5e1;
+  border: 1px solid rgba(255, 255, 255, 0.15);
+}
+
+.ub-btn-ghost:hover {
+  background: rgba(255, 255, 255, 0.16);
+}
+
+.ub-btn-accent {
+  background: linear-gradient(135deg, #f59e0b, #d97706);
+  color: #ffffff;
+  box-shadow: 0 4px 12px rgba(245, 158, 11, 0.3);
+}
+
+.ub-btn-accent:hover {
+  background: linear-gradient(135deg, #fbbf24, #b45309);
+  transform: translateY(-1px);
+}
+
+.ub-status-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background: rgba(15, 23, 42, 0.6);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 8px;
+  padding: 6px 12px;
+  font-size: 12px;
+  font-weight: 600;
+}
+
+.ub-select {
+  background: transparent;
+  border: none;
+  color: #fbbf24;
+  font-size: 12px;
+  font-weight: 700;
+  outline: none;
+  cursor: pointer;
+}
+
+.ub-select option {
+  background: #1e293b;
+  color: #f8fafc;
+}
+
+.ub-badge {
+  color: #94a3b8;
+}
+
+.ub-badge span {
+  color: #f8fafc;
+  font-weight: 700;
+}
+
+/* Board Wrap */
+.ub-board-wrap {
+  width: 100%;
+  aspect-ratio: 1 / 1;
+  max-width: 360px;
+  background: #2b1d0c;
+  border: 6px solid #451a03;
+  border-radius: 16px;
+  box-shadow: 0 12px 32px rgba(0, 0, 0, 0.6), inset 0 0 16px rgba(0, 0, 0, 0.5);
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* Exit Gate at Row 2 right */
+.ub-exit-gate {
+  position: absolute;
+  right: -8px;
+  top: 33.33%;
+  height: 16.66%;
+  background: #f43f5e;
+  color: #ffffff;
+  font-size: 9px;
+  font-weight: 800;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0 3px;
+  border-radius: 0 4px 4px 0;
+  box-shadow: 0 2px 8px rgba(244, 63, 94, 0.5);
+  z-index: 5;
+  pointer-events: none;
+  letter-spacing: -0.5px;
+}
+
+.ub-board {
+  width: 100%;
+  height: 100%;
+  position: relative;
+  background: #3b2813;
+  background-image: 
+    linear-gradient(rgba(255, 255, 255, 0.04) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255, 255, 255, 0.04) 1px, transparent 1px);
+  background-size: 16.666% 16.666%;
+}
+
+/* Blocks */
+.ub-block {
+  position: absolute;
+  border-radius: 8px;
+  cursor: grab;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.4), inset 0 1px 2px rgba(255, 255, 255, 0.3);
+  transition: transform 0.12s cubic-bezier(0.34, 1.56, 0.64, 1);
+  touch-action: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.ub-block:active {
+  cursor: grabbing;
+}
+
+/* Target Red Block */
+.ub-block.target {
+  background: linear-gradient(135deg, #f43f5e, #be123c);
+  border: 1px solid #9f1239;
+  box-shadow: 0 4px 12px rgba(244, 63, 94, 0.5), inset 0 1px 2px rgba(255, 255, 255, 0.4);
+}
+
+.ub-block.target::after {
+  content: '🚗';
+  font-size: 18px;
+}
+
+/* Wood Obstacle Blocks */
+.ub-block.wood {
+  background: linear-gradient(135deg, #d97706, #92400e);
+  border: 1px solid #78350f;
+}
+
+.ub-footer {
+  width: 100%;
+  text-align: center;
+}
+
+.ub-hint {
+  font-size: 11px;
+  color: #64748b;
+  line-height: 1.4;
+}
+
+/* Modal */
+.modal-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(15, 23, 42, 0.75);
+  backdrop-filter: blur(6px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 16px;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.25s ease;
+  z-index: 99;
+}
+
+.modal-overlay.show {
+  opacity: 1;
+  pointer-events: auto;
+}
+
+.modal-card {
+  background: #1e293b;
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  border-radius: 18px;
+  padding: 24px 20px;
+  text-align: center;
+  max-width: 320px;
+  width: 100%;
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.6);
+  transform: translateY(20px) scale(0.95);
+  transition: transform 0.25s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+.modal-overlay.show .modal-card {
+  transform: translateY(0) scale(1);
+}
+
+.modal-emoji {
+  font-size: 44px;
+  margin-bottom: 8px;
+}
+
+.modal-title {
+  font-size: 20px;
+  font-weight: 800;
+  color: #f8fafc;
+  margin-bottom: 6px;
+}
+
+.modal-desc {
+  font-size: 14px;
+  color: #94a3b8;
+  margin-bottom: 18px;
+  line-height: 1.4;
+}
+
+.modal-actions {
+  display: flex;
+  justify-content: center;
+}
+
+.modal-btn {
+  border: none;
+  border-radius: 10px;
+  padding: 10px 24px;
+  font-size: 14px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.18s;
+}
+
+.modal-btn-primary {
+  background: linear-gradient(135deg, #f59e0b, #d97706);
+  color: #ffffff;
+  box-shadow: 0 4px 14px rgba(245, 158, 11, 0.35);
+}
+
+.modal-btn-primary:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 6px 18px rgba(245, 158, 11, 0.45);
+}

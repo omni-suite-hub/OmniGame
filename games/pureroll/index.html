@@ -1,0 +1,307 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no, viewport-fit=cover">
+<title>滚轮深钻 - OmniGame</title>
+<link rel="stylesheet" href="../_shared/game-layout.css">
+<style>
+  :root {
+    --bg: #0b0914;
+    --card: #151224;
+    --gold: #f59e0b;
+    --gold-glow: rgba(245, 158, 11, 0.4);
+    --cyan: #06b6d4;
+    --magma: #ef4444;
+    --text: #f3f4f6;
+    --text-dim: #9ca3af;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; user-select: none; -webkit-user-select: none; }
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    overflow: hidden;
+    height: 100vh;
+    display: flex;
+    flex-direction: column;
+  }
+  #gameContainer {
+    position: relative;
+    width: 100%;
+    height: 100%;
+    max-width: 520px;
+    margin: 0 auto;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    background: radial-gradient(ellipse at 50% 80%, #20132b 0%, #0b0914 85%);
+  }
+  /* Top HUD */
+  .top-hud {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    z-index: 20;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 10px 16px;
+    background: linear-gradient(180deg, rgba(11, 9, 20, 0.95) 0%, transparent 100%);
+    pointer-events: none;
+  }
+  .hud-stat {
+    display: flex;
+    flex-direction: column;
+  }
+  .hud-label {
+    font-size: 10px;
+    font-weight: 700;
+    color: var(--text-dim);
+    letter-spacing: 1px;
+    text-transform: uppercase;
+  }
+  .hud-val {
+    font-size: 18px;
+    font-weight: 800;
+    color: #fff;
+    text-shadow: 0 0 10px var(--gold-glow);
+  }
+  /* Fuel & Frenzy */
+  .fuel-status {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 3px;
+  }
+  .fuel-label {
+    font-size: 11px;
+    font-weight: 700;
+    color: var(--cyan);
+  }
+  .fuel-bar {
+    width: 90px;
+    height: 6px;
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 999px;
+    overflow: hidden;
+    border: 1px solid rgba(6, 182, 212, 0.3);
+  }
+  .fuel-fill {
+    height: 100%;
+    width: 100%;
+    background: linear-gradient(90deg, #06b6d4, #10b981);
+    border-radius: 999px;
+    transition: width 0.1s linear;
+  }
+  /* Canvas */
+  #gameCanvas {
+    width: 100%;
+    height: 100%;
+    display: block;
+    cursor: default;
+  }
+  /* Touch & Steering Controls at bottom */
+  .touch-deck {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    height: 120px;
+    z-index: 15;
+    pointer-events: none;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0 20px 14px;
+  }
+  .steer-buttons {
+    display: flex;
+    gap: 12px;
+    pointer-events: auto;
+  }
+  .touch-btn {
+    width: 58px;
+    height: 58px;
+    border-radius: 16px;
+    background: rgba(255, 255, 255, 0.08);
+    border: 1px solid rgba(255, 255, 255, 0.18);
+    color: #fff;
+    font-size: 20px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    touch-action: manipulation;
+    transition: transform 0.08s ease;
+  }
+  .touch-btn:active, .touch-btn.active {
+    background: rgba(245, 158, 11, 0.35);
+    border-color: var(--gold);
+    transform: scale(0.92);
+  }
+  .boost-btn {
+    width: 72px;
+    height: 58px;
+    border-radius: 16px;
+    background: linear-gradient(135deg, #f59e0b, #ef4444);
+    border: 0;
+    color: #fff;
+    font-weight: 800;
+    font-size: 14px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 2px;
+    cursor: pointer;
+    box-shadow: 0 4px 16px rgba(245, 158, 11, 0.4);
+    pointer-events: auto;
+    touch-action: manipulation;
+    transition: transform 0.08s ease;
+  }
+  .boost-btn:active, .boost-btn.active {
+    transform: scale(0.92);
+  }
+  /* Overlay */
+  .overlay {
+    position: absolute;
+    inset: 0;
+    background: rgba(11, 9, 20, 0.92);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    z-index: 30;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 24px;
+    text-align: center;
+  }
+  .overlay.hidden { display: none; }
+  .modal-title {
+    font-size: 26px;
+    font-weight: 800;
+    color: #fff;
+    margin-bottom: 8px;
+    text-shadow: 0 0 20px var(--gold-glow);
+  }
+  .modal-sub {
+    font-size: 13px;
+    color: var(--text-dim);
+    margin-bottom: 24px;
+    line-height: 1.6;
+    max-width: 320px;
+  }
+  .btn-start {
+    padding: 12px 36px;
+    border-radius: 999px;
+    border: 0;
+    background: linear-gradient(135deg, #f59e0b, #ef4444);
+    color: #fff;
+    font-size: 16px;
+    font-weight: 800;
+    cursor: pointer;
+    box-shadow: 0 4px 20px rgba(245, 158, 11, 0.4);
+    transition: all 0.15s ease;
+  }
+  .btn-start:hover { transform: translateY(-2px); }
+  .btn-start:active { transform: scale(0.97); }
+  .score-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+    width: 100%;
+    max-width: 280px;
+    margin-bottom: 24px;
+  }
+  .score-card {
+    background: rgba(255, 255, 255, 0.04);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    border-radius: 12px;
+    padding: 10px;
+  }
+  .score-card-num {
+    font-size: 20px;
+    font-weight: 800;
+    color: var(--gold);
+  }
+  .score-card-lbl {
+    font-size: 11px;
+    color: var(--text-dim);
+    font-weight: 600;
+  }
+</style>
+</head>
+<body>
+<div id="gameContainer">
+  <div class="top-hud">
+    <div class="hud-stat">
+      <span class="hud-label">深度</span>
+      <span id="depthVal" class="hud-val">0 m</span>
+    </div>
+    <div class="fuel-status">
+      <span class="fuel-label">⚡ 钻机燃料</span>
+      <div class="fuel-bar"><div id="fuelFill" class="fuel-fill"></div></div>
+    </div>
+    <div class="hud-stat" style="text-align: right;">
+      <span class="hud-label">矿石积分</span>
+      <span id="scoreVal" class="hud-val" style="color: var(--gold);">0</span>
+    </div>
+  </div>
+
+  <canvas id="gameCanvas"></canvas>
+
+  <div class="touch-deck">
+    <div class="steer-buttons">
+      <button id="btnLeft" class="touch-btn">◀</button>
+      <button id="btnRight" class="touch-btn">▶</button>
+    </div>
+    <button id="btnBoost" class="boost-btn">
+      <span>🚀 涡轮</span>
+      <span style="font-size:9px; opacity:0.8;">滚轮/长按</span>
+    </button>
+  </div>
+
+  <!-- Start Overlay -->
+  <div id="startOverlay" class="overlay">
+    <h1 class="modal-title">🌪️ 滚轮深钻</h1>
+    <p class="modal-sub">
+      地心极速钻探 · 滚轮驱动钻头直穿地壳！<br>
+      滚动滚轮或按住涡轮极速下钻 · 左右键避开熔岩尖刺<br>
+      采集稀有晶石与燃料桶 · 蓄满能量化身<b>【狂暴无敌钻头】</b>！
+    </p>
+    <button id="startBtn" class="btn-start">下潜启动</button>
+  </div>
+
+  <!-- Over Overlay -->
+  <div id="overOverlay" class="overlay hidden">
+    <h2 class="modal-title" id="overTitle">钻机燃尽</h2>
+    <p class="modal-sub" id="overSub">在地心深处完成了伟大的勘探</p>
+    <div class="score-grid">
+      <div class="score-card">
+        <div id="finalDepth" class="score-card-num">0 m</div>
+        <div class="score-card-lbl">下探深度</div>
+      </div>
+      <div class="score-card">
+        <div id="finalScore" class="score-card-num">0</div>
+        <div class="score-card-lbl">开采总值</div>
+      </div>
+      <div class="score-card">
+        <div id="finalGems" class="score-card-num">0</div>
+        <div class="score-card-lbl">稀有晶石</div>
+      </div>
+      <div class="score-card">
+        <div id="finalFrenzy" class="score-card-num">0</div>
+        <div class="score-card-lbl">狂暴次数</div>
+      </div>
+    </div>
+    <button id="retryBtn" class="btn-start">重新启钻</button>
+  </div>
+</div>
+
+<script src="../_shared/storage.js"></script>
+<script src="game.js"></script>
+</body>
+</html>

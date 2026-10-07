@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>经典保龄球 (Bowling) - OmniGame</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <div class="bowl-container">
+    <header class="bowl-header">
+      <div class="bowl-title-row">
+        <h1 class="bowl-title">经典保龄球 <span>Bowling 3D</span></h1>
+        <div class="bowl-tools">
+          <button id="soundBtn" class="bowl-icon-btn" title="声音">🔊</button>
+          <button id="restartBtn" class="bowl-btn bowl-btn-accent">新球局</button>
+        </div>
+      </div>
+      <div class="bowl-status-row">
+        <div class="bowl-badge">当前局: <span id="frameText">第 1/5 轮</span></div>
+        <div class="bowl-badge">本轮投球: <span id="ballText">第 1 投</span></div>
+        <div class="bowl-badge">总得分: <span id="scoreText">0</span></div>
+      </div>
+      <!-- Scoreboard frames summary -->
+      <div class="scoreboard-row" id="scoreboard"></div>
+    </header>
+
+    <div class="alley-wrap">
+      <canvas id="gameCanvas" width="360" height="340"></canvas>
+      <div class="bowl-overlay-hint" id="overlayHint">拖动小球调整站位，向前划动投掷</div>
+    </div>
+
+    <!-- Power & Hook Indicator -->
+    <div class="bowl-controls-row">
+      <div class="ctrl-group">
+        <label>蓄力状态: <span id="powerLabel">准备就绪</span></label>
+        <div class="power-track"><div class="power-bar" id="powerBar"></div></div>
+      </div>
+      <button class="bowl-throw-btn" id="throwBtn">一键投掷 🎳</button>
+    </div>
+
+    <footer class="bowl-footer">
+      <div class="bowl-hint">左右移动站位 · 向上滑动投球 · 击中 1 号与 3 号瓶口袋触发一击全倒 (Strike)！</div>
+    </footer>
+  </div>
+
+  <div class="modal-overlay" id="gameOverModal">
+    <div class="modal-card">
+      <div class="modal-emoji" id="modalEmoji">🎳</div>
+      <h2 class="modal-title" id="modalTitle">保龄球局结束！</h2>
+      <p class="modal-desc" id="modalDesc">总共 5 轮累计斩获 118 分！</p>
+      <div class="modal-actions">
+        <button id="modalRestartBtn" class="modal-btn">再开一局</button>
+      </div>
+    </div>
+  </div>
+
+  <script src="game.js"></script>
+</body>
+</html>

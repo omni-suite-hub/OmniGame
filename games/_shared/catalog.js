@@ -1,0 +1,2725 @@
+/*
+ * games/_shared/catalog.js
+ * Extensible catalog manager for OmniGame (OmniCatalog).
+ *
+ * - Built-in games: bundled with the extension for 100% offline availability.
+ * - Dynamic / Hot-loaded games: stored in chrome.storage.local (omnigame:custom_games)
+ *   and merged seamlessly into the catalog without requiring extension repacking.
+ * - Supports remote manifests via OmniCatalog.syncRemote(url).
+ */
+(function (global) {
+  'use strict';
+
+  var BUILTIN_GAMES = [
+    {
+      id: 'gravitas-4',
+      name: '重力方阵',
+      emoji: '🪐',
+      original: true,
+      tagline: '自研 · 旋转重力博弈',
+      grad: 'linear-gradient(135deg,#F472B6,#DB2777)',
+      metric: 'score',
+      badge: '自研联机',
+      category: 'multiplayer',
+      hot: true,
+      keywords: 'zhonglifangzhen,gravitas,gravity,4inrow,liandui',
+      goal: '在 7×7 网格中率先将己方 4 枚棋子连成一线（横、竖、斜任意方向）获胜！',
+      controls: '点击列顶部投放棋子；点击“顺时针旋转90°”按钮旋转棋盘。',
+      rules: '每回合二选一：下落棋子（受重力落到底部）或旋转棋盘90度（所有棋子受重力二次下落坍塌重排）。',
+      tips: '旋转不仅能防守化解敌方连线，更能在重力坍塌时瞬间触发隐藏的 4 连杀！支持局域网同 Wi-Fi 与 6 位数密钥联机。'
+    },
+    {
+      id: 'tetris-clash',
+      name: '方块死斗',
+      emoji: '⚔️',
+      tagline: '攻防互扔垃圾 · 联机死斗',
+      grad: 'linear-gradient(135deg,#F472B6,#DB2777)',
+      metric: 'score',
+      badge: '联机',
+      category: 'multiplayer',
+      hot: true,
+      keywords: 'fangkuaishidou,tetrisclash,tetris,pk,duizhan',
+      goal: '实时俄罗斯方块双人死斗！通过消除方块向对手发射垃圾行，撑到最后者获胜。',
+      controls: '← → 左右移动 · ↑ 旋转 · ↓ 软降 · 空格 硬降。',
+      rules: '消 2 行送对方 1 行垃圾行；消 3 行送 2 行；一次消 4 行（Tetris 暴击）直接向对手底部注入 4 排坚硬垃圾！',
+      tips: '蓄积长条打 Tetris 4 消可造成毁灭性压制。支持 WebRTC 实时低延迟联机对战与智能 AI 对抗。'
+    },
+    {
+      id: 'hack-roulette',
+      name: '暗箱轮盘',
+      emoji: '🎲',
+      original: true,
+      tagline: '黑客终端 · 心理博弈',
+      grad: 'linear-gradient(135deg,#F472B6,#DB2777)',
+      metric: 'score',
+      badge: '自研联机',
+      category: 'multiplayer',
+      hot: true,
+      keywords: 'anxianglunpan,hackroulette,cyber,roulette,sheji',
+      goal: '赛博轮盘赌心理博弈！通过真假子弹概率推演与战术芯片，将对手防火墙生命清零。',
+      controls: '点击射击目标（自己或对方）；点击道具槽激活战术芯片。',
+      rules: '每轮装填已知数量实弹与空弹。朝自己开枪若为空弹，额外奖励一回合行动权！',
+      tips: '善用 4 种黑客道具：扫描仪偷看弹膛、超频器伤害翻倍、旁路芯片跳过回合、极性转换器颠倒真假子弹。'
+    },
+    {
+      id: 'dice-duel',
+      name: '摇骰对决',
+      emoji: '🎲',
+      tagline: '摸鱼聚会 · 摇骰决胜负',
+      grad: 'linear-gradient(135deg,#F472B6,#DB2777)',
+      metric: 'rounds',
+      badge: '摸鱼联机',
+      category: 'multiplayer',
+      hot: true,
+      keywords: 'yaosaizi,diceduel,shaizi,chuinui,bipoint,office',
+      goal: '摇动骰盅比点数或吹牛博弈，决出今日办公室谁请客！',
+      controls: '点击“摇动骰盅”摇骰；点击“悄悄偷看”独自看点；点击“揭盅开牌”同时亮出！',
+      rules: '支持 5 颗比总和（豹子暴击通吃）、1 颗闪电定胜负与极简吹牛。输家接受办公室命运惩罚！',
+      tips: '支持局域网同 Wi-Fi 秒连与 6 位密码联机，输了还能一键转动惩罚转盘！'
+    },
+    {
+      id: 'rps-duel',
+      name: '猜拳巅峰赛',
+      emoji: '✌️',
+      tagline: '心理博弈 · 剪刀石头布',
+      grad: 'linear-gradient(135deg,#F472B6,#DB2777)',
+      metric: 'rounds',
+      badge: '摸鱼联机',
+      category: 'multiplayer',
+      hot: true,
+      keywords: 'caiquandianfengsai,rpsduel,jiandaoshitoubu,caiquan,finger',
+      goal: '经典剪刀石头布决胜负，争夺办公室猜拳之王称号！',
+      controls: '点击手势出拳，或使用键盘快捷键 1(石头) 2(剪刀) 3(布)。',
+      rules: '经典三相克制。支持 BO3（三局两胜）、BO5 与一局定胜负。网络盲选同步解封绝无作弊。',
+      tips: '注意对手的出拳惯性，输家往往倾向于切换为克制刚才手势的形状！'
+    },
+    {
+      id: 'card-clash',
+      name: '卡牌比大小',
+      emoji: '🃏',
+      tagline: '抽牌决斗 · 极简金花',
+      grad: 'linear-gradient(135deg,#F472B6,#DB2777)',
+      metric: 'rounds',
+      badge: '摸鱼联机',
+      category: 'multiplayer',
+      hot: true,
+      keywords: 'kapaibidaxiao,cardclash,poker,choupai,daxiao,jinhua',
+      goal: '盲抽扑克牌比大小，看谁牌力更强掌控全场！',
+      controls: '点击“洗牌发牌”抽取手牌；点击“加倍”加码战况；点击“翻牌决胜”见分晓！',
+      rules: '单张比大小比点数与花色（黑桃>红桃>梅花>方块）；三张牌对决按金花牌型（豹子>同花顺>同花>顺子>对子>单牌）。',
+      tips: '开牌前按下“加倍”胜方惩罚翻倍，敢不敢跟对手赌一把大的？'
+    },
+    {
+      id: 'gomoku-clash',
+      name: '五子棋巅峰赛',
+      emoji: '⚪⚫',
+      tagline: '黑白博弈 · 五子连珠',
+      grad: 'linear-gradient(135deg,#F472B6,#DB2777)',
+      metric: 'rounds',
+      badge: '摸鱼联机',
+      category: 'multiplayer',
+      hot: true,
+      keywords: 'wuziqi,gomoku,gomokuclash,gobang,lianxian',
+      goal: '率先在横、竖、斜任意方向将己方 5 枚棋子连成一线的玩家获胜！',
+      controls: '点击棋盘交叉点落子。',
+      rules: '黑子先行，白子后行。支持悔棋、局域网秒连与 6 位密码联机。',
+      tips: '注意活三与冲四的进攻组合，防守反击往往能绝地反杀！'
+    },
+    {
+      id: 'tictactoe-ultimate',
+      name: '大吃小井字棋',
+      emoji: '👾',
+      tagline: '怪兽吞噬 · 策略井字棋',
+      grad: 'linear-gradient(135deg,#F472B6,#DB2777)',
+      metric: 'rounds',
+      badge: '摸鱼联机',
+      category: 'multiplayer',
+      hot: true,
+      keywords: 'dachixiaojingziqi,tictactoeultimate,gobblet,monster,chixiao',
+      goal: '将己方怪兽连成 3 颗直线获胜，大号怪兽可直接吞下小号怪兽！',
+      controls: '点击手牌怪兽进场，或点击场上怪兽移位/吞噬。',
+      rules: '每人拥有小、中、大三档怪兽，大号怪兽可覆盖盖住任何小怪兽。',
+      tips: '被吞掉的怪兽并没有消失，如果上面的大怪兽移走，被压住的怪兽会重新生效！'
+    },
+    {
+      id: 'air-hockey',
+      name: '桌上空气曲棍球',
+      emoji: '🏒',
+      tagline: '极速反弹 · 绝杀破门',
+      grad: 'linear-gradient(135deg,#F472B6,#DB2777)',
+      metric: 'score',
+      badge: '摸鱼联机',
+      category: 'multiplayer',
+      hot: true,
+      keywords: 'kongqiqugunqiu,airhockey,hockey,bingqiu,duijue',
+      goal: '滑动推杆高速击打冰球，率先攻破对方球门攻入 5 球获胜！',
+      controls: '鼠标或手指滑动推杆击球。',
+      rules: '冰球在边框强力反弹，撞入对方球门得分。',
+      tips: '斜向甩杆可打出高速折射球，让对手措手不及！'
+    },
+    {
+      id: 'dots-and-boxes',
+      name: '点格棋领地战',
+      emoji: '📦',
+      tagline: '连线圈地 · 连击暴击',
+      grad: 'linear-gradient(135deg,#F472B6,#DB2777)',
+      metric: 'score',
+      badge: '摸鱼联机',
+      category: 'multiplayer',
+      hot: true,
+      keywords: 'diangeqi,dotsandboxes,quandi,lianxian,fangge',
+      goal: '点击虚线连线，补齐方格第 4 条边占领该格，占领最多者胜！',
+      controls: '点击点之间的虚线连线。',
+      rules: '占领方格不仅得 1 分，还额外奖励连续行动权！',
+      tips: '前期尽量避免送给对手第 3 条边，留心连锁吃地盘的机会！'
+    },
+    {
+      id: 'tug-of-war',
+      name: '疯狂拔河对决',
+      emoji: '🪢',
+      tagline: '极速狂按 · 力量比拼',
+      grad: 'linear-gradient(135deg,#F472B6,#DB2777)',
+      metric: 'rounds',
+      badge: '摸鱼联机',
+      category: 'multiplayer',
+      hot: true,
+      keywords: 'bahe,tugofwar,shousu,kuangan,liliang',
+      goal: '疯狂按键拉绳，将中心丝带拽入己方半场标记点！',
+      controls: '狂按“给我拉”按钮，或敲击空格键/回车键。',
+      rules: '手速越快拉力越大，拉力压过胜点直接判定获胜。',
+      tips: '保持节奏连续快速点击，手速爆发期可直接把对手拽飞！'
+    },
+    {
+      id: 'mole-clash',
+      name: '打地鼠竞速死斗',
+      emoji: '🔨',
+      tagline: '眼疾手快 · 抢砸地鼠',
+      grad: 'linear-gradient(135deg,#F472B6,#DB2777)',
+      metric: 'score',
+      badge: '摸鱼联机',
+      category: 'multiplayer',
+      hot: true,
+      keywords: 'dadishu,moleclash,whackamole,dishu,chuizi',
+      goal: '疯狂敲打地洞钻出的地鼠，率先砸满 15 分者胜！',
+      controls: '鼠标或手指点击地鼠进行锤击。',
+      rules: '普通地鼠 +1分，黄金鼠王 +2分，炸弹骷髅 -2分并眩晕！',
+      tips: '千万别乱点炸弹，看准黄金鼠王能快速拉开分差！'
+    },
+    {
+      id: 'slap-hands',
+      name: '啪啪打手反应王',
+      emoji: '👋',
+      tagline: '攻防互博 · 光速抽手',
+      grad: 'linear-gradient(135deg,#F472B6,#DB2777)',
+      metric: 'rounds',
+      badge: '摸鱼联机',
+      category: 'multiplayer',
+      hot: true,
+      keywords: 'dashou,slaphands,redhands,pashoubei,fanying',
+      goal: '攻击方极速拍打手背，防守方光速缩手躲避，先得 5 分胜！',
+      controls: '攻击时点击“拍打”，防守时点击“缩手”。',
+      rules: '拍中得 1 分；若防守方成功躲避，双方攻防身份互换。',
+      tips: '利用虚晃节奏打乱对手反应神经！'
+    },
+    {
+      id: 'penalty-shootout',
+      name: '足球点球大战',
+      emoji: '⚽',
+      tagline: '死角世界波 · 门神扑救',
+      grad: 'linear-gradient(135deg,#F472B6,#DB2777)',
+      metric: 'score',
+      badge: '摸鱼联机',
+      category: 'multiplayer',
+      hot: true,
+      keywords: 'dianqiu,penaltyshootout,soccer,football,shemen,pujiu',
+      goal: '5 轮点球决胜，射入死角或预判扑出射门！',
+      controls: '点击球门 6 个角落进行射门或守门扑救。',
+      rules: '射手与门将选同方向扑出，选不同方向破门得分。',
+      tips: '心理学博弈：对手刚扑过某个角落，下一脚很可能会换反方向！'
+    },
+    {
+      id: 'darts-duel',
+      name: '飞镖大师对决',
+      emoji: '🎯',
+      tagline: '百步穿杨 · 正中靶心',
+      grad: 'linear-gradient(135deg,#F472B6,#DB2777)',
+      metric: 'score',
+      badge: '摸鱼联机',
+      category: 'multiplayer',
+      hot: true,
+      keywords: 'feibiao,darts,dartsduel,zhengzhongbaxin,sheji',
+      goal: '瞄准晃动准星投掷飞镖，3 镖决胜比拼总积分！',
+      controls: '看准晃动准星重叠时机，点击“投掷飞镖”。',
+      rules: '红心 50 分，内环 25 分，三倍区与双倍区得分翻倍！',
+      tips: '耐心等待晃动轨迹经过靶心正中间的刹那瞬间出手！'
+    },
+    {
+      id: 'pong-clash',
+      name: '霓虹乒乓死斗',
+      emoji: '🏓',
+      tagline: '旋风扣杀 · 极限对打',
+      grad: 'linear-gradient(135deg,#F472B6,#DB2777)',
+      metric: 'score',
+      badge: '摸鱼联机',
+      category: 'multiplayer',
+      hot: true,
+      keywords: 'pingpang,pong,pongclash,tabletennis,duida',
+      goal: '滑动球拍回击高速乒乓球，率先攻下 5 分获胜！',
+      controls: '鼠标或手指左右滑动球拍。',
+      rules: '击球时带着滑动可施加旋转弧线，连续对打球速递增。',
+      tips: '用球拍边缘击球可打出大角度穿越球，迫使对手救球失误！'
+    },
+    {
+      id: 'bomb-defuse-clash',
+      name: '拆弹心跳博弈',
+      emoji: '💣',
+      tagline: '生死一线 · 剪线排雷',
+      grad: 'linear-gradient(135deg,#F472B6,#DB2777)',
+      metric: 'rounds',
+      badge: '摸鱼联机',
+      category: 'multiplayer',
+      hot: true,
+      keywords: 'chaidan,bombdefuse,xintiao,jianxian,baozha',
+      goal: '在倒计时 30 秒内挑选引信剪断，剪断安全线或让对手自爆！',
+      controls: '点击 6 根彩色引信进行剪线。',
+      rules: '1 根安全线（直接胜出），1 根雷线（直接自爆），其余为计时惩罚。',
+      tips: '心跳加速的声音会越来越快，深呼吸保持直觉判断！'
+    },
+    {
+      id: 'memory-clash',
+      name: '记忆翻牌竞速',
+      emoji: '🃏',
+      tagline: '最强大脑 · 连击配对',
+      grad: 'linear-gradient(135deg,#F472B6,#DB2777)',
+      metric: 'score',
+      badge: '摸鱼联机',
+      category: 'multiplayer',
+      hot: true,
+      keywords: 'jiyifanpai,memoryclash,fanpai,peidui,cardmemory',
+      goal: '轮流翻开 2 张卡牌，相同配对则得分并继续行动！',
+      controls: '点击卡牌翻转查看。',
+      rules: '4×4 共 16 张萌趣动物卡，集齐最多对数者获胜。',
+      tips: '即使不是自己的回合，也要死死记住对手翻开过的卡牌位置！'
+    },
+    {
+      id: 'curling-clash',
+      name: '桌面冰壶碰撞',
+      emoji: '🥌',
+      tagline: '精准停位 · 碰撞撞击',
+      grad: 'linear-gradient(135deg,#F472B6,#DB2777)',
+      metric: 'score',
+      badge: '摸鱼联机',
+      category: 'multiplayer',
+      hot: true,
+      keywords: 'binghu,curling,curlingclash,zhuomianbinghu,dabenying',
+      goal: '瞄准角度推射冰壶，将己方冰壶送入大本营红心！',
+      controls: '移动调整角度，点击“推射冰壶”发力。',
+      rules: '每方 3 颗冰壶，可撞飞对手冰壶。离圆心最近者得分胜出！',
+      tips: '不仅要往中心停，还要用后手冰壶把对手霸占中心的壶撞出去！'
+    },
+    {
+      id: 'minesweeper-clash',
+      name: '双人扫雷死斗',
+      emoji: '🚩',
+      tagline: '暗礁险滩 · 策略排雷',
+      grad: 'linear-gradient(135deg,#F472B6,#DB2777)',
+      metric: 'score',
+      badge: '摸鱼联机',
+      category: 'multiplayer',
+      hot: true,
+      keywords: 'shuangrensaolei,minesweeperclash,saolei,pailei,duizhan',
+      goal: '翻开安全方块得分连击，避免踩中地雷扣分！',
+      controls: '点击格子进行揭开探测。',
+      rules: '安全格 +1分且继续翻开；踩雷 -2分并移交回合。',
+      tips: '根据数字逻辑推导周围雷数，稳扎稳打抢占高分！'
+    },
+    {
+      id: 'snake-clash',
+      name: '双人贪吃蛇对决',
+      emoji: '🐍',
+      tagline: '风骚走位 · 卡位围堵',
+      grad: 'linear-gradient(135deg,#F472B6,#DB2777)',
+      metric: 'score',
+      badge: '摸鱼联机',
+      category: 'multiplayer',
+      hot: true,
+      keywords: 'tanchishe,snakeclash,snake,zouwei,weidu',
+      goal: '操控蛇头抢吃能量豆，诱导或卡位让对手撞身淘汰！',
+      controls: '键盘方向键或屏幕 D-Pad 控制蛇头移动。',
+      rules: '撞墙或撞上任何一条蛇身体判定淘汰。',
+      tips: '利用身体长度形成环形包夹，封死对手的所有转弯空间！'
+    },
+    {
+      id: 'bubble-duel',
+      name: '泡泡龙攻防战',
+      emoji: '🫧',
+      tagline: '彩色泡泡 · 3消爆破',
+      grad: 'linear-gradient(135deg,#F472B6,#DB2777)',
+      metric: 'score',
+      badge: '摸鱼联机',
+      category: 'multiplayer',
+      hot: true,
+      keywords: 'paopaolong,bubbleduel,bubble,3xiao,sheji',
+      goal: '瞄准发射彩色泡泡，3 消爆破率先达到 18 分获胜！',
+      controls: '移动瞄准，点击屏幕发射泡泡。',
+      rules: '相同颜色连击消除，泡泡堆积触及底部红线则失败。',
+      tips: '善用左右边框的反弹打入高位挂钩点，一枪爆破掉整片泡泡！'
+    },
+    {
+      id: '2048-clash',
+      name: '2048 竞速死斗',
+      emoji: '🔢',
+      tagline: '数字狂欢 · 暴击合成',
+      grad: 'linear-gradient(135deg,#F472B6,#DB2777)',
+      metric: 'score',
+      badge: '摸鱼联机',
+      category: 'multiplayer',
+      hot: true,
+      keywords: '2048,2048clash,hecheng,shuzi,jingsu',
+      goal: '滑动合并方块，合成 2048 或高分压制获胜！',
+      controls: '键盘方向键或滑动控制方块滑移。',
+      rules: '合成 64 以上大数字获得额外暴击加分。',
+      tips: '将最大数字固定在棋盘角落（如右下角），按蛇形向内铺开！'
+    },
+    {
+      id: 'speed-type-duel',
+      name: '极速打字对决',
+      emoji: '⌨️',
+      tagline: '键盘冒火 · 词汇激光',
+      grad: 'linear-gradient(135deg,#F472B6,#DB2777)',
+      metric: 'rounds',
+      badge: '摸鱼联机',
+      category: 'multiplayer',
+      hot: true,
+      keywords: 'dazi,speedtype,typeclash,jianpan,shousu',
+      goal: '极速输入屏幕上的摸鱼词汇，发射激光轰空对方血条！',
+      controls: '在输入框打字并敲击回车键。',
+      rules: '准确输入并回车打掉对方 25% 血条，血条清空即获胜。',
+      tips: '注意全角半角标点符号，盲打打字手速是办公室核心生存技能！'
+    },
+    {
+      id: 'spot-diff-clash',
+      name: '眼力找不同对决',
+      emoji: '🔍',
+      tagline: '火眼金睛 · 秒找不同',
+      grad: 'linear-gradient(135deg,#F472B6,#DB2777)',
+      metric: 'rounds',
+      badge: '摸鱼联机',
+      category: 'multiplayer',
+      hot: true,
+      keywords: 'zhaobutong,spotdiff,yanli,zhaocha,chayi',
+      goal: '上下两组场景中找出 3 处不同点，率先圈齐者胜！',
+      controls: '点击有差异的方块格子。',
+      rules: '圈对得 1 分，点错会有音效提示，率先找齐 3 处胜出。',
+      tips: '快速扫视全局的颜色微调和表情细微差异！'
+    },
+    {
+      id: 'battleship-clash',
+      name: '海战棋迷雾决战',
+      emoji: '🚢',
+      tagline: '深海雷达 · 击沉战舰',
+      grad: 'linear-gradient(135deg,#F472B6,#DB2777)',
+      metric: 'rounds',
+      badge: '摸鱼联机',
+      category: 'multiplayer',
+      hot: true,
+      keywords: 'haizhanqi,battleship,zhanjian,pa击,leida',
+      goal: '盲开炮火轰击海域迷雾，率先全歼敌方 3 艘战舰获胜！',
+      controls: '点击海域方格发射鱼雷。',
+      rules: '巡洋舰 3格、驱逐舰 2格、潜艇 1格，命中可继续开炮。',
+      tips: '一旦击中一处，立即探测其上下左右相邻格子寻找战舰延伸方向！'
+    },
+
+    {
+      id: 'find-horse',
+      name: '找马挑战',
+      emoji: '🐴',
+      tagline: '每天方块 · 萌趣扫雷找马',
+      grad: 'linear-gradient(135deg,#A78BFA,#7C3AED)',
+      metric: 'level',
+      badge: '新品爆款',
+      category: 'puzzle',
+      hot: true,
+      keywords: 'zhaomachiaozhan,findhorse,meitianfangkuai,blockhorse,ma,saolei,puzzle',
+      goal: '根据矩阵边缘数字与格内扫雷线索，找出所有隐藏在方块下的小马！',
+      controls: '点击方块翻开/找马；使用顶部工具按钮切换“🐴找马”与“🔍探路”模式；右键快捷探路。',
+      rules: '双重线索：边缘标注该行/列藏马数，格内数字代表相邻藏马数。内置 2 次失误容错心 ❤️，第 3 次失误才判定失败。',
+      tips: '优先排除标 0 的行与列；遇到僵局时，善用胡萝卜 🥕 诱饵直接吸引小马，或使用雷达 🧭 透视 3×3 区域！'
+    },
+    {
+      id: '2048',
+      name: '2048',
+      emoji: '🟦',
+      tagline: '滑动合成到 2048',
+      grad: 'linear-gradient(135deg,#A78BFA,#7C3AED)',
+      metric: 'score',
+      category: 'puzzle',
+      hot: true,
+      keywords: '2048,shuzi,hecheng,slide',
+      goal: '在 4×4 棋盘上滑动方块，合并相同数字直至合成 2048！',
+      controls: '键盘 ↑ ↓ ← → 方向键，或在屏幕上划动手势。',
+      rules: '每次移动所有方块向同一方向滑动，相同数字碰撞相加翻倍，空白处随机生成 2 或 4。',
+      tips: '将最大的数字始终固定在棋盘的一个角落（如右下角），沿边缘按大小顺序蛇形排列。'
+    },
+    {
+      id: 'snake',
+      name: '贪吃蛇',
+      emoji: '🐍',
+      tagline: '别撞墙也别咬自己',
+      grad: 'linear-gradient(135deg,#22D3EE,#0891B2)',
+      metric: 'score',
+      category: 'arcade',
+      hot: true,
+      keywords: 'tanchishe,snake,chipingguo',
+      goal: '控制小蛇尽可能吃掉更多食物，不断变长并冲刺最高分！',
+      controls: '方向键 ↑ ↓ ← → 或 W A S D 控制方向。',
+      rules: '每吃一个食物身体增长 1 节，移动速度随等级逐步提升。撞到四周边界或自身身体即游戏结束。',
+      tips: '体长较大时尽量沿外围贴边巡游，在内部保留蛇形通道，避免将自己锁死在死胡同里。'
+    },
+    {
+      id: 'minesweeper',
+      name: '扫雷',
+      emoji: '💣',
+      tagline: '标记出所有地雷',
+      grad: 'linear-gradient(135deg,#A78BFA,#7C3AED)',
+      metric: 'time',
+      category: 'puzzle',
+      hot: true,
+      keywords: 'saolei,minesweeper,dilei,flag',
+      goal: '推断出所有地雷位置并安全翻开所有无雷格子，用时越短排名越高！',
+      controls: '鼠标左键点击翻开；右键或长按插旗标记；或点击“标雷模式”切换。',
+      rules: '首击必安全（第一步绝不踩雷）。数字代表其周围 8 格内的地雷总数。',
+      tips: '遇到 1-2-1 阵型通常中间 2 两侧是雷；高级模式支持平滑水平滚动，完整查看 30 列。'
+    },
+    {
+      id: 'tetris',
+      name: '俄罗斯方块',
+      emoji: '🧱',
+      tagline: '消行拿高分',
+      grad: 'linear-gradient(135deg,#4ADE80,#059669)',
+      metric: 'score',
+      category: 'match',
+      hot: true,
+      keywords: 'eluosifangkuai,tetris,xiaohang,fangkuai',
+      goal: '控制各种形状的方块拼成完整行进行消除，防止方块堆叠触顶！',
+      controls: '← → 左右移动 · ↑ 顺时针旋转 · ↓ 软降 · 空格 硬降 · P 暂停。',
+      rules: '整行填满即自动消除并得分。随等级上升下落速度逐渐加快。',
+      tips: '自适应大屏布局：横向拉大窗口棋盘自动扩展放大；消除多行可获高额连击加成。'
+    },
+    {
+      id: 'perfect-circle',
+      name: '画个完美的圆',
+      emoji: '⭕',
+      original: true,
+      tagline: '自研 · 手绘评分',
+      grad: 'linear-gradient(135deg,#FBBF24,#EA580C)',
+      metric: 'percent',
+      badge: '自研',
+      category: 'physics',
+      hot: true,
+      keywords: 'huayigewanmeideyua,perfectcircle,circle,draw,huayuan',
+      goal: '徒手一笔画出一个完美的正圆，挑战 95%+ 以上的神级评分！',
+      controls: '鼠标长按拖拽（或触屏按住），围绕中心十字画一圈闭合。',
+      rules: '几何引擎将根据你的绘制轨迹与拟合理想圆的径向误差、曲率连续性与首尾闭合度进行打分。',
+      tips: '保持手腕相对固定，利用肘部或肩部大臂带动圆规式画弧，速度保持匀速更易拿高分。'
+    },
+    {
+      id: 'watermelon',
+      name: '合成大西瓜',
+      emoji: '🍉',
+      tagline: '物理掉落 · 碰撞合成',
+      grad: 'linear-gradient(135deg,#4ADE80,#059669)',
+      metric: 'score',
+      category: 'match',
+      hot: true,
+      keywords: 'hechengdaxigua,watermelon,xigua,shuiguo',
+      goal: '控制水果下落，相同水果碰撞融合成更高一级，冲刺合成超大西瓜！',
+      controls: '鼠标/触屏左右移动瞄准，点击/松开释放；键盘 ← → 移动，空格/↓ 掉落。',
+      rules: '两个相同水果碰撞自动升阶合成更大水果并累积分数；堆叠果实若超出顶部警戒线将导致游戏结束。',
+      tips: '尽量让大水果沉底、按大小阶梯状有序排列，避免小水果被大水果架空形成死角。'
+    },
+    {
+      id: 'dino',
+      name: '恐龙跳跃',
+      emoji: '🦖',
+      tagline: '经典断网跑酷 · 昼夜交替',
+      grad: 'linear-gradient(135deg,#22D3EE,#0891B2)',
+      metric: 'score',
+      category: 'arcade',
+      hot: true,
+      keywords: 'konglongtiaoyue,dino,trex,paoku,tiaoyue',
+      goal: '操控小恐龙避开一路上的仙人掌与翼龙障碍，跑得越远分数越高！',
+      controls: '空格 / 方向键 ↑ / W / 点击屏幕：跳跃；方向键 ↓ / S：俯身滑铲 / 快速下落。',
+      rules: '随奔跑距离增加移动速度逐渐加快；触碰任何仙人掌或翼龙直接判定游戏结束；每 700 分日夜交替。',
+      tips: '空中按住 ↓ 键可以实现“急速下坠”，应对高难度密集障碍时可以更快落地起跳！'
+    },
+    {
+      id: 'flappy-bird',
+      name: '像素鸟',
+      emoji: '🐦',
+      tagline: '魔性拍翅 · 极限穿缝',
+      grad: 'linear-gradient(135deg,#22D3EE,#0891B2)',
+      metric: 'score',
+      category: 'arcade',
+      hot: true,
+      keywords: 'xiangsuniao,flappybird,bird,paichi',
+      goal: '操控笨鸟在管道缝隙中自由穿梭，争取拿到白金钻石奖牌！',
+      controls: '空格 / 方向键 ↑ / W / 点击屏幕：拍打翅膀飞升。',
+      rules: '每成功飞过一组上下水管计 1 分；撞击水管或坠落到地面立即死亡。',
+      tips: '找到节奏感轻点轻放，保持在中轴线偏下方起跳，更易应对紧随其后的下一道管道高低差！'
+    },
+    {
+      id: 'piano-tiles',
+      name: '别踩白块儿',
+      emoji: '🎹',
+      tagline: '节奏大师 · 钢琴连弹',
+      grad: 'linear-gradient(135deg,#22D3EE,#0891B2)',
+      metric: 'score',
+      category: 'arcade',
+      hot: true,
+      keywords: 'biecaibaikuair,pianotiles,gangqin,yinyue',
+      goal: '顺应节奏连续点击下落的黑块弹奏名曲，千万别踩白块！',
+      controls: '键盘 D F J K 或 1 2 3 4 分别对应四轨；亦可直接用鼠标/手指点按黑块。',
+      rules: '每踩中一块黑块弹奏一个音符并计 1 分；漏掉黑块到底或误踩白块直接判负。',
+      tips: '推荐双手食指中指分别放在 D、F、J、K 四键盲打，随得分上升节奏加快，沉浸在旋律中更稳！'
+    },
+    {
+      id: 'breakout',
+      name: '经典打砖块',
+      emoji: '🧱',
+      tagline: '弹球反弹 · 爽快爆破',
+      grad: 'linear-gradient(135deg,#22D3EE,#0891B2)',
+      metric: 'score',
+      category: 'arcade',
+      hot: true,
+      keywords: 'jingdiandazhuankuai,breakout,tanqiu,zhuankuai',
+      goal: '操控底部弹板反弹弹球，击碎全部彩砖并通过层层关卡挑战！',
+      controls: '鼠标/触屏左右移动挡板；键盘 ← → / A D 移动，空格发球与发射激光。',
+      rules: '弹球根据击中挡板的位置偏转出射角；击碎彩砖随机掉落多重球、加长板、激光炮与救命底板道具。',
+      tips: '用挡板边缘擦球可以打出大角度削球，将球打入砖块顶部上方可在夹层中疯狂连击！'
+    },
+    {
+      id: 'sokoban',
+      name: '经典推箱子',
+      emoji: '📦',
+      tagline: '益智烧脑 · 步步为营',
+      grad: 'linear-gradient(135deg,#A78BFA,#7C3AED)',
+      metric: 'score',
+      category: 'puzzle',
+      hot: true,
+      keywords: 'jingdiantuixiangzi,sokoban,xiangzi,tui',
+      goal: '操控工人将所有木箱准确推到指定红心目标点，全部归位即可过关！',
+      controls: '键盘方向键 / WASD 或点击屏幕虚拟方向盘移动；按 Z 撤销一步，R 重玩本关。',
+      rules: '只能推箱子不能拉箱子；一次只能推 1 个箱子；注意不要将箱子推入死角墙缝。',
+      tips: '善用撤销功能多推演路径，优先处理离终点最远或最容易被卡住的箱子，内置 30 关经典趣味题！'
+    },
+    {
+      id: 'pacman',
+      name: '吃豆人',
+      emoji: '👻',
+      tagline: '街机神作 · 迷宫巡猎',
+      grad: 'linear-gradient(135deg,#22D3EE,#0891B2)',
+      metric: 'score',
+      category: 'arcade',
+      hot: true,
+      keywords: 'chidouren,pacman,youling,migong',
+      goal: '操控吃豆人扫光迷宫内全部豆子，吃大能量豆反噬追击四色幽灵！',
+      controls: '键盘方向键 / WASD 或点击屏幕虚拟方向盘控制吃豆人变向。',
+      rules: '普通豆计 10 分，大能量豆 50 分并让幽灵变为可吞食的蓝色虚弱状态；被正常幽灵触碰扣减一条命。',
+      tips: '善用左右两侧的穿梭隧道实现瞬间转移甩开红幽灵，连击吃掉多只蓝幽灵分数成倍递增！'
+    },
+    {
+      id: 'klotski',
+      name: '数字华容道',
+      emoji: '🧩',
+      tagline: '经典滑块 · 益智数独',
+      grad: 'linear-gradient(135deg,#A78BFA,#7C3AED)',
+      metric: 'time',
+      category: 'puzzle',
+      hot: true,
+      keywords: 'shuzihuarongdao,klotski,huarongdao,15puzzle',
+      goal: '滑动方块，将打乱的数字按升序重新排列整齐，挑战最快解题时间！',
+      controls: '点击方块或使用键盘方向键 / WASD 推动方块滑入空格；支持整行整列批量连推。',
+      rules: '支持 3×3、4×4、5×5 三种经典阶数自由切换；数学算法保证 100% 必然有解。',
+      tips: '按照从第一行到最后一行顺次拼好的策略，最后两行采用先定左再转角的方法即可稳定通关！'
+    },
+    {
+      id: 'onet',
+      name: '开心连连看',
+      emoji: '🀄',
+      tagline: '经典消除 · 两折连线',
+      grad: 'linear-gradient(135deg,#4ADE80,#059669)',
+      metric: 'score',
+      category: 'match',
+      hot: true,
+      keywords: 'kaixinlianliankan,onet,lianliankan,xiaochu',
+      goal: '找出所有相同的萌宠图标进行连线消除，在倒计时前清空全部方块！',
+      controls: '鼠标或触屏点击两张相同图案；亦可使用提示 💡 与洗牌 🔀 道具辅助。',
+      rules: '两个相同图标之间的连线折角不能超过 2 个（三折线以内）；连线可以经过盘面外侧的空白空间。',
+      tips: '优先从外围或已消除的开阔区域入手，连续快速消除能触发连击 Combo 额外翻倍加分！'
+    },
+    {
+      id: 'space-invaders',
+      name: '太空小蜜蜂',
+      emoji: '🚀',
+      tagline: '复古弹幕 · 保卫地球',
+      grad: 'linear-gradient(135deg,#22D3EE,#0891B2)',
+      metric: 'score',
+      category: 'arcade',
+      hot: true,
+      keywords: 'taikongxiaomifeng,spaceinvaders,sheji,zhanji',
+      goal: '操控太空战机阻击成排下压的外星入侵者舰队，击毁神秘红色飞碟！',
+      controls: '方向键 ← → 或 A D 左右移动战机；空格键 / 点击按钮开火射击。',
+      rules: '每排外星小蜜蜂分值不同，随着敌机减少其行军步调急剧加快；摧毁隐蔽堡垒可躲避敌机炸弹。',
+      tips: '优先消灭最外侧两列的外星舰队，可大幅延缓舰队左右碰壁触底的下移速度！'
+    },
+    {
+      id: 'gomoku',
+      name: '五子棋',
+      emoji: '♟️',
+      tagline: '人机对弈 · 五子连珠',
+      grad: 'linear-gradient(135deg,#818CF8,#4F46E5)',
+      metric: 'score',
+      category: 'board',
+      hot: true,
+      keywords: 'wuziqi,gomoku,gobang,qipai,heibai',
+      goal: '率先在横、竖、斜任意方向将己方 5 枚棋子连成一线即可获胜！',
+      controls: '点击棋盘交叉点落子；支持“悔棋”与“重新开局”；可切换人机与双人模式。',
+      rules: '黑先白后交替落子；支持“初级/进阶/大师”三级智能 AI，亦可切换为双人同屏对弈。',
+      tips: '注意提前布局“活三”与“冲四”，同时严密盯防拦截对手的连续攻势！'
+    },
+    {
+      id: 'tic-tac-toe',
+      name: '井字棋',
+      emoji: '❌',
+      tagline: '三连即胜 · 极智对决',
+      grad: 'linear-gradient(135deg,#818CF8,#4F46E5)',
+      metric: 'score',
+      category: 'board',
+      hot: true,
+      keywords: 'jingziqi,tictactoe,oxqi,sanlian,qipai',
+      goal: '在 3×3 棋盘上率先连成一线（横、竖、斜）即可获胜！',
+      controls: '点击九宫格空白格子落子；支持重开与清空积分。',
+      rules: 'X 与 O 轮流落子；支持入门、进阶与绝顶 Minimax 无敌 AI，亦可双人同屏对抗。',
+      tips: '占据中心格通常占得先机， corner 角格次之，注意构筑双杀威胁！'
+    },
+    {
+      id: 'reversi',
+      name: '黑白棋',
+      emoji: '⚪',
+      tagline: '翻转乾坤 · 经典奥赛罗',
+      grad: 'linear-gradient(135deg,#818CF8,#4F46E5)',
+      metric: 'score',
+      category: 'board',
+      hot: true,
+      keywords: 'heibaiqi,reversi,othello,aosaiduo,qipai',
+      goal: '终局时棋盘上己方颜色的棋子总数多于对手即可获胜！',
+      controls: '点击带有半透明提示圆点的合法格子落子；支持悔棋、新局与难度切换。',
+      rules: '落子必须在横、竖、斜任意方向夹住对方棋子并全部翻转；若无处可落则自动让步跳过回合。',
+      tips: '“金角银边草肚皮”——四角永远不会被敌方翻转，占领四角往往奠定胜局！'
+    },
+    {
+      id: 'sudoku',
+      name: '数独',
+      emoji: '🔢',
+      tagline: '九宫逻辑 · 头脑风暴',
+      grad: 'linear-gradient(135deg,#A78BFA,#7C3AED)',
+      metric: 'time',
+      category: 'puzzle',
+      hot: true,
+      keywords: 'shudu,sudoku,jiugongge,luoji,shuzi',
+      goal: '在 9×9 盘面上填入 1~9，使每行、每列以及每个 3×3 九宫格内数字不重复！',
+      controls: '点击格子选中，点击底部数字键盘或键盘数字键 1~9 填入；支持笔记模式、撤销、擦除与提示。',
+      rules: '包含简单、中等、困难、大师四档难度；累计 3 次冲突失误即判定挑战失败。',
+      tips: '遇到不确定的格子可开启“铅笔笔记模式”记录候选数，配合排除法逐个击破！'
+    },
+    {
+      id: 'hanoi',
+      name: '汉诺塔',
+      emoji: '🗼',
+      tagline: '递归经典 · 智力移盘',
+      grad: 'linear-gradient(135deg,#A78BFA,#7C3AED)',
+      metric: 'score',
+      category: 'puzzle',
+      hot: true,
+      keywords: 'hannotai,hanoi,towerofhanoi,yipan,diejia',
+      goal: '遵循规则将 A 柱上的全部圆盘完整转移至 C 柱，步数越少越好！',
+      controls: '点击柱子提起顶部圆盘，再次点击目标柱子放下；支持撤销与 AI 演示解法。',
+      rules: '每次只能移动一个圆盘；在任何时刻，较大圆盘都不能叠放在较小圆盘上方。',
+      tips: 'n 层圆盘理论最少需要 2^n - 1 步完成；先递归将 n-1 层移至辅助柱，再将底层移到目标柱！'
+    },
+    {
+      id: 'bubble-shooter',
+      name: '泡泡龙',
+      emoji: '🫧',
+      tagline: '反弹射击 · 连击消除',
+      grad: 'linear-gradient(135deg,#4ADE80,#059669)',
+      metric: 'score',
+      category: 'match',
+      hot: true,
+      keywords: 'paopaolong,bubbleshooter,sheji,xiaochu,tanqiu',
+      goal: '操控发射台发射彩色泡泡，3个及以上同色相连消除，力争清空全屏！',
+      controls: '移动光标或触摸瞄准方向，点击发射；可利用两侧墙壁反弹折射。',
+      rules: '打中 3 个以上同色泡泡立即爆破；悬空失去支点的泡泡群会整片下坠获得高额加分；防线触底判定失败。',
+      tips: '善用左右侧墙反弹将泡泡送入盲区狭缝，击断顶层关键支点可触发壮观的连环大坍塌！'
+    },
+    {
+      id: 'samegame',
+      name: '同色消除',
+      emoji: '⭐',
+      tagline: '相连成团 · 爽快爆星',
+      grad: 'linear-gradient(135deg,#4ADE80,#059669)',
+      metric: 'score',
+      category: 'match',
+      hot: true,
+      keywords: 'tongsexiaochu,samegame,xiaomiexingxing,popstar,xingxing',
+      goal: '点击 2 个及以上相连同色星星消除，达到目标分数即可过关！',
+      controls: '移动光标预览得分，点击相连同色块执行消除；支持撤销与多关卡挑战。',
+      rules: '一次消除的同色星星越多得分呈指数暴击；消除后上方方块受重力下落，空列自动向左靠拢；剩余越少获得巨额清盘奖励。',
+      tips: '优先消除零碎杂色，尽可能将同一颜色聚集在一块进行超大型“核爆消除”！'
+    },
+    {
+      id: 'stack',
+      name: '叠塔',
+      emoji: '🧱',
+      tagline: '节奏切削 · 步步登天',
+      grad: 'linear-gradient(135deg,#FBBF24,#EA580C)',
+      metric: 'score',
+      category: 'physics',
+      hot: true,
+      keywords: 'dieta,stack,towerblocks,fangkuai,jiezou',
+      goal: '抓准时机放置滑动方块，切削悬空多余部分，将摩天高塔叠至极限！',
+      controls: '点击屏幕或按空格键放置方块；支持重新开局与记录历史最高层数。',
+      rules: '超出下层底座的部分会被锋利削落，方块体积逐渐变小；完全脱靶则塔楼倒塌游戏结束。',
+      tips: '连续达成 PERFECT 完美对齐不仅会触发升调和弦，更能让方块面积重新向外扩张！'
+    },
+    {
+      id: 'gold-miner',
+      name: '黄金矿工',
+      emoji: '⛏️',
+      tagline: '摆动抓钩 · 淘金挖宝',
+      grad: 'linear-gradient(135deg,#FBBF24,#EA580C)',
+      metric: 'score',
+      category: 'physics',
+      hot: true,
+      keywords: 'huangjinkuangong,goldminer,kuanggong,wa kuang,taojin',
+      goal: '操控矿工摆动钩爪，抓取地下金块、璀璨钻石与神秘福袋达成关卡资金指标！',
+      controls: '点击屏幕或按 ↓ / 空格键发射钩爪；拉起重石头时可按 ↑ 或点 🧨 炸掉。',
+      rules: '不同矿物重量不同拉升速度各异；限时 60 秒内赚取足够资金即可晋级下一关。',
+      tips: '瞄准小而轻的黄金与钻石能够快速拉回赚大钱，避开耗时沉重且低价的大大石头！'
+    },
+    {
+      id: 'pipe-mania',
+      name: '接水管',
+      emoji: '🚰',
+      tagline: '巧妙旋转 · 引水通渠',
+      grad: 'linear-gradient(135deg,#A78BFA,#7C3AED)',
+      metric: 'score',
+      category: 'puzzle',
+      hot: true,
+      keywords: 'jieshuiguan,pipemania,pipetubes,shuiguan,tongqu',
+      goal: '旋转各个管道管件使水源与终点出水口闭合连通，在倒计时结束前引水通渠！',
+      controls: '点击管件顺时针旋转90度；准备就绪可点击“🌊 立即通水”提前放水。',
+      rules: '倒计时归零后水流自动从源头注入；若水流遇到断头或错开管口则喷溅泄漏判定挑战失败。',
+      tips: '优先从入水口与出水口向中间逆向推导，提前规划好主干道走向！'
+    },
+    {
+      id: 'wordle',
+      name: '猜词',
+      emoji: '🟩',
+      tagline: '六步猜谜 · 词汇风暴',
+      grad: 'linear-gradient(135deg,#A78BFA,#7C3AED)',
+      metric: 'score',
+      category: 'puzzle',
+      hot: true,
+      keywords: 'caici,wordle,dancicaimi,yingyu,puzzle',
+      goal: '在 6 次机会内猜中隐藏的 5 个字母标准英语单词！',
+      controls: '使用虚拟键盘或实体键盘输入 5 字母后按回车提交；支持清空与战绩查看。',
+      rules: '绿色代表字母与位置均正确；黄色代表字母包含在单词中但位置错误；灰色代表单词中不含该字母。',
+      tips: '首个单词尽量选用元音丰富的高频词（如 CRANE、AUDIO），迅速缩小猜测范围！'
+    },
+    {
+      id: 'color-sort',
+      name: '色块排序',
+      emoji: '🧪',
+      tagline: '试管分色 · 纯化分类',
+      grad: 'linear-gradient(135deg,#A78BFA,#7C3AED)',
+      metric: 'score',
+      category: 'puzzle',
+      hot: true,
+      keywords: 'sekuanpaixu,colorsort,watersort,shiguan,fenlei',
+      goal: '倾倒试管中的彩色液体，将相同颜色的液体全部归类到同一根试管中！',
+      controls: '点击试管选中，再次点击目标试管倒入；支持悔棋、重置与增加额外空试管。',
+      rules: '只能将液体倒入有空位的试管，且目标试管顶部液体颜色必须与当前液体一致（空试管可倒入任意颜色）。',
+      tips: '优先腾出一根完全空白的备用试管作为中转缓冲，步步倒推理清次序！'
+    },
+    {
+      id: 'memory-match',
+      name: '记忆翻牌',
+      emoji: '🃏',
+      tagline: '脑力激荡 · 记忆配对',
+      grad: 'linear-gradient(135deg,#A78BFA,#7C3AED)',
+      metric: 'time',
+      category: 'puzzle',
+      hot: true,
+      keywords: 'jiyifanpai,memorymatch,fanpai,peidui,naoli',
+      goal: '翻开卡片找出两两相同的萌宠图标，以最少步数和最短时间完成全盘配对！',
+      controls: '点击卡片翻转；支持 4×4、6×4 与 6×6 三阶难度选择。',
+      rules: '每次翻开两张卡片，图案相同则保持展示并加分，不同则短暂展示后翻转回背面。',
+      tips: '记住未配对卡片的位置，连续成功配对能极大缩短用时！'
+    },
+    {
+      id: 'maze',
+      name: '走迷宫',
+      emoji: '🌀',
+      tagline: '曲折回环 · 步步寻路',
+      grad: 'linear-gradient(135deg,#A78BFA,#7C3AED)',
+      metric: 'time',
+      category: 'puzzle',
+      hot: true,
+      keywords: 'zoumigong,maze,mazerunner,xunlu,migong',
+      goal: '操控发光光标在错综复杂的程序生成迷宫中探索，穿过迷宫直达终点！',
+      controls: '键盘方向键 / WASD 移动；触屏滑动或点击虚拟方向键；支持开启迷雾模式。',
+      rules: '迷宫由算法动态随机生成，保证 100% 存在唯一正确通路；沿途自动留下足迹光迹。',
+      tips: '善用“右手定则”贴墙探索，开启迷雾模式视野仅剩周围3格，更具探索刺激感！'
+    },
+    {
+      id: 'bejeweled',
+      name: '宝石迷阵',
+      emoji: '💎',
+      tagline: '三消鼻祖 · 璀璨连击',
+      grad: 'linear-gradient(135deg,#4ADE80,#059669)',
+      metric: 'score',
+      category: 'match',
+      hot: true,
+      keywords: 'baoshimizhen,bejeweled,sanxiao,baoshi,match3',
+      goal: '交换相邻宝石形成 3 颗及以上同色宝石连线消除，在步数耗尽前达成目标高分！',
+      controls: '点击两颗相邻宝石互换位置；支持悔棋与重玩。',
+      rules: '互换必须产生至少一组 3 连消除，否则自动弹回；消除后上方宝石重力下落填补并触发连环 Cascade 连锁大奖。',
+      tips: '优先从棋盘底部进行消除，下层变动往往能引发上层壮观的连环自动消除瀑布！'
+    },
+    {
+      id: 'unblock-me',
+      name: '滑块解锁',
+      emoji: '🚗',
+      tagline: '巧挪障碍 · 华容脱困',
+      grad: 'linear-gradient(135deg,#A78BFA,#7C3AED)',
+      metric: 'score',
+      category: 'puzzle',
+      hot: true,
+      keywords: 'huakuaijiesuo,unblockme,huarongdao,chuche,tuoche',
+      goal: '在 6×6 盘面上移动其他横竖木块，清空通道，将红色主车移出右侧出口！',
+      controls: '按住木块顺着其轨道方向拖动滑动；支持悔棋、重置与关卡选择。',
+      rules: '横向木块只能水平左右滑动，纵向木块只能垂直上下滑动；木块之间不能穿透重叠。',
+      tips: '逆向推演：先看堵住出口的关键障碍木块需要腾挪到哪里，再逐层解除外围羁绊！'
+    },
+    {
+      id: 'doodle-jump',
+      name: '跳一跳',
+      emoji: '🦘',
+      tagline: '涂鸦跳跃 · 步步高升',
+      grad: 'linear-gradient(135deg,#22D3EE,#0891B2)',
+      metric: 'score',
+      category: 'arcade',
+      hot: true,
+      keywords: 'tiaoyitiao,doodlejump,tuya,tiaoyue,paoku',
+      goal: '操控小怪兽连续踩踏云端踏板持续攀升，刷新无尽高空纪录！',
+      controls: '键盘方向键 ← → 或 A D 左右移动；触屏按压左右两侧；支持屏幕边缘穿梭。',
+      rules: '踩中普通绿板自动反弹；移动蓝板增加变数；易碎褐板一踩即塌；踩中弹簧触发超级大弹跳；跌出屏幕底端判定失败。',
+      tips: '善用左右穿屏瞬移机制躲避死胡同，看准弹簧平台能助你瞬间连冲百米！'
+    },
+    {
+      id: 'solitaire',
+      name: '纸牌接龙',
+      emoji: '🂠',
+      tagline: '经典克朗代克 · 智取全盘',
+      grad: 'linear-gradient(135deg,#818CF8,#4F46E5)',
+      metric: 'score',
+      category: 'board',
+      hot: true,
+      keywords: 'zhipaijielong,solitaire,klondike,puke,jie long',
+      goal: '遵循红黑交替降序排布牌叠，将全部 52 张扑克牌按花色从 A 到 K 归入右上角目标牌堆！',
+      controls: '点击或拖拽卡牌移动；双击或点击卡牌尝试自动归位；支持悔棋与一键自动收牌。',
+      rules: '牌叠红黑花色交替递减排列；空列只能放入 K；目标堆按同花色从 A 向上累积至 K。',
+      tips: '优先翻开牌面朝下的隐藏牌，保持空列给 K 腾挪，善用自动归位功能省时省力！'
+    },
+    {
+      id: 'fruit-ninja',
+      name: '水果忍者',
+      emoji: '🍉',
+      tagline: '刀光剑影 · 畅爽切割',
+      grad: 'linear-gradient(135deg,#22D3EE,#0891B2)',
+      metric: 'score',
+      category: 'arcade',
+      hot: true,
+      keywords: 'shuiguorenzhe,fruitninja,qieshuiguo,renzhe,kan',
+      goal: '挥动指尖利刃切开抛飞的水果，触发 COMBO 连击冲击最高连斩记录！',
+      controls: '触屏滑动或鼠标按住拖拽挥刀；避开致命炸弹 💣。',
+      rules: '一刀连切 3 个及以上水果触发连击额外加分；漏切水果落地扣减 1 颗心（共 3 条命）；切中炸弹立即游戏结束。',
+      tips: '不要盲目狂划，等待多个水果在抛物线顶点交汇时一刀多切，能斩获惊人连击加分！'
+    },
+    {
+      id: 'monkeytype',
+      name: '打字测速',
+      emoji: '⌨️',
+      tagline: '指尖飞舞 · 极速盲打',
+      grad: 'linear-gradient(135deg,#22D3EE,#0891B2)',
+      metric: 'score',
+      category: 'arcade',
+      hot: true,
+      keywords: 'dazicesu,monkeytype,dazi,sudu,wpm,jianpan',
+      goal: '限时挑战指尖盲打速度，测算每分钟词数 WPM 与输入准确率！',
+      controls: '键盘键入字母；空格键切换下一个单词；Backspace 修正错误；按 Tab 键立即重测。',
+      rules: '绿色显示正确字符，红色下划线标记打错字符；打字期间实时测算纯净 WPM 与整体准确率。',
+      tips: '保持视线注视后方 1 到 2 个单词，保持稳定按键韵律比忽快忽慢更容易突破百字极速！'
+    },
+    {
+      id: 'zuma',
+      name: '祖玛',
+      emoji: '🐸',
+      tagline: '神秘雨林 · 轨道爆珠',
+      grad: 'linear-gradient(135deg,#4ADE80,#059669)',
+      metric: 'score',
+      category: 'match',
+      hot: true,
+      keywords: 'zuma,zumaqiu,paopaolong,baozhu,guidao',
+      goal: '操控中央石蛙射击彩珠，同色 3 连消除，阻断珠链滚入骷髅洞穴！',
+      controls: '移动鼠标/手指瞄准方向，点击发射彩珠；注意观察石蛙口中与背后的下一颗弹药。',
+      rules: '命中珠链插入对应空位；3 颗及以上同色相连消除；空隙两端同色触发磁吸倒流与连环大 Combo。',
+      tips: '优先消灭靠近骷髅洞的先头部队，制造同色夹心空隙可触发自动回吸连击赚大分！'
+    },
+    {
+      id: 'jigsaw',
+      name: '艺术拼图',
+      emoji: '🖼️',
+      tagline: '巧手拼图 · 还原美景',
+      grad: 'linear-gradient(135deg,#A78BFA,#7C3AED)',
+      metric: 'time',
+      category: 'puzzle',
+      hot: true,
+      keywords: 'pintu,jigsaw,jigsawpuzzle,yishu,fengjing',
+      goal: '将待拼碎片拖拽或点选归位到正确的网格槽位中，还原唯美艺术风景！',
+      controls: '点击碎片选中，再点击目标网格槽位放入；支持随时开启“👁️ 原图”对照。',
+      rules: '碎片归入正确槽位自动磁吸锁定；所有碎片归位即可大获全胜。',
+      tips: '优先观察具有明显地平线、太阳或山脊线条的特征边缘碎片，能快速破局！'
+    },
+    {
+      id: 'pinball',
+      name: '街机弹球',
+      emoji: '🎰',
+      tagline: '霓虹弹珠 · 经典击打',
+      grad: 'linear-gradient(135deg,#22D3EE,#0891B2)',
+      metric: 'score',
+      category: 'arcade',
+      hot: true,
+      keywords: 'tanqiu,pinball,danzhu,danzhutai,jijie',
+      goal: '操控底部双挡板反弹银色钢珠，连续撞击霓虹蘑菇头与反弹道刷新最高记录！',
+      controls: '键盘 ← → / A D 或触屏按键翻转挡板；空格/下方向键蓄力发射弹珠。',
+      rules: '撞击蘑菇头反弹得分并触发闪光冲击；每局拥有 3 颗弹珠；弹珠从底端漏出扣减 1 球。',
+      tips: '不要两块挡板同时乱按，看准弹珠下落轨迹单边发力，利用板尖推击可精准打出高速斜冲球！'
+    },
+    {
+      id: 'cookie-clicker',
+      name: '饼干点点乐',
+      emoji: '🍪',
+      tagline: '香脆烘焙 · 挂机躺赢',
+      grad: 'linear-gradient(135deg,#22D3EE,#0891B2)',
+      metric: 'score',
+      category: 'arcade',
+      hot: true,
+      keywords: 'binggandian,cookieclicker,guaji,dianji,hongbei,binggan',
+      goal: '疯狂点击大饼干累积资金，投资老奶奶、农场与烘焙厂开启挂机印钞奇迹！',
+      controls: '点击大饼干获得饼干；在下方商店购买生产设施提升每秒 CPS 产出。',
+      rules: '设施价格随购买数量递增；偶遇金色幸运饼干点击可触发狂暴 7 倍产出或天降横财。',
+      tips: '前期优先买满高性价比的老奶奶与农场，快速跨过资本积累期实现指数级复利增长！'
+    },
+    {
+      id: 'darts',
+      name: '经典飞镖',
+      emoji: '🎯',
+      tagline: '百步穿杨 · 301极智结镖',
+      grad: 'linear-gradient(135deg,#FBBF24,#EA580C)',
+      metric: 'score',
+      category: 'physics',
+      hot: true,
+      keywords: 'feibiao,darts,301,501,hongxin,shejian',
+      goal: '瞄准标准国际飞镖靶盘，精准命中三倍区与红心，以最少镖数将 301 分恰好清零！',
+      controls: '移动光标瞄准，点击或触摸屏幕掷出飞镖；每轮投掷 3 镖。',
+      rules: '双倍红心 50 分，三倍区 20 获 60 分；刚好减至 0 分结镖获胜；超出 0 分判定爆镖并复原该轮分数。',
+      tips: '注意手腕微晃呼吸节奏，提前规划尾声阶段的算分组合，尽量留出双倍区结镖空间！'
+    },
+    {
+      id: 'basketball',
+      name: '街头投篮',
+      emoji: '🏀',
+      tagline: '抛弧入网 · 空心暴击',
+      grad: 'linear-gradient(135deg,#FBBF24,#EA580C)',
+      metric: 'score',
+      category: 'physics',
+      hot: true,
+      keywords: 'toulan,basketball,lanqiu,kongxin,streetball',
+      goal: '拉动篮球控制抛物线与力度，在 60 秒限时内连续空心入网刷新最高分！',
+      controls: '按住篮球向后拉拽或向前滑动投掷；松手发射。',
+      rules: '空心入网得 3 分，擦板或触筐得 2 分；连续命中累加连击倍率并触发空心火炎状态。',
+      tips: '观察虚线抛物线引导轨迹，保持弧线顶点略高于篮板上沿更容易打出空心刷网！'
+    },
+    {
+      id: 'nonogram',
+      name: '数织解谜',
+      emoji: '🎨',
+      tagline: '逻辑涂格 · 破译像素',
+      grad: 'linear-gradient(135deg,#A78BFA,#7C3AED)',
+      metric: 'time',
+      category: 'puzzle',
+      hot: true,
+      keywords: 'shuzhi,nonogram,picross,tuge,xiangsutu,luoji',
+      goal: '根据每行每列的数字线索推理涂黑方格，拼出隐藏的精美像素艺术图！',
+      controls: '点击或拖拽涂黑方块；右键或切换叉号工具标记排他空格。',
+      rules: '数字代表该行/列相连连续黑块的长度，多组数字间至少相隔 1 个空格；填错不会强退，全盘匹配自动通关。',
+      tips: '从线索数值最大或满格的行列切入，结合交叉点正反推导必填格子！'
+    },
+    {
+      id: 'wood-block',
+      name: '木块拼图',
+      emoji: '🪵',
+      tagline: '巧布木块 · 满行爆破',
+      grad: 'linear-gradient(135deg,#A78BFA,#7C3AED)',
+      metric: 'score',
+      category: 'puzzle',
+      hot: true,
+      keywords: 'mukaipintu,woodblock,blockblast,fangkuaibaopo,1010',
+      goal: '将下方托盘中的木块置入 8×8 棋盘，填满完整行或列即可触发爽快爆破消除！',
+      controls: '点击下方木块选中，再点击棋盘目标位置放入；亦可悬停预览落子位置。',
+      rules: '木块不能重叠或出界；填满整行或整列触发连击消除；若当前 3 块木块全部无法放入任何空格则游戏结束。',
+      tips: '尽量保持棋盘中心区域开阔，优先预留出 3×3 大正方形与长条木块的容纳空间！'
+    },
+    {
+      id: 'sheep-match',
+      name: '羊了个羊',
+      emoji: '🐑',
+      tagline: '魔性堆叠 · 极智三消',
+      grad: 'linear-gradient(135deg,#4ADE80,#059669)',
+      metric: 'score',
+      category: 'match',
+      hot: true,
+      keywords: 'yanglegeyang,sheepmatch,duidiesanxiao,yang,xiaoxiao',
+      goal: '层层剥开上方遮挡的方块，在底栏 7 个卡槽内凑齐 3 张相同图案消除！',
+      controls: '点击未被压盖的高亮方块移入底槽；遇到死局善用移回、移出与洗牌道具。',
+      rules: '底栏最多容纳 7 张卡牌，凑齐 3 张自动爆破消除；槽位占满 7 张无消除即刻判定失败。',
+      tips: '观察底层隐藏图案的走向，留心底栏槽位余量，务必保证每放进一张牌都在向三消目标靠拢！'
+    },
+    {
+      id: 'drift-boss',
+      name: '漂移老板',
+      emoji: '🏎️',
+      tagline: '一键漂移 · 极限过弯',
+      grad: 'linear-gradient(135deg,#22D3EE,#0891B2)',
+      metric: 'score',
+      category: 'arcade',
+      hot: true,
+      keywords: 'piaoyilaoban,driftboss,saiche,piaoyi,wuxian',
+      goal: '操控赛车在悬空 Z 字型云端跑道上飞驰，精准微操漂移过弯收集金币！',
+      controls: '按住屏幕/空格键向右漂移；松手自动向左回正。',
+      rules: '跑道悬空无护栏，冲出跑道边缘跌落悬崖即游戏结束；沿途收集金币增加额外得分。',
+      tips: '提前半秒预判入弯时机，切勿死按不放，轻点轻放小幅微调是保持车身在跑道正中的秘诀！'
+    },
+    {
+      id: 'bottle-flip',
+      name: '瓶子翻转',
+      emoji: '🍾',
+      tagline: '蓄力抛掷 · 稳稳站立',
+      grad: 'linear-gradient(135deg,#FBBF24,#EA580C)',
+      metric: 'score',
+      category: 'physics',
+      hot: true,
+      keywords: 'pingzifanzhuan,bottleflip,fanzhuan,shuiping,wuli',
+      goal: '按住屏幕蓄力将水瓶抛向下一个平台，在空中翻转 360 度稳稳立住！',
+      controls: '按住屏幕或空格键蓄力，根据平台距离松开发射。',
+      rules: '瓶底必须平稳竖直落在目标桌台面上方算作成功；角度过大倒伏或落空掉入深渊即游戏结束。',
+      tips: '观察蓄力百分比与两张桌子之间的间距比例，掌握约 0.4 到 0.8 秒的手感节奏！'
+    },
+    {
+      id: 'chinese-chess',
+      name: '中国象棋',
+      emoji: '🏮',
+      tagline: '楚河汉界 · 运筹帷幄',
+      grad: 'linear-gradient(135deg,#818CF8,#4F46E5)',
+      metric: 'score',
+      category: 'board',
+      hot: true,
+      keywords: 'zhongguoxiangqi,xiangqi,chess,qipai,jiangjun',
+      goal: '执红子对弈黑方智能 AI，通过精妙调兵遣将攻破敌方九宫击杀【将】帅！',
+      controls: '点击己方棋子查看绿色可行走落点，点击落点走子或吃子；支持悔棋。',
+      rules: '严格遵循象棋七大兵种走法（马走日蹩马腿、象走田塞象眼、炮翻山隔子打、兵过河横行）；先吃掉敌方将帅者胜。',
+      tips: '开局迅速出车占肋道，马炮协同封锁中路，注意防范飞将照面杀！'
+    },
+    {
+      id: 'chess',
+      name: '国际象棋',
+      emoji: '♟️',
+      tagline: '黑白交错 · 智冠王冠',
+      grad: 'linear-gradient(135deg,#818CF8,#4F46E5)',
+      metric: 'score',
+      category: 'board',
+      hot: true,
+      keywords: 'guojixiangqi,chess,wangguan,heibai,qipai',
+      goal: '执白棋与智能 AI 对弈，灵活调配兵/马/象/车/后各路大军，最终将死（Checkmate）黑方国王！',
+      controls: '点击棋子选中查看圆点可行落点与红圈吃子目标，点击目标方格即可移动；支持悔棋与一键重开。',
+      rules: '兵只前行斜吃、升变；骑士走日字八方越子；主教走斜线；战车走横竖；王后八方通达；国王遇险必须解将。',
+      tips: '开局尽快挺进中心兵控制中心格，及时出动轻子（马、象），注意保护国王安全！'
+    },
+    {
+      id: 'mahjong-solitaire',
+      name: '麻将接龙',
+      emoji: '🀄',
+      tagline: '上海麻将 · 叠层配对',
+      grad: 'linear-gradient(135deg,#A78BFA,#7C3AED)',
+      metric: 'score',
+      category: 'puzzle',
+      hot: true,
+      keywords: 'majiangjielong,mahjong,shanghai,peidui,xiaochu',
+      goal: '层层寻觅未被遮挡的自由麻将牌，两两配对消除，最终清空整座牌山！',
+      controls: '点击左右无阻且上方未被压盖的高亮自由麻将牌进行配对；支持悔棋与提示。',
+      rules: '麻将牌上方无压牌，且左侧或右侧至少有一侧为空时为自由牌；两张花色与数字相同的自由牌可配对消除。',
+      tips: '优先消除层数高、压盖面积大的牌塔中心，保留开阔的边缘牌作为备选缓冲！'
+    },
+    {
+      id: 'mahjong',
+      name: '二人麻将',
+      emoji: '🀐',
+      tagline: '雀神争霸 · 吃碰胡牌',
+      grad: 'linear-gradient(135deg,#818CF8,#4F46E5)',
+      metric: 'score',
+      category: 'board',
+      hot: true,
+      keywords: 'errenmajiang,majiang,duizhan,hupai,peng,gang',
+      goal: '与高智能电脑雀神对决，摸牌打牌、碰牌、凑齐4组顺子/刻子加1对将牌夺得胡牌！',
+      controls: '点击手中麻将或摸牌槽即可打出弃牌；对方打出匹配牌时弹出【胡】【碰】【过】操作按钮。',
+      rules: '经典二人麻将精简字牌与万子，14张手牌达成标准胡牌型即结算得分；支持自摸与点炮荣和。',
+      tips: '多留万子连张易于组顺子，碰牌会减少手牌灵活性，根据牌势决定是保守自摸还是快速进攻！'
+    },
+    {
+      id: 'dou-dizhu',
+      name: '经典斗地主',
+      emoji: '🃏',
+      tagline: '二打一 · 抢地主出牌',
+      grad: 'linear-gradient(135deg,#818CF8,#4F46E5)',
+      metric: 'score',
+      category: 'board',
+      hot: true,
+      keywords: 'doudizhu,puke,dizhu,nongmin,zhadan,wangzha',
+      goal: '叫地主独战两家农民，或两家农民默契配合压制地主，率先出完手牌斩获胜利！',
+      controls: '点击扑克卡牌弹起选中，再次点击取消；点击【出牌】【不出】【提示】参与对决。',
+      rules: '标准斗地主牌型（单张、对子、连对、顺子、三带一/二、飞机、炸弹、王炸）；炸弹与王炸翻倍积分。',
+      tips: '地主需算清外面大牌与断张防范炸弹；农民下家压牌上家走牌，互相协作方能克敌制胜！'
+    },
+    {
+      id: 'san-guo-sha',
+      name: '三国杀简版',
+      emoji: '⚔️',
+      tagline: '英雄对决 · 杀闪决斗',
+      grad: 'linear-gradient(135deg,#818CF8,#4F46E5)',
+      metric: 'score',
+      category: 'board',
+      hot: true,
+      keywords: 'sanguosha,shansha,taoyuan,juedou,nongmin,rebel',
+      goal: '化身汉室主公刘备，运用杀、闪、桃及奇谋锦囊，与反贼曹操展开回合制智勇搏杀！',
+      controls: '点击手牌使用；使用杀进攻，桃回复体力，锦囊打乱敌阵；出牌结束点击【结束出牌】弃牌过回合。',
+      rules: '每回合摸2张牌；【杀】每回合限用1次；手牌上限等于当前体力值；降敌方体力至0即胜。',
+      tips: '逆境时留桃续命，注意保存【闪】防备敌方突袭，在对方手牌短缺时发动【决斗】一击必杀！'
+    },
+    {
+      id: 'uno',
+      name: 'UNO纸牌',
+      emoji: '🌈',
+      tagline: '同色同数 · 变色转顺',
+      grad: 'linear-gradient(135deg,#818CF8,#4F46E5)',
+      metric: 'score',
+      category: 'board',
+      hot: true,
+      keywords: 'uno,unopai,bianse,fanxiang,jinzh,draw4',
+      goal: '四人经典UNO对局，遵循同色或同数规则出牌，合理运用功能牌阻击对手，率先清空手牌！',
+      controls: '点击手中可出卡牌放入弃牌堆；无牌可出点击摸牌堆抽牌；出野生变色牌时自选目标新颜色。',
+      rules: '出牌需匹配桌面顶牌的颜色或数字/符号；禁止牌跳过下家，转向牌逆转出牌顺序，+2/+4惩罚对手摸牌。',
+      tips: '保留变色牌在手牌中作为绝杀保险，在对手手牌只剩1张时毫不犹豫砸出+2或+4打乱其节奏！'
+    },
+    {
+      id: 'geometry-dash',
+      name: '几何冲刺',
+      emoji: '💠',
+      tagline: '极速节奏 · 方块跳跃',
+      grad: 'linear-gradient(135deg,#22D3EE,#0891B2)',
+      metric: 'score',
+      category: 'arcade',
+      hot: true,
+      keywords: 'jihechongci,geometrydash,fangkuaitiaoyue,jiezou,jianci',
+      goal: '跟随动感电子音乐节拍操控霓虹方块，跳跃避开尖刺与险关，冲击 100% 极限通关！',
+      controls: '点击屏幕或按空格键起跳；踩中黄色弹跳踏板触发超高弹射。',
+      rules: '碰触任何尖刺或撞击方块侧面立即碎裂；保持连续跳跃翻滚冲刺到关底终点。',
+      tips: '聆听背景音乐节拍点，提前在节奏鼓点起跳，保持手部按压节奏感！'
+    },
+    {
+      id: 'subway-surfers',
+      name: '地铁跑酷',
+      emoji: '🛹',
+      tagline: '三轨穿梭 · 极速酷跑',
+      grad: 'linear-gradient(135deg,#22D3EE,#0891B2)',
+      metric: 'score',
+      category: 'arcade',
+      hot: true,
+      keywords: 'ditiepaoku,subwaysurfers,paoku,huaban,jinbi',
+      goal: '在穿梭的地铁轨道间左右闪转腾挪，飞跃路障翻滚过桥，收集尽可能多的金币与道具！',
+      controls: '方向键 ← → 变道；↑ 键跳跃；↓ 键翻滚下潜；支持触屏滑动。',
+      rules: '撞击地铁列车或路障导致被抓；收集金币增加分数加成；持续奔跑时速递增。',
+      tips: '在空中时按 ↓ 可快速急坠落地，利用磁铁道具可以无视换道吸取整屏金币！'
+    },
+    {
+      id: 'temple-run',
+      name: '神庙逃亡',
+      emoji: '🗿',
+      tagline: '悬崖断桥 · 绝壁狂飙',
+      grad: 'linear-gradient(135deg,#22D3EE,#0891B2)',
+      metric: 'score',
+      category: 'arcade',
+      hot: true,
+      keywords: 'shenmiaotaowang,templerun,taowang,duanqiao,jiao',
+      goal: '夺取远古神庙黄金神像逃脱恶魔狂猿的追杀，越过深渊裂谷与喷火机关！',
+      controls: '← → 变道与路口急转弯；↑ 跳跃飞跃断桥；↓ 滑铲避开石拱与喷火；支持触屏滑动。',
+      rules: '未及时转弯坠入深谷或撞击障碍即告失败；沿途收集远古金币提升最终战绩。',
+      tips: '看到岔路口警示提前准备转向按键，遇低矮石拱务必提前滑铲防碰撞！'
+    },
+    {
+      id: 'tunnel-rush',
+      name: '隧道冲刺',
+      emoji: '🌀',
+      tagline: '360°旋转 · 穿梭幻境',
+      grad: 'linear-gradient(135deg,#22D3EE,#0891B2)',
+      metric: 'score',
+      category: 'arcade',
+      hot: true,
+      keywords: 'suidaochongci,tunnelrush,xuanzhuan,guangsu,bifang',
+      goal: '在炫彩 3D 圆柱形无限深邃隧道中沿 360° 圆周旋转飞梭，从高速旋转障碍扇形缺口穿过！',
+      controls: '按 ← → 键或触屏拖拽控制飞船沿隧道圆周旋转；避开彩色阻挡扇区。',
+      rules: '撞击任何旋转扇面障碍即刻解体；随着深入冲刺距离速度成倍递增。',
+      tips: '视线聚焦在隧道深处的狭窄空隙提前微调角度，切忌大幅度反复乱晃！'
+    },
+    {
+      id: 'slope',
+      name: '下坡疾驰',
+      emoji: '🟢',
+      tagline: '3D滚球 · 倾斜狂飙',
+      grad: 'linear-gradient(135deg,#22D3EE,#0891B2)',
+      metric: 'score',
+      category: 'arcade',
+      hot: true,
+      keywords: 'xiapojichi,slope,gunqiu,xietipo,hongse',
+      goal: '操控高速滚动的荧光球在悬空的立体倾斜斜坡跑道上疾驰，挑战最远无尽距离！',
+      controls: '按 ← → 键倾斜转向；轻触屏幕两侧微调平衡。',
+      rules: '撞击红色障碍方块或滚出斜坡边缘跌入虚空即游戏结束；时速将随距离飙升。',
+      tips: '始终保持小球处于赛道中轴线附近，过弯道时点按微调避免剧烈打滑甩出赛道！'
+    },
+    {
+      id: 'drive-mad',
+      name: '疯狂驾驶',
+      emoji: '🚙',
+      tagline: '越野爬坡 · 物理平衡',
+      grad: 'linear-gradient(135deg,#FBBF24,#EA580C)',
+      metric: 'score',
+      category: 'physics',
+      hot: true,
+      keywords: 'fengkuangjiashi,drivemad,saiche,papo,pingheng,yueye',
+      goal: '驾驶大脚越野卡车穿越机关重重的险峻障碍跑道，巧妙平衡车身冲过终点方格旗！',
+      controls: '按 → 踩油门前进；按 ← 倒车与刹车；空中按键可调整车身俯仰姿态。',
+      rules: '车身翻覆且车顶触地即宣告翻车损坏；通过坡坎时需精细控制油门大小。',
+      tips: '腾空飞跃时松开油门轻点倒车键拉平车头，让四轮同时平稳接地！'
+    },
+    {
+      id: 'groovy-ski',
+      name: '酷滑滑雪',
+      emoji: '🎿',
+      tagline: '雪道飞驰 · 绕旗回转',
+      grad: 'linear-gradient(135deg,#22D3EE,#0891B2)',
+      metric: 'score',
+      category: 'arcade',
+      hot: true,
+      keywords: 'kuhuahuaxue,groovyski,skifree,huaxue,xueshan',
+      goal: '穿行白雪皑皑的高山雪道，精准穿越红蓝旗门累积连击，飞跃跳台冲刺高分！',
+      controls: '按 ← → 键左右转弯回转；按空格键或 ↑ 键跳跃越过积雪矮石；支持屏幕触控。',
+      rules: '撞击松树或雪人跌倒结束；连续完美穿过双色旗门获得阶梯式 COMBO 翻倍积分。',
+      tips: '利用雪跳板腾空滑翔可以轻松跃过密集障碍群，保持流畅 S 弯节奏！'
+    },
+    {
+      id: 'bad-time',
+      name: '地狱模拟',
+      emoji: '💀',
+      tagline: '决心之魂 · 极限避弹',
+      grad: 'linear-gradient(135deg,#22D3EE,#0891B2)',
+      metric: 'score',
+      category: 'arcade',
+      hot: true,
+      keywords: 'diyumoni,badtime,sans,undertale,danmu,juexin',
+      goal: '操纵微型红色决心之魂在战斗黑匣中闪避暴风骤雨般的骨头阵与激光巨炮轰击！',
+      controls: '使用方向键 ↑ ↓ ← → 全向机动；蓝色骨头穿过时保持静止即可免伤。',
+      rules: '初始 92 点生命值，遭受攻击扣血并提供短暂无敌闪烁；生命值归零决心碎裂。',
+      tips: '观察巨炮红线蓄力预警提前逃离所在行，面对蓝骨切忌慌乱乱按，静立即可毫发无损！'
+    },
+    {
+      id: 'happy-match',
+      name: '开心消消乐',
+      emoji: '🦊',
+      tagline: '萌宠交换 · 顺畅三消',
+      grad: 'linear-gradient(135deg,#4ADE80,#059669)',
+      metric: 'score',
+      category: 'match',
+      hot: true,
+      keywords: 'kaixinxiaoxiaole,happymatch,sanxiao,mengchong,xiaochu',
+      goal: '交换相连动物萌宠凑成 3 连消除，合成 4 连全行爆破与 5 连魔力鸟，达成通关目标！',
+      controls: '点击选中动物，再点击上下左右相邻动物进行交换位置。',
+      rules: '步数耗尽前达到指定目标积分；同色相连 3 个消除；4 连触发整行爆破，5 连触发全消鸟。',
+      tips: '从底部开始消除更容易引发自上而下的自动瀑布连击，创造多重连锁大奖励！'
+    },
+    {
+      id: 'candy-crush',
+      name: '糖果传奇',
+      emoji: '🍭',
+      tagline: '甜蜜消除 · 彩虹爆破',
+      grad: 'linear-gradient(135deg,#4ADE80,#059669)',
+      metric: 'score',
+      category: 'match',
+      hot: true,
+      keywords: 'tangguochuanqi,candycrush,tangguo,tiaowen,caihong',
+      goal: '在糖果王国交换美味糖果，4 连生成条纹糖，5 连合成彩虹巧克力糖，达成美味爆破！',
+      controls: '点击选择糖果，点击相邻格进行滑动交换；将彩虹巧克力糖与任意糖果交换触发全屏大消除。',
+      rules: '限定步数内达到关卡过关分数；条纹糖可消除整行或整列；彩虹糖吸附清除全盘同色糖果。',
+      tips: '尽量积攒彩虹糖与条纹糖相邻放置，交换两颗特殊糖果会触发全屏糖果风暴！'
+    },
+    {
+      id: 'garden-bloom',
+      name: '花园绽放',
+      emoji: '🌺',
+      tagline: '花语连击 · 百花争艳',
+      grad: 'linear-gradient(135deg,#4ADE80,#059669)',
+      metric: 'score',
+      category: 'match',
+      hot: true,
+      keywords: 'huayuanzhanfang,gardenbloom,huaduo,sanxiao,shuidi,mifeng',
+      goal: '在满园芬芳中交换鲜花，利用水滴花九宫泼洒与勤劳蜜蜂全园授粉，绽放繁花盛景！',
+      controls: '点击相邻鲜花交换三消；水滴花触发 3×3 范围盛开，蜜蜂花消除全盘同品鲜花。',
+      rules: '步数限制内达成花园积分目标；连击阶梯提升单次消除所得养分加成。',
+      tips: '优先在花盘中心合成特殊水滴花，能最大范围激活周围花苞产生连环爆破！'
+    },
+    {
+      id: 'collapse',
+      name: '塌方消除',
+      emoji: '🧱',
+      tagline: '同色群消 · 谨防封顶',
+      grad: 'linear-gradient(135deg,#4ADE80,#059669)',
+      metric: 'score',
+      category: 'match',
+      hot: true,
+      keywords: 'tafangxiaochu,collapse,supercollapse,fangkuai,kuaiduo,chuandi',
+      goal: '点击 3 块以上相连同色方块群瞬间塌陷消除，在底部不断推升的新行到达红线前保卫阵地！',
+      controls: '鼠标或轻触直接点击相连色块群进行消除；点击炸弹清除周围 3×3 范围方块。',
+      rules: '必须 3 个及以上相连方块方可消除；方块触顶越过警戒线即刻游戏结束。',
+      tips: '关注倒计时进度条，优先清理堆积较高的危险列，保留低位安全方块等待大群连击！'
+    },
+    {
+      id: 'skydom',
+      name: '天空之城',
+      emoji: '🏰',
+      tagline: '符文破冰 · 云霄远征',
+      grad: 'linear-gradient(135deg,#4ADE80,#059669)',
+      metric: 'score',
+      category: 'match',
+      hot: true,
+      keywords: 'tiankongzhicheng,skydom,yunxiao,bingkuai,pobing,fuwen',
+      goal: '调遣日月星辰天空符文，在冰封格旁三消震碎寒冰，解除天空之城全盘封印！',
+      controls: '点击符文交换位置完成三消；在冰块所在格或相邻格消除即可敲碎冰层。',
+      rules: '步数耗尽前必须将棋盘内所有冰封格彻底粉碎；全部破除即刻判定通关凯旋。',
+      tips: '紧贴冰封区域边缘寻找匹配，切忌在没有冰块的开阔区域浪费宝贵的推演步数！'
+    },
+    {
+      id: 'line-connect',
+      name: '色线连接',
+      emoji: '🌈',
+      tagline: '管道贯通 · 满格铺满',
+      grad: 'linear-gradient(135deg,#A78BFA,#7C3AED)',
+      metric: 'score',
+      category: 'puzzle',
+      hot: true,
+      keywords: 'sexianlianjie,lineconnect,flowfree,guandao,lianxian,puman',
+      goal: '在网格棋盘中绘制彩色管道连通相同颜色的圆点，线路不相交且 100% 铺满每一个格子！',
+      controls: '按住彩色端点拖动绘制管道连至另一端点；绘制新线跨过已有线路会自动截断让路。',
+      rules: '所有颜色必须全部成对连通；所有管道不得交叉；棋盘中不能留有任何空白未涂格子。',
+      tips: '先沿着棋盘四周边框走最外围的长距离颜色，把内部空间留给短距管道更容易实现 100% 满铺！'
+    },
+    {
+      id: '8-ball-pool',
+      name: '桌球八球',
+      emoji: '🎱',
+      tagline: '真实碰撞 · 走位清台',
+      grad: 'linear-gradient(135deg,#FBBF24,#EA580C)',
+      metric: 'score',
+      category: 'physics',
+      hot: true,
+      keywords: 'zhuoqiu,taiqiu,8ball,pool,billiards,baqiu',
+      goal: '操控白球击打全色球与花色球入袋，最终将 8 号黑球稳稳推入袋口清台胜利！',
+      controls: '围绕白球旋转瞄准虚线导向；拉动右侧/下方力度滑块或拖拽球杆出杆击球。',
+      rules: '白球入袋罚分并复位；击打目标球必须入袋；最后才能击入 8 号黑球。',
+      tips: '善用台边库边反弹角！轻击控制白球走位，为下一颗球留下极佳的入射角度。'
+    },
+    {
+      id: 'bowling',
+      name: '保龄球',
+      emoji: '🎳',
+      tagline: '弧线全中 · 完美补中',
+      grad: 'linear-gradient(135deg,#FBBF24,#EA580C)',
+      metric: 'score',
+      category: 'physics',
+      hot: true,
+      keywords: 'baolingqiu,bowling,quanzhong,ping,strike,spare',
+      goal: '在 5 局投掷中击倒全部 10 根球瓶，争取连续打出全中（Strike）与补中（Spare）！',
+      controls: '横向拖动小球调整站位；点击瞄准摆动指针锁定出手角度；蓄力投掷出球。',
+      rules: '每局有两次投球机会；一次击倒 10 瓶为 Strike 获 20 分；两次清空为 Spare 获 15 分。',
+      tips: '不要正冲 1 号瓶正中！瞄准 1 号与 3 号瓶之间的“口袋区”（Pocket）更容易引发多米诺骨牌连环全中！'
+    },
+    {
+      id: 'mini-golf',
+      name: '迷你高尔夫',
+      emoji: '⛳',
+      tagline: '避障推杆 · 一杆进洞',
+      grad: 'linear-gradient(135deg,#FBBF24,#EA580C)',
+      metric: 'score',
+      category: 'physics',
+      hot: true,
+      keywords: 'gaoerfu,minigolf,putt,tuigan,yiganjindong,hole',
+      goal: '在多变坡道、沙坑与风车障碍中推杆，以低于标准杆（Par）的最少杆数打完 4 个洞！',
+      controls: '在小球周围拖拽拉动瞄准线与蓄力虚线，松开推杆击出高尔夫球。',
+      rules: '避开沙坑减速；穿过旋转风车叶片；在规定杆数内将球稳稳推入旗杆球洞。',
+      tips: '反弹墙壁是你的好朋友！利用内墙折射角可以绕过正面的致命障碍直接奔向球洞。'
+    },
+    {
+      id: 'mini-racing',
+      name: '极速赛车',
+      emoji: '🏎️',
+      tagline: '轮胎冒烟 · 漂移过弯',
+      grad: 'linear-gradient(135deg,#FBBF24,#EA580C)',
+      metric: 'score',
+      category: 'physics',
+      hot: true,
+      keywords: 'saiche,miniracing,drift,piaoyi,jisu,guowan,track',
+      goal: '驾驶红色跑车在专业沥青赛道上极速驰骋，完成 3 圈竞速并刷新最快单圈圈速！',
+      controls: '键盘方向键或 WASD 驾驶；触屏使用屏幕虚拟方向键与油门/刹车按钮。',
+      rules: '离开赛道草地会大幅减速；高速急转触发漂移甩尾；必须依次穿过所有检查点。',
+      tips: '入弯前轻点刹车减速紧贴内弯路肩（Apex），出弯时大脚油门加速，走线越平顺成绩越快！'
+    },
+    {
+      id: 'retro-bowl',
+      name: '复古橄榄球',
+      emoji: '🏈',
+      tagline: '精准长传 · 达阵狂欢',
+      grad: 'linear-gradient(135deg,#FBBF24,#EA580C)',
+      metric: 'score',
+      category: 'physics',
+      hot: true,
+      keywords: 'ganlanqiu,retrobowl,touchdown,dazhen,football,nfl',
+      goal: '化身进攻战术四分卫，在 4 次进攻（Downs）内推进 10 码，长传突破直捣达阵区得分！',
+      controls: '从四分卫向后拖拽拉出抛物线瞄准并蓄力，松开传球；接球跑锋点击上下微调变向。',
+      rules: '传球未接住扣减一次进攻机会；4 次进攻未拿下 10 码将交出球权；推进至底线即获 7 分达阵。',
+      tips: '观察防守队员的站位！在外侧接球手甩开防守角卫瞬间送出精准提前量长传！'
+    },
+    {
+      id: 'crossword',
+      name: '经典填字',
+      emoji: '📝',
+      tagline: '横竖交叉 · 词汇破译',
+      grad: 'linear-gradient(135deg,#A78BFA,#7C3AED)',
+      metric: 'score',
+      category: 'puzzle',
+      hot: true,
+      keywords: 'tianzi,crossword,hengshu,cihui,danci,clue',
+      goal: '依据横向与纵向的谜面线索提示，在网格中填入正确的英文单词全部通关！',
+      controls: '点击格子选定方向（双击切换横/纵向）；使用键盘或屏幕虚拟键盘输入字母。',
+      rules: '填入的所有横向与纵向单词必须与线索谜底完全吻合；点击检查可校验全盘。',
+      tips: '先攻克有交叉已定字母的简易词条，利用交叉点字母作为突破口顺藤摸瓜！'
+    },
+    {
+      id: 'idiom-chain',
+      name: '成语接龙',
+      emoji: '📜',
+      tagline: '首尾相衔 · 妙语连珠',
+      grad: 'linear-gradient(135deg,#A78BFA,#7C3AED)',
+      metric: 'score',
+      category: 'puzzle',
+      hot: true,
+      keywords: 'chengyujielong,idiomchain,shici,wenhua,lianji,hanzi',
+      goal: '以上一个成语末尾汉字作为首字，在倒计时结束前接出正确成语，冲击最高连击！',
+      controls: '阅读前一成语释义，从下方候选中点击首字匹配的正确四字成语。',
+      rules: '成语首尾字必须同字；倒计时内未作答或选错将中断连击。',
+      tips: '注意同音字陷阱！必须是字形完全相同的字，连击越高不仅得分倍增还能饱览成语典故！'
+    },
+    {
+      id: 'anagrams',
+      name: '重排拼词',
+      emoji: '🔤',
+      tagline: '字块解构 · 词海淘金',
+      grad: 'linear-gradient(135deg,#A78BFA,#7C3AED)',
+      metric: 'score',
+      category: 'puzzle',
+      hot: true,
+      keywords: 'zhongpaipingci,anagrams,pinyin,danci,letter,scramble',
+      goal: '利用一组打乱顺序的英文字母，重组拼出所有隐藏的有效英文单词！',
+      controls: '点击字母块或键盘敲击组合单词；点击“打乱”换位寻找灵感；点击“提交”验证。',
+      rules: '拼出的单词必须存在于词库中；找出该关卡全部目标单词即可解锁下一关。',
+      tips: '先从最长的全字母基础词入手，然后再拆解出 3 字母和 4 字母的基础高频词！'
+    },
+    {
+      id: 'quordle',
+      name: '四词同猜',
+      emoji: '🧩',
+      tagline: '四盘同弈 · 极智推演',
+      grad: 'linear-gradient(135deg,#A78BFA,#7C3AED)',
+      metric: 'score',
+      category: 'puzzle',
+      hot: true,
+      keywords: 'sicilongcai,quordle,wordle,guess,danci,wuzimu',
+      goal: '在 9 次有限尝试内，同时猜中 4 块棋盘中各自隐藏的 5 字母神秘单词！',
+      controls: '键盘或虚拟键盘输入 5 字母单词，回车确认；四块面板将同时反馈颜色状态。',
+      rules: '绿代表字母位置正确，黄代表包含但位置不对，灰代表不含；9 次内解开全部 4 词获胜。',
+      tips: '前两发优先输入元音字母覆盖率高的高频词（如 ROAST / LINED），快速摸清四大词盘的字母底细！'
+    },
+    {
+      id: 'poetry-fill',
+      name: '诗词填空',
+      emoji: '🎋',
+      tagline: '唐诗宋词 · 墨香点睛',
+      grad: 'linear-gradient(135deg,#A78BFA,#7C3AED)',
+      metric: 'score',
+      category: 'puzzle',
+      hot: true,
+      keywords: 'shicitiankong,poetryfill,tangshi,songci,gushi,wenhua',
+      goal: '品读千古经典名篇，从候选汉字中为残缺诗句点选最贴切的那一抹“诗眼”！',
+      controls: '阅读上联与诗词作者信息，直接点击下方候选字填补缺字空位。',
+      rules: '选对即可欣赏诗篇品析并进入下一首；选错将重置当前空位并扣除思考分。',
+      tips: '注意诗词韵脚与平仄格律！熟悉李白、杜甫、苏轼名作能让你势如破竹轻松登顶！'
+    },
+    {
+      id: 'alphabet-chain',
+      name: '字母接龙',
+      emoji: '🔠',
+      tagline: '首尾相顾 · 词汇风暴',
+      grad: 'linear-gradient(135deg,#A78BFA,#7C3AED)',
+      metric: 'score',
+      category: 'puzzle',
+      hot: true,
+      keywords: 'zimujielong,alphabetchain,shiritori,wordchain,danci,duijue',
+      goal: '以上一词的末尾英文字母作为首字母输入有效单词，与 AI 对手展开脑力耐力对决！',
+      controls: '输入框输入英文单词按回车提交，或直接轻触快捷推荐词胶囊。',
+      rules: '每个词在此局中只能使用一次；限时 15 秒必须作答；单词越长奖励积分越高。',
+      tips: '尽量使用以复杂字母（如 X, Z, Q）结尾的单词来给 AI 设卡，逼迫对方无词可出！'
+    },
+    {
+      id: 'room-escape',
+      name: '密室逃脱',
+      emoji: '🚪',
+      tagline: '机关重重 · 搜证脱困',
+      grad: 'linear-gradient(135deg,#A78BFA,#7C3AED)',
+      metric: 'score',
+      category: 'puzzle',
+      hot: true,
+      keywords: 'mishitaotuo,roomescape,jiguan,mima,souzheng,tuokun',
+      goal: '在昏暗神秘的密室中搜寻隐秘线索，破解暗柜密码与机关锁具，取得门禁磁卡成功逃出！',
+      controls: '轻触/点击画面中的家具物品进行细致调查；点击底部物品栏选中道具后与特定机关交互。',
+      rules: '环环相扣：钟表铜钥匙解开书桌抽屉，日记残页结合抽象油画破译密码箱，最终取得大门门禁。',
+      tips: '仔细阅读调查物品弹出时给出的每一个文字细节与数字线索，切勿放过任何蛛丝马迹！'
+    },
+    {
+      id: 'detective-logic',
+      name: '推理侦探',
+      emoji: '🕵️',
+      tagline: '线索罗网 · 锁定真凶',
+      grad: 'linear-gradient(135deg,#A78BFA,#7C3AED)',
+      metric: 'score',
+      category: 'puzzle',
+      hot: true,
+      keywords: 'tuilizhentan,detectivelogic,luoji,anqing,tuili,posuo',
+      goal: '化身神探福尔摩斯，根据案发现场 5 条互斥手记线索，在逻辑推演表中还原真相并指控真凶！',
+      controls: '点击逻辑表格方块在“空白 / ✖排除 / ✔确认”间切换排查；在底部下达终极逮捕指控。',
+      rules: '嫌疑人、案发房间、随身物品一一对应绝对互斥；根据逻辑推论全部无误方可通过严苛审查结案。',
+      tips: '每当某一交叉行确定“✔”时，该行该列的其他格子必定全部为“✖”，利用交叉互斥快速缩减嫌疑圈！'
+    },
+    {
+      id: 'word-search',
+      name: '单词搜索',
+      emoji: '🔍',
+      tagline: '字符矩阵 · 慧眼识词',
+      grad: 'linear-gradient(135deg,#A78BFA,#7C3AED)',
+      metric: 'score',
+      category: 'puzzle',
+      hot: true,
+      keywords: 'dancisousuo,wordsearch,zifu,chazhao,zimu,juzhen',
+      goal: '在 10×10 错综复杂的英文字母方阵中，顺藤摸瓜找齐全部横向、纵向或对角线隐藏单词！',
+      controls: '鼠标或手指在字母方阵上拖拽拉出直线连线，覆盖目标单词后松开判定。',
+      rules: '单词支持正向与反向排列（如 SPACE 或 ECAPS）；找齐清单中的全部单词即可刷新纪录。',
+      tips: '优先盯紧目标单词的首字母或特征罕见字母（如 Z、X、Q），在方阵中以它们为中心向 8 个方向放射扫描！'
+    },
+    {
+      id: 'lemonade-stand',
+      name: '柠檬水摊',
+      emoji: '🍋',
+      tagline: '市场预测 · 商业致富',
+      grad: 'linear-gradient(135deg,#A78BFA,#7C3AED)',
+      metric: 'score',
+      category: 'puzzle',
+      hot: true,
+      keywords: 'ningmengshuitan,lemonadestand,jingying,shangye,peifang,mrp',
+      goal: '根据每日天气气温预报采购原料、调制独家冰糖比例配方并合理定价，冲击百元财富目标！',
+      controls: '点击进货按钮按需采购柠檬、糖、冰块与杯子；拖动滑块调整配方与单杯售价；点击开业。',
+      rules: '未使用的冰块每天收摊时会完全融化；酷暑天顾客渴望大量冰块，雨天路人稀少需大幅打折促销。',
+      tips: '盯准天气预报！高温酷暑天果断囤积冰块提高单价赚取暴利，阴雨天适度备货保本为上！'
+    },
+    {
+      id: 'farm',
+      name: '农场物语',
+      emoji: '🌾',
+      tagline: '春华秋实 · 耕耘乐土',
+      grad: 'linear-gradient(135deg,#A78BFA,#7C3AED)',
+      metric: 'score',
+      category: 'puzzle',
+      hot: true,
+      keywords: 'nongchang,farm,zhongzhi,shouhuo,huluobo,caomei',
+      goal: '在肥沃的九宫农庄开垦耕作，种植胡萝卜、草莓、玉米与西瓜，收获果实兑换海量金币！',
+      controls: '切换顶部“播种 / 浇水 / 收获”工具栏；点击土地进行农事操作；底部挑选种子。',
+      rules: '浇水可大幅缩短作物成熟时间；收获作物自动变现存入农场金库；高阶作物利润更加丰厚。',
+      tips: '优先种植草莓与西瓜！利用浇水加速周转期，实现金币几何级滚雪球暴增！'
+    },
+    {
+      id: 'diner-dash',
+      name: '餐厅达人',
+      emoji: '🍽️',
+      tagline: '迎宾上菜 · 极速翻台',
+      grad: 'linear-gradient(135deg,#22D3EE,#0891B2)',
+      metric: 'score',
+      category: 'arcade',
+      hot: true,
+      keywords: 'canting,dinerdash,shangcai,chushi,kafei,huanba',
+      goal: '经营人潮涌动的网红餐厅，引导顾客就座、传递点单、端送热腾腾餐品并收银翻台！',
+      controls: '点击排队顾客再点击空桌入座；顾客想好后点击桌子点单；出餐口点备好餐品送至餐桌。',
+      rules: '顾客耐心有限，等候过久会生气流失；限时营业时间内赚足目标流水营业额即可过关。',
+      tips: '保持节奏！送完餐后顺手收取隔壁桌的餐盘小费，一气呵成实现流水线式翻台效率！'
+    },
+    {
+      id: 'simcity-lite',
+      name: '模拟城市',
+      emoji: '🏙️',
+      tagline: '高楼林立 · 规划宏图',
+      grad: 'linear-gradient(135deg,#A78BFA,#7C3AED)',
+      metric: 'score',
+      category: 'puzzle',
+      hot: true,
+      keywords: 'monichengshi,simcity,guihua,daolu,jianzhu,shizheng',
+      goal: '化身智慧市长规划 6×6 城市网格，合理布局住宅、商业、工业与公园绿地，繁荣都市！',
+      controls: '点击底部建筑方案（道路/住宅/商业/工业/公园/电厂），再点击地块进行建造与规划。',
+      rules: '商业与工业带来滚滚税收，但工业会降低居民满意度；布置公园能有效净化环境提升居民幸福度。',
+      tips: '不要将重工业区直接紧挨着住宅区！在住宅与工业之间修建一条道路和带状公园隔离带最科学！'
+    },
+    {
+      id: 'fishing',
+      name: '钓鱼达人',
+      emoji: '🎣',
+      tagline: '微波荡漾 · 挥竿搏巨',
+      grad: 'linear-gradient(135deg,#22D3EE,#0891B2)',
+      metric: 'score',
+      category: 'arcade',
+      hot: true,
+      keywords: 'diaoyu,fishing,paogan,shouxian,jinyu,luyu',
+      goal: '在静谧湖畔挥杆垂钓，捕捉大嘴鲈鱼、七彩虹鳟乃至罕见的传奇金锦鲤王！',
+      controls: '点击“抛竿”浮漂入水；看到“❗ 咬钩啦”瞬间迅速提竿；长按/松开控制收线绿框框住挣扎的大鱼。',
+      rules: '收线时必须让绿色控制框持续覆盖鱼形图标；进度条满 100% 成功捕获，掉至 0% 则断线脱钩。',
+      tips: '鱼儿挣扎变向非常剧烈！利用短促的点按调节浮标惯性，保持微调处于平稳悬停状态！'
+    },
+    {
+      id: 'pet-shop',
+      name: '宠物物语',
+      emoji: '🐾',
+      tagline: '暖心疗愈 · 萌宠乐园',
+      grad: 'linear-gradient(135deg,#A78BFA,#7C3AED)',
+      metric: 'score',
+      category: 'puzzle',
+      hot: true,
+      keywords: 'chongwu,petshop,xiaogou,xiaomao,weishi,lingyang',
+      goal: '照料宠物店里的可爱猫咪、狗狗、兔子与仓鼠，满足进食、洗澡与嬉戏需求，帮它们找到幸福家庭！',
+      controls: '点击选中要照顾的宠物卡片；点击下方“喂食 / 洗澡 / 逗玩”按需补充属性；三维达标后点击送养。',
+      rules: '各属性随时间自然衰减；三项需求全部达到 95% 以上即可开启领养，收获丰厚爱心基金。',
+      tips: '同时照料 4 只小动物，注意巡回轮换补充快要见底的需求条，保证全员开心萌化！'
+    },
+    {
+      id: 'platformer',
+      name: '平台跳跃',
+      emoji: '🏃',
+      tagline: '疾跑二段 · 飞跃险阻',
+      grad: 'linear-gradient(135deg,#22D3EE,#0891B2)',
+      metric: 'score',
+      category: 'arcade',
+      hot: true,
+      keywords: 'pingtaitiaoyue,platformer,erduantiaoyue,jianci,baoshi,chuanhguan',
+      goal: '操控灵巧像素英雄飞跃悬空平台与致命红尖刺，沿途收集闪耀钻石并抵达终点红旗！',
+      controls: '方向键/WASD 或屏幕虚拟键左右跑动；按跳跃键起跳，空中可施展二段跳。',
+      rules: '掉落悬崖或踩中尖刺将立即重置回起点；收集齐关卡所有宝石可达成三星完美通关。',
+      tips: '善用二段跳的时机差！在一段跳达到最高点开始微幅下落的瞬间释放二段跳，可获得最远滞空横移距离！'
+    },
+    {
+      id: 'text-adventure',
+      name: '文字冒险',
+      emoji: '📜',
+      tagline: '抉择分支 · 命运史诗',
+      grad: 'linear-gradient(135deg,#A78BFA,#7C3AED)',
+      metric: 'score',
+      category: 'puzzle',
+      hot: true,
+      keywords: 'wenzimaoxian,textadventure,dianji,juezhe,wangling,tansuozhe',
+      goal: '踏入千年法老王陵，凭借智谋与果敢抉择破解重重死穴机关，谱写你的探险传奇！',
+      controls: '阅读沉浸式故事进展剧情；点击下方分支决策按钮推动情节发展。',
+      rules: '体力值与理智值归零将导致探险失败；每次明智的考古判断都会带来丰厚古金币奖励。',
+      tips: '理性平衡探险收益与风险！面对未知古老禁忌时，兼顾学者洞察与保命撤退策略往往能活得更久！'
+    },
+    {
+      id: 'roguelike',
+      name: '地牢探险',
+      emoji: '🧙‍♂️',
+      tagline: '迷雾地牢 · 步步惊心',
+      grad: 'linear-gradient(135deg,#22D3EE,#0891B2)',
+      metric: 'score',
+      category: 'arcade',
+      hot: true,
+      keywords: 'dilaotanxian,roguelike,zhandou,dilao,mowu,baoxiang',
+      goal: '深入随机生成的黑暗深渊地牢，消灭哥布林与骷髅魔物，搜寻药水宝箱并斩杀三层魔龙！',
+      controls: '方向键/WASD 或虚拟方向十字键移动；直接撞击相邻魔物发起回合制普通攻击。',
+      rules: '你移动一步魔物也移动一步；迷雾中未涉足区域不可见；找到传送石阶进入更深楼层。',
+      tips: '不要同时招惹两只以上的魔物！在狭窄走廊通道中卡位单挑是最安全的克敌制胜秘籍！'
+    },
+    {
+      id: 'geoguessr',
+      name: '地理猜猜',
+      emoji: '🌍',
+      tagline: '环球奇景 · 慧眼识图',
+      grad: 'linear-gradient(135deg,#A78BFA,#7C3AED)',
+      metric: 'score',
+      category: 'puzzle',
+      hot: true,
+      keywords: 'dilicaicai,geoguessr,dili,didian,huanqiu,mingsheng',
+      goal: '根据世界著名地标的建筑特征、历史风貌与文字线索，精准锁定其坐落的地理国家！',
+      controls: '阅读地标特征题卡；从四个候选地理国家与区域中点击选择你的终极答案。',
+      rules: '共进行 5 轮竞猜；答对单轮狂揽 5000 满分；累计冲击 25000 世界地理博学家成就。',
+      tips: '观察地标的建筑材料（大理石、红砖、钢架）与自然地貌植被，结合人类历史常识秒选真解！'
+    },
+    {
+      id: 'rpg-lite',
+      name: '轻量回合战斗',
+      emoji: '⚔️',
+      tagline: '剑与魔法 · 勇斗恶龙',
+      grad: 'linear-gradient(135deg,#22D3EE,#0891B2)',
+      metric: 'score',
+      category: 'arcade',
+      hot: true,
+      keywords: 'qinglianghuihe,rpglite,zhandou,yongzhe,elong,huoqiu,shengguang',
+      goal: '化身救世勇者挑战暗夜魔龙！运筹帷幄调配普通斩击、烈焰火球与圣光愈合击溃强敌！',
+      controls: '在底部战术指令面板选择“普通挥斩 / 烈焰火球 / 圣光愈合 / 举盾防御”。',
+      rules: '施放高阶魔法消耗 MP；举盾防御不仅能抵消大半敌袭伤害，还能凝神静气回复 15 点 MP。',
+      tips: '注意魔龙的蓄力怒吼！当魔龙怒气狂飙时果断选择“举盾防御”化解毁天灭地的龙息暴击！'
+    },
+    {
+      id: 'agar-io',
+      name: '大球吃小球',
+      emoji: '🟢',
+      tagline: '弱肉强食 · 吞噬分裂',
+      grad: 'linear-gradient(135deg,#22D3EE,#0891B2)',
+      metric: 'score',
+      category: 'arcade',
+      hot: true,
+      keywords: 'daqiuchixiaoqiu,agario,tunshi,fenlie,jingji,daren',
+      goal: '在巨型竞技场中吞食能量小光点壮大自身，躲避庞大巨球并捕食弱小球体登顶霸主！',
+      controls: '鼠标或手指在屏幕滑动引导细胞移动方向；按空格键或点击“分裂”弹射捕食。',
+      rules: '体积越大移动速度略微降低；直径大于目标 15% 即可直接吞噬对方；触碰尖刺会强制爆裂。',
+      tips: '善用诱敌深入与闪电分裂！面对中等体积的对手，果断按空格分裂半球瞬间瞬移吞噬！'
+    },
+    {
+      id: 'slither-io',
+      name: '蛇蛇大作战',
+      emoji: '🐍',
+      tagline: '灵活走位 · 围剿爆头',
+      grad: 'linear-gradient(135deg,#22D3EE,#0891B2)',
+      metric: 'score',
+      category: 'arcade',
+      hot: true,
+      keywords: 'sheshedazuozhan,slitherio,shentou,jiasu,tanchi,weijiao',
+      goal: '化身灵动炫彩长蛇在黑暗星空中驰骋，利用蛇身包围拦截其他蛇头，吞噬爆落光芒无限成长！',
+      controls: '鼠标或触摸指引蛇头转向；长按鼠标左键/空格/屏幕加速键消耗少量长度全速冲刺。',
+      rules: '蛇头碰撞任何其他蛇的身体即刻化为光球爆散；只要避开碰撞其他蛇，身体长度无上限。',
+      tips: '超车卡位是制胜不二法门！看准大蛇行进方向大脚加速斜插切断其必经之路，诱使其撞击你的腰身！'
+    },
+    {
+      id: 'paper-io',
+      name: '占地为王',
+      emoji: '👑',
+      tagline: '圈地狂潮 · 截杀命门',
+      grad: 'linear-gradient(135deg,#22D3EE,#0891B2)',
+      metric: 'score',
+      category: 'arcade',
+      hot: true,
+      keywords: 'zhandiweiwang,paperio,quandi,weiji,baotu,kuozhang',
+      goal: '驾驶彩色方块走出领地划定轨迹，回到己方基地瞬间圈占新土地，扩张版图冲击 100% 统治！',
+      controls: '方向键/WASD 或虚拟十字键控制转向；离开基地画出尾迹，闭环返回即完成版图拓印。',
+      rules: '离开领地期间留下的尾迹是致命弱点！一旦被敌人横切尾迹将瞬间出局；切断敌人尾迹可将其消灭。',
+      tips: '贪多嚼不烂！每次外出圈地切忌拉太长的尾迹，小步快跑紧贴边缘蚕食敌方领地最稳健安全！'
+    },
+    {
+      id: 'tangram',
+      name: '七巧板',
+      emoji: '🧩',
+      tagline: '千变万化 · 益智拼图',
+      grad: 'linear-gradient(135deg,#A78BFA,#7C3AED)',
+      metric: 'score',
+      category: 'puzzle',
+      hot: true,
+      keywords: 'qiqiaoban,tangram,pintu,fanchuan,fangwu,tian' + 'e,juxing',
+      goal: '运用 7 块经典几何板件，通过平移与 45° 旋转，完美拼合还原出各式典雅黑白剪影！',
+      controls: '拖动板件至目标区域；选中板件后点击“旋转45°”调整姿态；接近正确槽位自动吸附。',
+      rules: '七块板件必须全部用上；板件之间不得重叠交叉；完整覆盖剪影即告通关。',
+      tips: '先放置两块面积最大的红色与蓝色大直角三角形，定下构型主干，再用中小部件补足细节！'
+    },
+    {
+      id: 'drop-2048',
+      name: '掉落2048',
+      emoji: '🎲',
+      tagline: '下落碰撞 · 连击合成',
+      grad: 'linear-gradient(135deg,#4ADE80,#059669)',
+      metric: 'score',
+      category: 'match',
+      hot: true,
+      keywords: 'diaoluo2048,drop2048,shuzi,lianji,xialuo,tetris',
+      goal: '结合俄罗斯方块下落与 2048 数字合并的魔性爽感，在列顶投放数字块引发连锁聚变突破 2048！',
+      controls: '点击任一列顶部投放当前准备好的数字方块；方块在重力作用下沉底并自动结算碰撞。',
+      rules: '相邻（上下或左右）同数值方块立刻相撞合并翻倍；任一列堆积溢出顶部即告游戏结束。',
+      tips: '尽量让相邻列的数值呈现阶梯递增排列（如 64 紧邻 32，32 紧邻 16），一次掉落可触发连环四重消！'
+    },
+    {
+      id: 'tank-battle',
+      name: '坦克大战',
+      emoji: '🛡️',
+      tagline: '保卫鹰巢 · 装甲对决',
+      grad: 'linear-gradient(135deg,#22D3EE,#0891B2)',
+      metric: 'score',
+      category: 'arcade',
+      hot: true,
+      keywords: 'tank,tanke,dazhan,battle,sheji,laoying,baowei',
+      goal: '操控主力装甲战车，歼灭入侵的敌军装甲集群并全力誓死保卫底部的老鹰基地！',
+      controls: '方向键/WASD 移动战车；空格键/J/开火按钮发射主炮穿甲弹。',
+      rules: '敌方炮火击中老鹰基地或三辆战车全部损毁则判负；歼灭全部波次敌军坦克即获胜利。',
+      tips: '善加利用红砖墙掩体阻挡敌军射击，注意拾取红星升级主炮火力，拾取炸弹可瞬间震碎全图敌军！'
+    },
+    {
+      id: 'bomberman',
+      name: '炸弹人',
+      emoji: '💣',
+      tagline: '十字爆破 · 迷宫破局',
+      grad: 'linear-gradient(135deg,#22D3EE,#0891B2)',
+      metric: 'score',
+      category: 'arcade',
+      hot: true,
+      keywords: 'zhadanren,bomberman,baozha,migong,chaifang',
+      goal: '在经典网格迷宫中灵活走位安放定时炸弹，引爆炸弹炸毁软砖并剿灭所有巡逻游荡的怪物！',
+      controls: '方向键/WASD 穿梭走位；空格键/💣按钮在脚下放置定时爆破炸弹。',
+      rules: '炸弹十字烈焰不仅能歼灭怪物与砖块，也会波及自身；切勿触碰怪物或站在爆炸路线上。',
+      tips: '炸毁软砖后会有几率掉落增加炸弹容量、提升火焰射程以及增强移动速度的强化道具！'
+    },
+    {
+      id: 'plants-defense',
+      name: '植物防线',
+      emoji: '🌻',
+      tagline: '向日葵阳光 · 坚守花园',
+      grad: 'linear-gradient(135deg,#22D3EE,#0891B2)',
+      metric: 'score',
+      category: 'arcade',
+      hot: true,
+      keywords: 'zhiwufangxian,pvz,plants,jiangshi,zombie,xiangrikui,wanhou',
+      goal: '合理规划阳光经济种植防守植物，抵挡多波次来势汹汹的僵尸大军突破庭院！',
+      controls: '点击收集飘落的阳光；点击上方卡片选中植物后点击草坪格子种植；或使用小铲清除植物。',
+      rules: '向日葵持续产出阳光，豌豆射手同排迎敌，坚果墙筑起高厚血盾，樱桃炸弹范围秒杀；底线割草机是最后防线。',
+      tips: '开局务必优先在后排种满至少 2~3 株向日葵储备充裕阳光，再在前排放置坚果阻拦铁桶僵尸！'
+    },
+    {
+      id: 'sky-fighter',
+      name: '雷霆战机',
+      emoji: '🚀',
+      tagline: '星际弹幕 · 旗舰讨伐',
+      grad: 'linear-gradient(135deg,#22D3EE,#0891B2)',
+      metric: 'score',
+      category: 'arcade',
+      hot: true,
+      keywords: 'leitingzhanji,skyfighter,feiji,danmu,raiden,1942,kongzhan',
+      goal: '穿梭于密集的星际敌军弹幕之间，不断收集强化武器火力，最终击溃敌军母舰旗舰！',
+      controls: '鼠标/触控拖拽或 WASD/方向键操控战机；战机自动连射，点击核弹按钮释放全屏清屏冲击波。',
+      rules: '躲避敌机冲撞与各色光弹；击坠敌机掉落 P(升阶火力)、B(补充核弹)、S(防护力场)。',
+      tips: '面对母舰狂暴的旋转螺旋弹幕时，预留一枚核弹可以在千钧一发之际化解死局！'
+    },
+    {
+      id: 'whack-a-mole',
+      name: '疯狂打地鼠',
+      emoji: '🔨',
+      tagline: '金鼠连击 · 极速出锤',
+      grad: 'linear-gradient(135deg,#22D3EE,#0891B2)',
+      metric: 'score',
+      category: 'arcade',
+      hot: true,
+      keywords: 'dadishu,whackamole,dishu,chui,fanxiang,lianji',
+      goal: '在 60 秒限时考验内凭借闪电般的眼力与手速狂砸冒出洞口的地鼠，冲击最高连击得分！',
+      controls: '鼠标点击或手指触碰冒头的地鼠进行锤击。',
+      rules: '普通地鼠 +10 分；黄金地鼠 +30 分；头盔地鼠需要连续锤击 2 次；千万避开红眼炸弹地鼠(-20分且断连)！',
+      tips: '保持不漏锤可以迅速叠加连击倍率，最高可享受 4 倍得分加成，黄金地鼠将带来巨额收益！'
+    },
+    {
+      id: 'slingshot-birds',
+      name: '弹弓破坏',
+      emoji: '🐦',
+      tagline: '抛物轨迹 · 堡垒瓦解',
+      grad: 'linear-gradient(135deg,#FBBF24,#EA580C)',
+      metric: 'score',
+      category: 'physics',
+      hot: true,
+      keywords: 'dangun,angrybirds,xiaoniao,feiniao,baolei,zhu,danpao',
+      goal: '拉拽强力橡皮弹弓，借由重力抛物线将小鸟弹射轰向木石堡垒，全歼所有掩体后的小猪！',
+      controls: '按住小鸟向后拖拽拉开弹弓调整仰角与力度，松手发射；飞行途中点击可触发黄鸟加速或炸弹鸟引爆。',
+      rules: '小鸟数量有限，摧毁障碍与撞击小猪均可获得积分；在弹药耗尽前消灭全部小猪即可破关。',
+      tips: '优先瞄准堡垒底部的承重木柱！动量破坏会导致上方整座砖石塔楼连环坍塌，将小猪彻底碾压！'
+    },
+    {
+      id: 'cut-the-rope',
+      name: '割绳子',
+      emoji: '🍬',
+      tagline: '指尖划割 · 投喂萌宠',
+      grad: 'linear-gradient(135deg,#FBBF24,#EA580C)',
+      metric: 'score',
+      category: 'physics',
+      hot: true,
+      keywords: 'geshengzi,cuttherope,tangguo,shengzi,omnom,qipao',
+      goal: '精准划断悬挂绳索，利用重力摆动与浮空泡泡收集三星并安全落入绿色小怪兽口中！',
+      controls: '鼠标或手指划过绳索切断；点击悬浮气泡可戳破泡泡让糖果恢复下坠。',
+      rules: '切断绳索使糖果摆动穿过星星；糖果若跌出屏幕外则判负；小怪兽吞下糖果即获胜利。',
+      tips: '观察多根绳索的张力与摆动节奏，在单侧摆动至最高峰点时果断切绳，可产生超长滑翔抛物线！'
+    },
+    {
+      id: 'bridge-builder',
+      name: '造桥大师',
+      emoji: '🌉',
+      tagline: '桁架承重 · 科学通车',
+      grad: 'linear-gradient(135deg,#FBBF24,#EA580C)',
+      metric: 'score',
+      category: 'physics',
+      hot: true,
+      keywords: 'zaoqiao,polybridge,bridge,hengjia,luduan,gongcheng,yingli',
+      goal: '在两侧悬崖间利用有限的工程预算搭建坚固桥梁，并经受载重卡车驶过时的应力考验！',
+      controls: '选择路面或木桁架工具，从锚点节点拖拽连线成梁；点击“开始测试”让卡车通车检验。',
+      rules: '路面供车辆行进，木桁架提供三角抗拉承重；任何构件应力超过极限会断裂坍塌；小车抵达右岸即通关。',
+      tips: '三角形是工程学上最稳固的几何构型！在路面下方或上方构建密集的三角形桁架网格能大幅分散车重压力！'
+    },
+    {
+      id: 'draw-save',
+      name: '画线保卫',
+      emoji: '🐶',
+      tagline: '一笔护犬 · 抵御蜂群',
+      grad: 'linear-gradient(135deg,#FBBF24,#EA580C)',
+      metric: 'level',
+      category: 'physics',
+      hot: true,
+      keywords: 'huaxian,baowei,jiujiugougou,doge,fengqun,mifeng,hushield',
+      goal: '在规定墨水限制内一笔画出物理防护盾牌，在暴躁蜂群的猛烈撞击下守护可怜小狗 8 秒钟！',
+      controls: '鼠标或手指一笔勾勒连续防护线条；松手后线条变为刚体受重力影响并立刻引爆蜂巢。',
+      rules: '线条必须阻挡蜜蜂钻入并防止小狗跌入尖刺陷阱；坚持 8 秒未被蛰中即告卫冕成功。',
+      tips: '尽量画一个带弯钩或帽子形状的闭合弧形，利用地形将小狗稳稳扣在保护罩内，同时勾住平台防止滑落！'
+    },
+    {
+      id: 'hill-climb',
+      name: '登山赛车',
+      emoji: '🏎️',
+      tagline: '陡坡攀爬 · 空中平衡',
+      grad: 'linear-gradient(135deg,#FBBF24,#EA580C)',
+      metric: 'score',
+      category: 'physics',
+      hot: true,
+      keywords: 'dengshan,saiche,hillclimb,racing,yueye,youxiang,cefan',
+      goal: '操控越野赛车在起伏险峻的山坡丘陵间飞驰狂飙，收集金币与油桶刷新极限远行纪录！',
+      controls: 'D键/右箭头/加速踏板提供动力；A键/左箭头/刹车踏板减速，滞空时两键可微调车身俯仰姿态。',
+      rules: '燃油耗尽熄火或车身侧翻导致驾驶员头部磕碰地面均会判负；沿途拾取红色油桶可回满油箱。',
+      tips: '飞跃山峰滞空时切忌盲目油门到底，合理配合刹车让赛车底盘平行贴合下坡斜面着陆，可大幅减少缓冲失速！'
+    },
+    {
+      id: 'one-stroke',
+      name: '一笔画',
+      emoji: '✏️',
+      tagline: '欧拉通路 · 一气呵成',
+      grad: 'linear-gradient(135deg,#A78BFA,#7C3AED)',
+      metric: 'level',
+      category: 'puzzle',
+      hot: true,
+      keywords: 'yibihua,onestroke,euler,xian,lianxian,tuxing,jiegou',
+      goal: '寻找经典几何图论中的欧拉路径，不抬起画笔且不重复遍历任何一条线，一笔连通全图！',
+      controls: '点击任意发光顶点起步，沿相连的未走过线条依次连接下一个顶点；支持一步撤销。',
+      rules: '每条线段必须且仅能走过一次；点可以重复经过；所有线段全部点亮即告大获全胜。',
+      tips: '根据欧拉定理，寻找度数为奇数（连接奇数条边）的顶点作为起点，是攻克复杂几何一笔画的万能钥匙！'
+    },
+    {
+      id: 'spot-differences',
+      name: '两图找茬',
+      emoji: '🔍',
+      tagline: '明察秋毫 · 火眼金睛',
+      grad: 'linear-gradient(135deg,#A78BFA,#7C3AED)',
+      metric: 'level',
+      category: 'puzzle',
+      hot: true,
+      keywords: 'zhaocha,spotdifferences,liangtuzhaocha,yanli,guancha,chayi',
+      goal: '在两幅精美对称的主题场景间仔细辨析，找出隐藏在微小细节中的全部 5 处不同！',
+      controls: '点击任一画幅中存在差异的区域进行标记圈出；右上角提供有限次灵感提示道具。',
+      rules: '每关限时 60 秒内找齐全部 5 处差异；点击错误空白区域会受到扣除 5 秒的时间惩罚。',
+      tips: '建议采取“分区扫描法”，先对比天空、太阳、云层，再排查房屋主体与门窗细节，最后细看地面花草！'
+    },
+    {
+      id: 'color-switch',
+      name: '色彩跳跃',
+      emoji: '🎨',
+      tagline: '同色穿越 · 极速变幻',
+      grad: 'linear-gradient(135deg,#22D3EE,#0891B2)',
+      metric: 'score',
+      category: 'arcade',
+      hot: true,
+      keywords: 'colorswitch,secaitiaoyue,tiaoyue,yanse,tongse,xuanzhuan,yuanhuan',
+      goal: '节奏点击弹跳彩色小球，仅能穿过旋转障碍物中与小球当前颜色完全一致的切片！',
+      controls: '点击屏幕或按空格键给予小球向上的跳跃冲力；不点击小球受重力自然下落。',
+      rules: '触碰与自身颜色不相符的任何障碍部件会瞬间粉碎判负；穿过中心拾取星星计分，触碰变色球变换身色。',
+      tips: '在障碍物下方通过轻巧连贯的微点保持浮空节奏，耐心等待目标颜色转动到底部入口时再果断冲刺！'
+    },
+    {
+      id: 'dancing-line',
+      name: '跳舞的线',
+      emoji: '🎵',
+      tagline: '旋律指引 · 直角漂移',
+      grad: 'linear-gradient(135deg,#22D3EE,#0891B2)',
+      metric: 'score',
+      category: 'arcade',
+      hot: true,
+      keywords: 'dancingline,tiaowudexian,yinyue,jiezou,zhijiao,paoku,yanzou',
+      goal: '倾听动感音乐的节奏律动，在蜿蜒曲折的浮空道路上凭借极限反应 90° 变向舞动冲刺！',
+      controls: '在每一个弯道交界处点击屏幕触发 90 度变向；收集沿途珍贵的蓝宝石。',
+      rules: '变向时机稍有偏颇便会脱离道路坠落万丈深渊；全神贯注坚持到 100% 抵达终点拱门。',
+      tips: '闭上眼睛让听觉成为你的第一感官！道路的每一次直角转弯都完美契合背景旋律重音，听准节拍即可闭眼通关！'
+    },
+    {
+      id: 'tower-defense',
+      name: '极简塔防',
+      emoji: '🏰',
+      tagline: '炮台矩阵 · 水晶守护',
+      grad: 'linear-gradient(135deg,#22D3EE,#0891B2)',
+      metric: 'score',
+      category: 'arcade',
+      hot: true,
+      keywords: 'tafang,towerdefense,paotai,jianshe,shuijing,mowu,boci',
+      goal: '沿魔物进军路线策略布置机枪塔、加农炮与冰霜塔，竭尽全力守护后方的生命水晶！',
+      controls: '点击顶部防御塔卡片后点击草坪空白格子布置；击杀魔物获得金币升级或建造新塔。',
+      rules: '机枪塔单体速射，加农炮范围轰炸，冰霜塔强力减速；魔物突破至终点会扣除水晶生命。',
+      tips: '在蜿蜒大转弯的内侧核心位置建造冰霜减速塔，能让魔物在密集的加农炮溅射火力圈中承受超长驻留伤害！'
+    },
+    {
+      id: 'chinese-checkers',
+      name: '跳棋',
+      emoji: '⭐',
+      tagline: '六角星阵 · 连环飞跃',
+      grad: 'linear-gradient(135deg,#818CF8,#4F46E5)',
+      metric: 'level',
+      category: 'board',
+      hot: true,
+      keywords: 'tiaoqi,chinesecheckers,qipan,liujiaoxing,lianhuan,tiao,bozhu',
+      goal: '在经典六角星形棋盘上调兵遣将，借由相邻棋子连环跳跃，率先将本方 10 枚棋子全部移入正对面的大本营！',
+      controls: '点击绿色己方棋子查看高亮落点，再点击目标孔位完成单步平移或连环飞跳。',
+      rules: '可单步平移至相邻空孔；亦可跨过任意相邻棋子跳入直线延长线上的对称空孔，并支持无限多连跳。',
+      tips: '在中心主干区域为自己预先搭设“连环跳板桥”！一颗棋子借由预先排布的梯队，一次回合可飞跃半个棋盘！'
+    },
+    {
+      id: 'backgammon',
+      name: '双陆棋',
+      emoji: '🎲',
+      tagline: '古老博弈 · 截击出盘',
+      grad: 'linear-gradient(135deg,#818CF8,#4F46E5)',
+      metric: 'level',
+      category: 'board',
+      hot: true,
+      keywords: 'shuangluqi,backgammon,touzi,qizi,papan,gudian,qilei',
+      goal: '投掷双骰驾驭 15 枚白棋在 24 个尖峰间顺畅穿行，阻击黑棋孤子并将本方棋子全部移出棋盘！',
+      controls: '点击“掷骰子”生成移动步数；点击白棋后点击目标尖峰移动；掷出双骰可享受 4 次行棋机会。',
+      rules: '不可落在有 2 枚及以上敌棋的封锁尖峰上；击中敌方孤子(Blot)会将其击落至中央横梁；全员归家后方可出盘。',
+      tips: '尽量避免留下单颗孤子暴露在敌棋冲锋射程内，在关键隘口堆叠两颗以上棋子构建坚不可摧的通行路障！'
+    },
+    {
+      id: 'auto-chess',
+      name: '极简自走棋',
+      emoji: '♟️',
+      tagline: '招募升星 · 羁绊对决',
+      grad: 'linear-gradient(135deg,#818CF8,#4F46E5)',
+      metric: 'round',
+      category: 'board',
+      hot: true,
+      keywords: 'zizouqi,autochess,tft,shengxing,jinbi,zhandou,jibanyi',
+      goal: '利用有限的金币在商店中招募战士、法师、射手与刺客，凑齐三合一升星并全自动迎战各路敌军！',
+      controls: '点击商店购买英雄或花 $2 刷新卡池；点击备战席英雄放置到棋盘后排或前排；点击“开始战斗”交锋。',
+      rules: '三名同种 1 星英雄自动合成属性翻倍的 2 星神将；英雄战斗时积攒法力值，满能量释放毁天灭地的大招。',
+      tips: '前排放置高血量重装战士吸收仇恨，后排部署法师与射手打出爆发伤害，刺客直切敌军后排核心脆皮！'
+    },
+    {
+      id: 'dominoes',
+      name: '多米诺骨牌',
+      emoji: '🀄',
+      tagline: '接龙接尾 · 骨牌对决',
+      grad: 'linear-gradient(135deg,#818CF8,#4F46E5)',
+      metric: 'score',
+      category: 'board',
+      hot: true,
+      keywords: 'duominuo,dominoes,gupai,dianzhi,jielong,bone,duijue',
+      goal: '在桌面上轮流打出首尾点数相配的骨牌构建贪吃蛇龙阵，争先清空手牌赢得点数积分！',
+      controls: '点击下方高亮的可出骨牌直接打出；无牌可出时点击左下角摸牌堆补充手牌。',
+      rules: '打出的骨牌必须有一端的点数与棋盘左右两端之一的开放点数相吻合；先出完者胜，或牌局锁死时点数小者胜。',
+      tips: '注意观察对手频繁无法出牌而摸牌的点数类型！多保留两端点数不同的万能牌，掌控牌局的主导节奏！'
+    },
+    {
+      id: 'knife-hit',
+      name: '飞刀打靶',
+      emoji: '🗡️',
+      tagline: '凌厉出刃 · 碎裂原木',
+      grad: 'linear-gradient(135deg,#22D3EE,#0891B2)',
+      metric: 'score',
+      category: 'arcade',
+      hot: true,
+      keywords: 'feidao,knifehit,daba,yuanmu,qiepingguo,feidaodaba,shoufa',
+      goal: '看准旋转原木的空隙节奏掷出飞刀，切碎苹果并粉碎目标，同时绝不碰撞任何已插入的刀刃！',
+      controls: '点击屏幕或按空格键发射飞刀；飞刀垂直向上刺入旋转木盘。',
+      rules: '触碰已有刀刃会导致飞刀崩裂弹飞而战败；将本关配备的所有飞刀全数插入木盘即可震碎木靶过关。',
+      tips: '面对加速或忽停忽转的 BOSS 旋转轮盘时，保持呼吸平稳，选择宽阔的空白扇区连发 2~3 刀快速建立优势！'
+    },
+    {
+      id: 'chords',
+      name: '和弦风暴',
+      emoji: '🎹',
+      original: true,
+      tagline: '自研 · 4轨节拍和弦音律',
+      grad: 'linear-gradient(135deg,#06B6D4,#3B82F6)',
+      metric: 'score',
+      badge: '自研原创',
+      category: 'arcade',
+      hot: true,
+      keywords: 'hexian,chords,hexianfengbao,yinle,jiezou,rhythm,4gui',
+      goal: '根据旋律节拍敲击 4 轨道音符，触发 Web Audio 纯合成和弦共鸣，冲击 SSS 超绝演奏评级！',
+      controls: 'D / F / J / K 或 ← / ↓ / ↑ / →；移动端/鼠标轻触底部发光琴键。',
+      rules: '音符落至判定光线时敲击，±50ms 判定 Perfect（+100分），连续敲击累计连击倍率并触发绚丽和弦粒子！',
+      tips: '保持指尖节奏感，观察下落节拍的光晕预兆，在双押与长音来临时双手并用连击不断！'
+    },
+    {
+      id: 'buffer',
+      name: '子弹缓冲',
+      emoji: '⏱️',
+      original: true,
+      tagline: '自研 · 子弹时间擦弹生存',
+      grad: 'linear-gradient(135deg,#22D3EE,#0891B2)',
+      metric: 'score',
+      badge: '自研原创',
+      category: 'arcade',
+      hot: true,
+      keywords: 'huancun,buffer,zidanhuancun,bullettime,cadan,jiguang,time',
+      goal: '在密不透风的旋转激光与弹幕雨中穿梭，开启子弹时间擦弹疾行，挑战生存极限！',
+      controls: 'WASD / 方向键控制飞行；按住 Shift 或 空格 激活时间缓冲；支持虚拟摇杆与触控。',
+      rules: '开启时间缓冲后周围流速减缓 80% 并伴随色差光效，擦弹近距离划过激光可高速补充缓冲能量！',
+      tips: '别在空旷处浪费缓冲能量，贴紧飞速旋转的激光十字架做微距擦弹，不仅充能极快还能爆出超高擦弹分！'
+    },
+    {
+      id: 'elements',
+      name: '元素炼金塔',
+      emoji: '🔥',
+      original: true,
+      tagline: '自研 · 四象元素切换平台跳跃',
+      grad: 'linear-gradient(135deg,#F59E0B,#EF4444)',
+      metric: 'score',
+      badge: '自研原创',
+      category: 'arcade',
+      hot: true,
+      keywords: 'yuansu,elements,yuansulianjinta,huo,shui,feng,tu,qiehuan',
+      goal: '登顶元素之塔，任意在火、水、风、地四大形态间瞬移切换，破解对应的自然法则障碍！',
+      controls: 'A/D 移动，W/空格 跳跃；数字键 1/2/3/4 或点击底部元素球即时切换火/水/风/地。',
+      rules: '🔥火焰形态可烧毁荆棘；💧流水形态可穿越瀑布与激流；🌪️狂风形态可二段跳并滑翔；🌿厚土形态可踏破崩裂石砖！',
+      tips: '面对复合机关组合，在跳跃滞空瞬间切换成风滑翔，落地前秒切厚土下砸震碎挡路石阵！'
+    },
+    {
+      id: 'folds',
+      name: '空间折纸',
+      emoji: '📐',
+      original: true,
+      tagline: '自研 · 空间折叠立体几何解谜',
+      grad: 'linear-gradient(135deg,#A78BFA,#7C3AED)',
+      metric: 'score',
+      badge: '自研原创',
+      category: 'puzzle',
+      hot: true,
+      keywords: 'zhedie,folds,kongjianzhedie,origami,zhedang,jihe,jiemi',
+      goal: '通过对折现实空间将遥不可及的断崖缝合，带领折纸使者穿梭于折叠层间拾取光之折纸！',
+      controls: 'A/D 或 ←/→ 移动，W/空格 跳跃；按 F 键或折叠按钮执行空间对折。',
+      rules: '空间对折后裂缝闭合，原本悬空的平台将在重叠维度首尾相接，再次展开将回到原本空间。',
+      tips: '在悬崖边按下对折，你会发现另一侧的孤岛瞬间来到脚下，在对折状态下跨过虚空再展开！'
+    },
+    {
+      id: 'slumber',
+      name: '梦境潜行',
+      emoji: '🌙',
+      original: true,
+      tagline: '自研 · 梦境静止视线潜行',
+      grad: 'linear-gradient(135deg,#6366F1,#4F46E5)',
+      metric: 'score',
+      badge: '自研原创',
+      category: 'puzzle',
+      hot: true,
+      keywords: 'chenshui,slumber,mengjingqianxing,qianxing,mengjing,tanzhaodeng',
+      goal: '在穿梭于虚空的梦魇守卫巡逻视线中潜行，化作沉睡星光躲避红外扫描，唤醒所有造梦晶石！',
+      controls: 'WASD / 方向键移动；按住 空格 或 潜睡按钮进入假死沉眠状态。',
+      rules: '梦魇守卫会投射扇形红色探照光束。进入沉睡状态时身体静止并隐匿，巡逻视线将穿透你而不报警！',
+      tips: '潜睡会消耗清醒度，不能无限期假死。观察守卫视线的摆动盲区，快步突进，关键时刻一秒入梦！'
+    },
+    {
+      id: 'broken',
+      name: '断章战刃',
+      emoji: '🗡️',
+      original: true,
+      tagline: '自研 · 兵器崩碎Roguelite割草',
+      grad: 'linear-gradient(135deg,#EF4444,#B91C1C)',
+      metric: 'score',
+      badge: '自研原创',
+      category: 'arcade',
+      hot: true,
+      keywords: 'duanzhang,broken,duanzhangzhanren,bingqi,roguelite,gecao,dajian',
+      goal: '操控战士挥舞大剑、双匕、战锤与长枪斩杀怪物群，耐久耗尽触发断章大爆破！',
+      controls: 'A/D 或 ←/→ 移动，W/空格/↑ 跳跃，J 或 Z 攻击，K 或 X 冲刺。亦可点击虚拟按键。',
+      rules: '每把武器拥有独立攻速与范围；耐久归零时触发全屏震颤【断章爆破】并即时切换新武器，拾取晶石升级！',
+      tips: '把武器耐久耗尽作为核弹级范围清屏手段，被怪物包围时果断砍空耐久引发致命轰鸣！'
+    },
+    {
+      id: 'weave',
+      name: '光棱织网',
+      emoji: '💎',
+      original: true,
+      tagline: '自研 · 激光多棱镜折射矩阵解谜',
+      grad: 'linear-gradient(135deg,#8B5CF6,#6D28D9)',
+      metric: 'score',
+      badge: '自研原创',
+      category: 'puzzle',
+      hot: true,
+      keywords: 'zhiwang,weave,guanglengzhiwang,jiguang,lengjing,zheshe,fangxiang',
+      goal: '旋转与布置矩阵中的反射镜与分光棱镜，引导折射激光束精准点亮所有能量共鸣水晶！',
+      controls: '点击格点上的镜片即可顺时针旋转 90 度调整反射方向；点击发射台点亮激光测试通路。',
+      rules: '激光遭遇平面镜发生 90 度反射，遭遇分光镜将拆分为双路正交光束，激光不可撞击吸光黑曜石！',
+      tips: '从目标水晶逆向倒推光路来源，巧妙利用中央分光棱镜一分为二，用最少旋转步数点亮全盘核心！'
+    },
+    {
+      id: 'echo',
+      name: '声纳迷雾',
+      emoji: '🐬',
+      original: true,
+      tagline: '自研 · 深海声纳盲打回声探索',
+      grad: 'linear-gradient(135deg,#0284C7,#0369A1)',
+      metric: 'score',
+      badge: '自研原创',
+      category: 'arcade',
+      hot: true,
+      keywords: 'huisheng,echo,shengnamiwu,shenhai,shengna,ping,tance,haidi',
+      goal: '在暗无天日的万米深海中驾驶声纳潜艇，发射声波脉冲点亮海底暗礁，找寻失落的亚特兰蒂斯宝藏！',
+      controls: 'WASD / 方向键移动潜艇；按空格键或声波按钮发射声纳 Ping；支持虚拟摇杆。',
+      rules: '深海一片漆黑，声波扩散将以声纳网格短暂显影 3.5 秒周围的岩壁、宝箱与深海巨兽，撞击暗礁会损毁潜艇！',
+      tips: '仔细听回声的立体声音调反馈，低沉回音代表庞大岩壁，清脆回音代表宝藏！合理规划脉冲冷却！'
+    },
+    {
+      id: 'delta',
+      name: '差分特工',
+      emoji: '🔍',
+      original: true,
+      tagline: '自研 · 赛博矩阵微秒差分纠错',
+      grad: 'linear-gradient(135deg,#10B981,#047857)',
+      metric: 'score',
+      badge: '自研原创',
+      category: 'puzzle',
+      hot: true,
+      keywords: 'chafen,delta,chafentegong,saibo,juzhen,jiucuo,zhaobutong',
+      goal: '在快速生成的两组高密安全逻辑芯片矩阵中，以特工级洞察力瞬时揪出被篡改的恶意代码异常位点！',
+      controls: '鼠标直接点击（或手指触控）右侧矩阵中与左侧不一致的异常元件。',
+      rules: '倒计时限制内找出每一轮隐藏的 1~3 处逻辑翻转与故障元件，连击成功可触发时间凝滞加成！',
+      tips: '采用分区扫视法，关注芯片元件的颜色反转、符号镜像与闪烁频率，不要随意盲点以免触发警报扣时！'
+    },
+    {
+      id: 'rewind',
+      name: '时空倒影',
+      emoji: '⏳',
+      original: true,
+      tagline: '自研 · 倒带克隆时间解谜',
+      grad: 'linear-gradient(135deg,#EC4899,#BE185D)',
+      metric: 'score',
+      badge: '自研原创',
+      category: 'puzzle',
+      hot: true,
+      keywords: 'daidai,rewind,shikongdaoying,kelong,daoliu,shikong,jiguan',
+      goal: '操纵时间倒流创建过去时空的残影，本体与残影通力协作压下机关、开启时空重门！',
+      controls: 'A/D 或 ←/→ 移动，W/空格/↑ 跳跃；按 R 键（或回溯按钮）倒流 6 秒时间并生成行动残影。',
+      rules: '按下倒带将回到过去，留下一具忠实重复你先前动作的残影。利用残影踩住压力板，自己冲进大门！',
+      tips: '提前跑去踩下沉重开关 3 秒，然后果断按 R 倒带——残影会替你踩住门禁，趁机直奔终点传送门！'
+    },
+    {
+      id: 'pureroll',
+      name: '滚轮深钻',
+      emoji: '🌀',
+      original: true,
+      tagline: '自研 · 极速钻地与深渊开采',
+      grad: 'linear-gradient(135deg,#F59E0B,#D97706)',
+      metric: 'score',
+      badge: '自研原创',
+      category: 'arcade',
+      hot: true,
+      keywords: 'chungun,pureroll,gunlunshenzuan,gunlun,zuandi,kuangshi,shenzuan',
+      goal: '飞速滚动滚轮驱动高转速钻头潜入地心，开采稀世矿石，避开坚硬岩层与熔岩！',
+      controls: '鼠标滚轮快速向下滚动推进钻机；方向键 A/D 或 ←/→ 左右变轨；点击涡轮过载冲刺。',
+      rules: '开采宝石赚取金币，沿途收集钻机燃料罐与冷却液。燃油耗尽或撞击坚硬黑曜岩将导致钻毁！',
+      tips: '利用地热喷泉加速下潜，连击滚动积攒狂热能量，开启无敌钻岩狂暴状态冲刺深渊！'
+    },
+    {
+      id: 'segment',
+      name: '切词狂潮',
+      emoji: '🗡️',
+      original: true,
+      tagline: '自研 · 水墨书法飞刀切词解压',
+      grad: 'linear-gradient(135deg,#64748B,#334155)',
+      metric: 'score',
+      badge: '自研原创',
+      category: 'arcade',
+      hot: true,
+      keywords: 'fenduan,segment,qiecikuangchao,shuimo,chengyu,qiecai,feidao',
+      goal: '化身墨韵剑客，以刀为笔划破飞腾而至的四字成语与汉字竹简，打出行云流水的笔画连斩！',
+      controls: '滑动鼠标或手指划过屏幕斩切飞行字简，支持划屏连招。',
+      rules: '按成语先后顺序连续斩落同一成语的 4 枚字简可触发【文澜大爆】金芒特效，切到恶性错别字会断连击！',
+      tips: '眼疾手快，不必单字单划，预判两到三个相近字简的抛物线交叉点，一记水墨横扫划出一击多杀！'
+    },
+    {
+      id: 'headlock',
+      name: '深空引力漂',
+      emoji: '🪐',
+      original: true,
+      tagline: '自研 · 星体引力锁死弹射漂移',
+      grad: 'linear-gradient(135deg,#8B5CF6,#4F46E5)',
+      metric: 'score',
+      badge: '自研原创',
+      category: 'arcade',
+      hot: true,
+      keywords: 'shicha,headlock,shenkongyinlipiao,yinli,piaoyi,feichuan,danshe',
+      goal: '驾驶先驱者号飞船在超重力星系中穿梭，向行星发射引力引索借力大回旋加速，冲入跃迁星门！',
+      controls: '按住鼠标左键或空格键锁死引力缆绳进入轨道圆周漂移，松开即刻切线弹射；支持触屏按住。',
+      rules: '缆绳连接时飞船将获得强大的向心加速度，在合适的脱离角度松开即可超光速弹射；撞击行星陨石爆炸！',
+      tips: '长按蓄满离心力让飞船尾焰化为金色粒子，在正对星门的 45 度切线位置果断松脱，完成完美弹射跃迁！'
+    },
+    {
+      id: 'keylayout',
+      name: '键位防线',
+      emoji: '🛡️',
+      original: true,
+      tagline: '自研 · 赛博打字炮塔防守',
+      grad: 'linear-gradient(135deg,#3B82F6,#1D4ED8)',
+      metric: 'score',
+      badge: '自研原创',
+      category: 'arcade',
+      hot: true,
+      keywords: 'jianwei,keylayout,jianweifangxian,dazi,tafang,saibo,jianpan',
+      goal: '在病毒蠕虫突破中央核心防线前敲击对应键位，充能防御矩阵并歼灭入侵群！',
+      controls: '直接在键盘上敲击对应字母；空格释放 EMP 冲击波；移动端点击虚拟键盘或漂浮字符。',
+      rules: '敌人头顶标有攻击字符，击碎敌人累积能量，满能量激活 6 秒狂暴彩虹过载模式！核心生命归零即防线崩溃。',
+      tips: '优先击杀带骷髅的高速突变体，当危机逼近时按空格释放全屏 EMP 清空弹幕！'
+    },
+    {
+      id: 'dual',
+      name: '双子镜像',
+      emoji: '👥',
+      original: true,
+      tagline: '自研 · 左右同步反向镜像解谜',
+      grad: 'linear-gradient(135deg,#F43F5E,#BE123C)',
+      metric: 'score',
+      badge: '自研原创',
+      category: 'puzzle',
+      hot: true,
+      keywords: 'duizhe,dual,shuangzijixiang,jingxiang,fubenkongzhi,tongbu,jiemi',
+      goal: '同时操纵左界太阳与右界月亮两名双子光灵，跨越镜像机关，双双抵达各自的永恒圣坛！',
+      controls: 'WASD 或 方向键移动（左右反向映射，上下同向）；空格跳跃；支持移动端虚拟按键。',
+      rules: '左侧角色往右走时，右侧角色会镜像往左走！两边的地形、尖刺陷阱与门锁机关完全不同且彼此牵制！',
+      tips: '利用单侧墙壁作为“卡位障碍”，让一侧角色顶墙停步，从而调整两人的相对站位与间距！'
+    },
+    {
+      id: 'clash',
+      name: '战舰装配对撞',
+      emoji: '🚀',
+      original: true,
+      tagline: '自研 · 模块化飞船角斗竞技',
+      grad: 'linear-gradient(135deg,#EC4899,#DB2777)',
+      metric: 'score',
+      badge: '自研原创',
+      category: 'arcade',
+      hot: true,
+      keywords: 'duizhuang,clash,zhanjianzhuangpei,feichuan,mokuaihua,zhuangji,juedou',
+      goal: '随心组装电浆重炮、反物质力场盾与撞角喷射推进翼，在封闭角斗场中与敌对战舰狂暴碰撞歼敌！',
+      controls: 'WASD / 方向键驾驶飞船转弯与推进；空格过载极速撞击；J 键开火电浆炮；移动端提供专属触控盘。',
+      rules: '部件碰撞具备真实牛顿刚体物理反弹，重装撞角正面撞击敌舰造成暴击损伤，破盾后撞击核心一击必杀！',
+      tips: '开启反物质护盾抵挡前向弹幕，抓准敌舰转向露出的侧翼薄弱点，开启过载全速冲撞将其撞向场地高压电网！'
+    }
+  ];
+
+  var STORAGE_KEY = 'omnigame:custom_games';
+
+  function isContextValid() {
+    try {
+      return typeof chrome !== 'undefined' &&
+        !!chrome.runtime &&
+        !!chrome.runtime.id &&
+        typeof chrome.runtime.getManifest === 'function' &&
+        !!chrome.runtime.getManifest();
+    } catch (e) {
+      return false;
+    }
+  }
+
+  function getCustomGames() {
+    return new Promise(function (resolve) {
+      if (!isContextValid() || !chrome.storage || !chrome.storage.local) {
+        try {
+          var val = localStorage.getItem(STORAGE_KEY);
+          resolve(val ? JSON.parse(val) : []);
+        } catch (e) {
+          resolve([]);
+        }
+        return;
+      }
+      try {
+        var p = chrome.storage.local.get(STORAGE_KEY, function (res) {
+          if (chrome.runtime && chrome.runtime.lastError) {
+            resolve([]);
+            return;
+          }
+          resolve((res && res[STORAGE_KEY]) || []);
+        });
+        if (p && typeof p.catch === 'function') {
+          p.catch(function () {
+            resolve([]);
+          });
+        }
+      } catch (e) {
+        resolve([]);
+      }
+    }).catch(function () {
+      return [];
+    });
+  }
+
+  function saveCustomGames(list) {
+    return new Promise(function (resolve) {
+      if (!isContextValid() || !chrome.storage || !chrome.storage.local) {
+        try {
+          localStorage.setItem(STORAGE_KEY, JSON.stringify(list));
+        } catch (e) {}
+        resolve(list);
+        return;
+      }
+      try {
+        var obj = {};
+        obj[STORAGE_KEY] = list;
+        var p = chrome.storage.local.set(obj, function () {
+          if (chrome.runtime && chrome.runtime.lastError) {}
+          resolve(list);
+        });
+        if (p && typeof p.catch === 'function') {
+          p.catch(function () {
+            resolve(list);
+          });
+        }
+      } catch (e) {
+        resolve(list);
+      }
+    }).catch(function () {
+      return list;
+    });
+  }
+
+  var CHAR_INITIALS = {
+    '一': 'y', '七': 'q', '三': 's', '上': 's', '下': 'x', '不': 'b', '两': 'l', '个': 'g', '中': 'z', '为': 'w',
+    '主': 'z', '之': 'z', '乐': 'l', '乒': 'p', '乓': 'p', '了': 'l', '二': 'e', '五': 'w', '井': 'j', '亡': 'w',
+    '人': 'r', '传': 'c', '何': 'h', '作': 'z', '你': 'n', '侦': 'z', '俄': 'e', '保': 'b', '像': 'x', '儿': 'e',
+    '克': 'k', '八': 'b', '典': 'd', '冒': 'm', '农': 'n', '冰': 'b', '冲': 'c', '决': 'j', '几': 'j', '刀': 'd',
+    '别': 'b', '刺': 'c', '割': 'g', '力': 'l', '华': 'h', '单': 'd', '博': 'b', '占': 'z', '卡': 'k', '卫': 'w',
+    '厅': 't', '双': 's', '反': 'f', '叠': 'd', '古': 'g', '台': 't', '吃': 'c', '合': 'h', '同': 't', '啪': 'p',
+    '四': 's', '回': 'h', '园': 'y', '国': 'g', '图': 't', '圆': 'y', '地': 'd', '场': 'c', '坏': 'h', '块': 'k',
+    '坡': 'p', '坦': 't', '城': 'c', '塌': 't', '塔': 't', '填': 't', '壶': 'h', '复': 'f', '多': 'd', '大': 'd',
+    '天': 't', '太': 't', '夫': 'f', '头': 't', '奇': 'q', '子': 'z', '字': 'z', '完': 'w', '宝': 'b', '宠': 'c',
+    '室': 's', '宫': 'g', '容': 'r', '密': 'm', '对': 'd', '将': 'j', '小': 'x', '尔': 'e', '山': 's', '峰': 'f',
+    '巅': 'd', '工': 'g', '巧': 'q', '市': 's', '师': 's', '干': 'g', '平': 'p', '序': 'x', '应': 'y', '庙': 'm',
+    '开': 'k', '弈': 'y', '弓': 'g', '弹': 'd', '彩': 'c', '心': 'x', '忆': 'y', '忍': 'r', '恐': 'k', '成': 'c',
+    '战': 'z', '手': 's', '打': 'd', '扫': 's', '找': 'z', '投': 't', '拆': 'c', '拔': 'b', '拟': 'n', '拳': 'q',
+    '拼': 'p', '挑': 't', '掉': 'd', '排': 'p', '探': 't', '接': 'j', '推': 't', '搜': 's', '摇': 'y', '摊': 't',
+    '撞': 'z', '攻': 'g', '放': 'f', '数': 's', '文': 'w', '斗': 'd', '斯': 's', '方': 'f', '暗': 'a', '曲': 'q',
+    '木': 'm', '术': 's', '机': 'j', '杀': 's', '板': 'b', '极': 'j', '果': 'g', '柠': 'n', '格': 'g', '桌': 'z',
+    '桥': 'q', '棋': 'q', '棍': 'g', '植': 'z', '榄': 'l', '模': 'm', '橄': 'g', '檬': 'm', '死': 's', '母': 'm',
+    '比': 'b', '气': 'q', '水': 's', '汉': 'h', '河': 'h', '泡': 'p', '测': 'c', '海': 'h', '消': 'x', '滑': 'h',
+    '漂': 'p', '炸': 'z', '点': 'd', '版': 'b', '牌': 'p', '牢': 'l', '物': 'w', '狂': 'k', '独': 'd', '狱': 'y',
+    '猜': 'c', '王': 'w', '玛': 'm', '球': 'q', '理': 'l', '瓜': 'g', '瓶': 'p', '画': 'h', '疯': 'f', '疾': 'j',
+    '登': 'd', '白': 'b', '的': 'd', '盘': 'p', '看': 'k', '眼': 'y', '石': 's', '矿': 'k', '砖': 'z', '破': 'p',
+    '碰': 'p', '祖': 'z', '神': 's', '移': 'y', '空': 'k', '竞': 'j', '笔': 'b', '简': 'j', '管': 'g', '箱': 'x',
+    '篮': 'l', '米': 'm', '糖': 't', '素': 's', '索': 's', '纸': 'z', '线': 'x', '织': 'z', '经': 'j', '绳': 's',
+    '绽': 'z', '罗': 'l', '羊': 'y', '美': 'm', '翻': 'f', '老': 'l', '者': 'z', '脱': 't', '自': 'z', '舞': 'w',
+    '色': 's', '艺': 'y', '花': 'h', '茬': 'c', '落': 'l', '虹': 'h', '蛇': 's', '蜂': 'f', '蜜': 'm', '街': 'j',
+    '西': 'x', '解': 'j', '记': 'j', '词': 'c', '诗': 's', '语': 'y', '诺': 'n', '谜': 'm', '豆': 'd', '象': 'x',
+    '贪': 't', '赛': 's', '走': 'z', '足': 'z', '跃': 'y', '跑': 'p', '跳': 't', '踩': 'c', '车': 'c', '转': 'z',
+    '轮': 'l', '轻': 'q', '达': 'd', '连': 'l', '迷': 'm', '逃': 't', '速': 's', '造': 'z', '道': 'd', '酷': 'k',
+    '重': 'z', '量': 'l', '金': 'j', '钓': 'd', '铁': 't', '锁': 's', '镖': 'b', '防': 'f', '阵': 'z', '际': 'j',
+    '陆': 'l', '除': 'c', '险': 'x', '隧': 's', '雪': 'x', '雷': 'l', '雾': 'w', '霆': 't', '霓': 'n', '面': 'm',
+    '靶': 'b', '领': 'l', '飞': 'f', '餐': 'c', '饼': 'b', '马': 'm', '驰': 'c', '驶': 's', '驾': 'j', '骨': 'g',
+    '骰': 't', '高': 'g', '鱼': 'y', '鸟': 'n', '麻': 'm', '黄': 'h', '黑': 'h', '鼠': 's', '龄': 'l', '龙': 'l'
+  };
+
+  function getInitials(str) {
+    if (!str) return '';
+    var out = '';
+    for (var i = 0; i < str.length; i++) {
+      var c = str[i];
+      out += CHAR_INITIALS[c] || c.toLowerCase();
+    }
+    return out;
+  }
+
+  var OmniCatalog = {
+    builtin: BUILTIN_GAMES,
+
+    // Returns a Promise resolving to the merged list of games.
+    getAll: function () {
+      return getCustomGames().then(function (custom) {
+        var merged = BUILTIN_GAMES.slice();
+        if (Array.isArray(custom)) {
+          custom.forEach(function (cg) {
+            // Avoid duplicate IDs
+            if (!merged.some(function (g) { return g.id === cg.id; })) {
+              merged.push(cg);
+            }
+          });
+        }
+        return merged;
+      }).catch(function () {
+        return BUILTIN_GAMES.slice();
+      });
+    },
+
+    // Returns a Promise resolving to all single-player / solo games (excluding multiplayer/联机)
+    getSoloGames: function () {
+      return this.getAll().then(function (games) {
+        return (games || []).filter(function (g) {
+          if (!g || !g.id) return false;
+          if (g.badge && /联机/.test(g.badge)) return false;
+          if (g.mode === 'multiplayer' || g.type === 'multiplayer') return false;
+          if (g.id === 'gravitas-4' || g.id === 'tetris-clash' || g.id === 'hack-roulette') return false;
+          return true;
+        });
+      }).catch(function () {
+        return BUILTIN_GAMES.filter(function (g) {
+          return !g.badge || !/联机/.test(g.badge);
+        });
+      });
+    },
+
+    // Add a hot-loaded / remote game without repacking the extension.
+    addGame: function (game) {
+      if (!game || !game.id || !game.name) return Promise.reject(new Error('Invalid game object'));
+      return getCustomGames().then(function (custom) {
+        var idx = custom.findIndex(function (g) { return g.id === game.id; });
+        if (idx >= 0) {
+          custom[idx] = game;
+        } else {
+          custom.push(game);
+        }
+        return saveCustomGames(custom);
+      });
+    },
+
+    // Remove a custom game by id
+    removeGame: function (id) {
+      return getCustomGames().then(function (custom) {
+        var filtered = custom.filter(function (g) { return g.id !== id; });
+        return saveCustomGames(filtered);
+      });
+    },
+
+    // Backwards-compatible initials and smart fuzzy search
+    getInitials: getInitials,
+    matchGame: function (game, query) {
+      if (!game || !game.id) return false;
+      if (!query) return true;
+      var q = query.trim().toLowerCase();
+      if (!q) return true;
+      var parts = q.split(/\s+/).filter(Boolean);
+      var name = (game.name || '').toLowerCase();
+      var inits = getInitials(game.name || '');
+      var tag = (game.tagline || '').toLowerCase();
+      var id = (game.id || '').toLowerCase();
+      var kw = (game.keywords || '').toLowerCase();
+      var badge = (game.badge || '').toLowerCase();
+      var cat = (game.category || '').toLowerCase();
+
+      var isMulti = cat === 'multiplayer' || (badge && badge.indexOf('联机') !== -1);
+      for (var i = 0; i < parts.length; i++) {
+        var p = parts[i];
+        var multiPinyinMatch = isMulti && (p === 'lianji' || p === 'lj' || p === 'pk' || p === 'duizhan' || p === 'shuangren' || p === 'sr');
+        var matched =
+          multiPinyinMatch ||
+          name.indexOf(p) !== -1 ||
+          inits.indexOf(p) !== -1 ||
+          tag.indexOf(p) !== -1 ||
+          id.indexOf(p) !== -1 ||
+          kw.indexOf(p) !== -1 ||
+          badge.indexOf(p) !== -1 ||
+          cat.indexOf(p) !== -1;
+        if (!matched) return false;
+      }
+      return true;
+    },
+
+    // Check if a game is self-developed / original
+    isOriginal: function (game) {
+      if (!game) return false;
+      return !!(
+        game.original === true ||
+        (game.badge && (game.badge.indexOf('自研') !== -1 || game.badge.indexOf('原创') !== -1)) ||
+        (game.tagline && (game.tagline.indexOf('自研') !== -1 || game.tagline.indexOf('原创') !== -1))
+      );
+    },
+
+    // Fetch a remote JSON manifest and merge into custom games
+    syncRemote: function (manifestUrl) {
+      return fetch(manifestUrl)
+        .then(function (res) { return res.json(); })
+        .then(function (games) {
+          if (!Array.isArray(games)) return Promise.reject(new Error('Invalid manifest'));
+          return getCustomGames().then(function (custom) {
+            games.forEach(function (g) {
+              var idx = custom.findIndex(function (c) { return c.id === g.id; });
+              if (idx >= 0) custom[idx] = g;
+              else custom.push(g);
+            });
+            return saveCustomGames(custom);
+          });
+        });
+    }
+  };
+
+  // Backwards compatibility for code synchronously expecting OMNIGAME_GAMES
+  global.OMNIGAME_GAMES = BUILTIN_GAMES;
+  global.OmniCatalog = OmniCatalog;
+})(typeof window !== 'undefined' ? window : this);

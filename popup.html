@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1, viewport-fit=cover"
+    />
+    <title>OmniGame 小游戏合集盒</title>
+    <link rel="stylesheet" href="popup.css" />
+  </head>
+  <body>
+    <div id="app">
+      <header class="topbar">
+        <div class="brand">
+          <span class="brand-logo" aria-hidden="true">🎮</span>
+          <div class="brand-text">
+            <h1>OmniGame</h1>
+            <p>悬浮即玩，随时开局</p>
+          </div>
+        </div>
+        <div class="topbar-actions">
+          <button id="popupMuteBtn" class="topbar-btn" type="button" title="一键静音/解除静音 (摸鱼模式)" aria-label="一键静音">
+            <svg class="topbar-btn-svg" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+              <path d="M8.5 4.5L5 7.5H2.5v5H5l3.5 3V4.5z"/>
+              <path d="M12.5 7a4 4 0 0 1 0 6"/>
+              <path d="M14.5 4.5a7.5 7.5 0 0 1 0 11"/>
+            </svg>
+          </button>
+          <button id="popupRandomBtn" class="topbar-btn topbar-btn-accent" type="button" title="摸鱼盲盒：随机抽一款游戏即玩！">🎲 盲盒</button>
+          <button id="popupSummonBallBtn" class="popup-summon-btn" type="button" title="在网页上召唤/恢复摸鱼悬浮球">🎮 小球</button>
+        </div>
+      </header>
+
+      <!-- Search & Category Filters (144 games) -->
+      <div class="popup-nav-wrap">
+        <div class="popup-search-bar">
+          <span class="popup-search-icon">🔍</span>
+          <input type="search" id="popupSearchInput" class="popup-search-input" placeholder="搜索 160 款游戏 / 拼音 (如 2048、扫雷、wzq)..." autocomplete="off" spellcheck="false" />
+          <button type="button" id="popupSearchClear" class="popup-search-clear" title="清空搜索" hidden>×</button>
+          <span id="popupCountBadge" class="popup-count-badge">160 款</span>
+          <div class="popup-view-switch" role="group" aria-label="视图切换">
+            <button type="button" id="popupViewGridBtn" class="popup-view-btn active" title="网格卡片视图">⊞</button>
+            <button type="button" id="popupViewListBtn" class="popup-view-btn" title="紧凑列表视图">☰</button>
+          </div>
+        </div>
+        <div class="popup-cat-bar" role="tablist">
+          <button class="popup-cat-pill active" data-cat="all" role="tab" aria-selected="true">全部</button>
+          <button class="popup-cat-pill" data-cat="fav" role="tab" aria-selected="false">⭐ 收藏 <span id="popupFavBadge" class="popup-cat-badge">0</span></button>
+          <button class="popup-cat-pill" data-cat="original" role="tab" aria-selected="false">✨ 自研原创 <span id="popupOriginalBadge" class="popup-cat-badge">19</span></button>
+          <button class="popup-cat-pill" data-cat="hot" role="tab" aria-selected="false">🔥 热门精选</button>
+          <button class="popup-cat-pill" data-cat="multiplayer" role="tab" aria-selected="false">⚔️ 双人联机</button>
+          <button class="popup-cat-pill" data-cat="puzzle" role="tab" aria-selected="false">🧩 益智解谜</button>
+          <button class="popup-cat-pill" data-cat="match" role="tab" aria-selected="false">💥 消除连线</button>
+          <button class="popup-cat-pill" data-cat="board" role="tab" aria-selected="false">♟️ 经典棋牌</button>
+          <button class="popup-cat-pill" data-cat="arcade" role="tab" aria-selected="false">🕹️ 街机动作</button>
+          <button class="popup-cat-pill" data-cat="physics" role="tab" aria-selected="false">⚡ 物理敏捷</button>
+        </div>
+      </div>
+
+      <!-- Recently-Played Quick Bar -->
+      <div id="popupRecentBar" class="popup-recent-bar" hidden>
+        <div class="popup-recent-title">
+          <span>🕒</span>
+          <span>最近:</span>
+        </div>
+        <div id="popupRecentList" class="popup-recent-list"></div>
+        <button type="button" id="popupRecentClear" class="popup-recent-clear" title="清空最近记录">×</button>
+      </div>
+
+      <main id="home" class="home">
+        <div id="grid" class="grid" role="list"></div>
+
+        <div id="popupEmpty" class="popup-empty hidden">
+          <div class="popup-empty-emoji">🔍</div>
+          <div class="popup-empty-title">未找到相关游戏</div>
+          <div class="popup-empty-desc">换个关键词试试，或点击下方按钮重置筛选</div>
+          <button type="button" id="popupEmptyReset" class="popup-empty-btn">显示全部游戏</button>
+        </div>
+
+        <footer class="popup-footer">
+          <p class="hint">点击卡片即玩 · ⭐ 收藏 · 全部离线运行</p>
+          <a class="site-banner" href="https://omnigame.top" target="_blank" rel="noopener noreferrer" title="访问 OmniGame 官方网站 (omnigame.top)">
+            <span class="site-icon">🌐</span>
+            <span class="site-title">官方网站：</span>
+            <span class="site-url">omnigame.top</span>
+            <span class="site-arrow">↗</span>
+          </a>
+        </footer>
+      </main>
+
+      <section id="player" class="player hidden">
+        <div class="player-bar">
+          <button id="backBtn" class="player-btn back-btn" title="返回大厅" aria-label="返回">
+            <svg class="player-btn-icon" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+              <path d="M12.5 15l-5-5 5-5"/>
+            </svg>
+            <span class="player-btn-label">返回</span>
+          </button>
+          <div id="playerTitle" class="player-title"></div>
+          <button id="restartBtn" class="player-btn restart-btn" title="重新开始本局游戏" aria-label="重开">
+            <svg class="player-btn-icon" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+              <path d="M3.5 4.5v4.5h4.5"/>
+              <path d="M4.2 12.8a6.5 6.5 0 1 0 1.3-6.6L3.5 9"/>
+            </svg>
+            <span class="player-btn-label">重开</span>
+          </button>
+          <button id="playerFavBtn" class="player-btn fav-btn" title="收藏此游戏" aria-label="收藏">
+            <svg class="player-btn-icon fav-star-icon" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+              <polygon points="10 2.5 12.3 7.3 17.5 8 13.8 11.7 14.6 17 10 14.5 5.4 17 6.2 11.7 2.5 8 7.7 7.3 10 2.5"/>
+            </svg>
+            <span class="player-btn-label">收藏</span>
+          </button>
+          <button id="howBtn" class="player-btn how-btn" title="查看玩法说明" aria-label="查看玩法说明">
+            <svg class="player-btn-icon" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+              <circle cx="10" cy="10" r="7.5"/>
+              <path d="M10 6.5h.01"/>
+              <path d="M9.2 9.5h1.6v4.5h.8"/>
+              <path d="M9.2 14h3.2"/>
+            </svg>
+            <span class="player-btn-label">玩法</span>
+          </button>
+          <button
+            id="tabBtn"
+            class="player-btn tab-btn"
+            title="在新标签打开独立大屏"
+            aria-label="在新标签打开"
+          >
+            <svg class="player-btn-icon" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+              <path d="M12.5 3.5h4v4"/>
+              <path d="M9.5 10.5l7-7"/>
+              <path d="M14.5 11.5v4a1.5 1.5 0 0 1-1.5 1.5h-8A1.5 1.5 0 0 1 3.5 15.5v-8A1.5 1.5 0 0 1 5 6h4"/>
+            </svg>
+            <span class="player-btn-label">大屏</span>
+          </button>
+          <button id="playerMuteBtn" class="player-btn mute-btn" title="一键静音/解除静音" aria-label="一键静音">
+            <svg class="player-btn-icon mute-icon" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+              <path d="M8.5 4.5L5 7.5H2.5v5H5l3.5 3V4.5z"/>
+              <path d="M12.5 7a4 4 0 0 1 0 6"/>
+              <path d="M14.5 4.5a7.5 7.5 0 0 1 0 11"/>
+            </svg>
+          </button>
+        </div>
+        <iframe
+          id="gameFrame"
+          class="game-frame"
+          title="游戏画面"
+          frameborder="0"
+          scrolling="auto"
+          allow="fullscreen; clipboard-write"
+        ></iframe>
+      </section>
+    </div>
+
+    <!-- Random Game (摸鱼盲盒) Lottery Modal -->
+    <div id="popupRandomModal" class="popup-modal-overlay" hidden>
+      <div class="popup-modal-card">
+        <div class="popup-modal-head">
+          <span>🎲 摸鱼盲盒 · 随心开局</span>
+          <button type="button" id="popupRandomClose" class="popup-modal-close" title="关闭">×</button>
+        </div>
+        <div class="popup-random-body">
+          <div id="popupRandomEmoji" class="popup-random-emoji">🎲</div>
+          <div id="popupRandomName" class="popup-random-name">正在摇奖中…</div>
+          <div id="popupRandomTag" class="popup-random-tag">随机挑选一款游戏</div>
+        </div>
+        <div class="popup-modal-actions">
+          <button type="button" id="popupRandomLaunch" class="popup-modal-btn popup-modal-btn-primary">🚀 立即开玩 (<span id="popupRandomCountdown">3</span>s)</button>
+          <button type="button" id="popupRandomReroll" class="popup-modal-btn">🎲 换一个</button>
+        </div>
+      </div>
+    </div>
+
+    <div id="gameHowTooltip" class="omg-tooltip" hidden></div>
+
+    <script src="games/_shared/storage.js"></script>
+    <script src="games/_shared/catalog.js"></script>
+    <script src="popup.js"></script>
+  </body>
+</html>

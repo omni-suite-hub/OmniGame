@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>糖果传奇 (Candy Crush) - OmniGame</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <div class="cc-container">
+    <header class="cc-header">
+      <div class="cc-title-row">
+        <h1 class="cc-title">糖果传奇 <span>Candy Crush</span></h1>
+        <div class="cc-tools">
+          <button id="soundBtn" class="cc-icon-btn" title="声音">🔊</button>
+          <button id="restartBtn" class="cc-btn cc-btn-accent">新对局</button>
+        </div>
+      </div>
+      <div class="cc-status-row">
+        <div class="cc-badge">剩余步数: <span id="movesText">20</span></div>
+        <div class="cc-badge">目标分数: <span id="targetText">2500</span></div>
+        <div class="cc-badge">当前得分: <span id="scoreText">0</span></div>
+      </div>
+    </header>
+
+    <div class="board-wrap">
+      <div class="candy-board" id="board"></div>
+    </div>
+
+    <footer class="cc-footer">
+      <div class="cc-hint">交换糖果三消 · 4连生成【条纹糖】爆整行/列 · 5连合成【彩虹糖】全屏同色清空！</div>
+    </footer>
+  </div>
+
+  <div class="modal-overlay" id="gameOverModal">
+    <div class="modal-card">
+      <div class="modal-emoji" id="modalEmoji">🍭</div>
+      <h2 class="modal-title" id="modalTitle">Sweet! 完美通关！</h2>
+      <p class="modal-desc" id="modalDesc">总积分 3890，美味大丰收！</p>
+      <div class="modal-actions">
+        <button id="modalRestartBtn" class="modal-btn">再吃一盘</button>
+      </div>
+    </div>
+  </div>
+
+  <script src="game.js"></script>
+</body>
+</html>

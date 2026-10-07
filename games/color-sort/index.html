@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>色块排序 (Color Sort) - OmniGame</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <div class="cs-container">
+    <header class="cs-header">
+      <div class="cs-title-row">
+        <h1 class="cs-title">色块排序 <span>Water Sort</span></h1>
+        <div class="cs-tools">
+          <button id="soundBtn" class="cs-icon-btn" title="声音开关">🔊</button>
+          <button id="undoBtn" class="cs-btn cs-btn-ghost" title="撤销一步">撤销</button>
+          <button id="restartBtn" class="cs-btn cs-btn-accent" title="重玩本关">重置</button>
+        </div>
+      </div>
+
+      <div class="cs-status-row">
+        <div class="cs-badge">第 <span id="levelText">1</span> 关</div>
+        <div class="cs-badge">步数: <span id="moveText">0</span></div>
+        <button id="addTubeBtn" class="cs-extra-btn" title="增加空试管">+ 额外试管</button>
+      </div>
+    </header>
+
+    <div class="cs-tubes-wrap" id="tubesContainer">
+      <!-- Test tubes dynamically generated -->
+    </div>
+
+    <footer class="cs-footer">
+      <div class="cs-hint">点击试管倾倒液体 · 相同颜色且顶部有空位才可倒入 · 将同色液体归入同管即胜利</div>
+    </footer>
+  </div>
+
+  <div class="modal-overlay" id="csModal">
+    <div class="modal-card">
+      <div class="modal-emoji" id="modalEmoji">🧪</div>
+      <h2 class="modal-title" id="modalTitle">纯化成功！</h2>
+      <p class="modal-desc" id="modalDesc">所有试管色彩均已完美归类！</p>
+      <div class="modal-actions">
+        <button id="modalActionBtn" class="modal-btn modal-btn-primary">进入下一关</button>
+      </div>
+    </div>
+  </div>
+
+  <script src="game.js"></script>
+</body>
+</html>

@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>跳一跳 (Doodle Jump) - OmniGame</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <div class="dj-container">
+    <header class="dj-header">
+      <div class="dj-title-row">
+        <h1 class="dj-title">跳一跳 <span>Doodle Jump</span></h1>
+        <div class="dj-tools">
+          <button id="soundBtn" class="dj-icon-btn" title="声音开关">🔊</button>
+          <button id="restartBtn" class="dj-btn dj-btn-accent" title="重新开始">重玩</button>
+        </div>
+      </div>
+
+      <div class="dj-status-row">
+        <div class="dj-badge">最高纪录: <span id="bestScoreText">0</span></div>
+        <div class="dj-badge highlight">高度得分: <span id="scoreText">0</span></div>
+      </div>
+    </header>
+
+    <div class="dj-canvas-wrap">
+      <canvas id="gameCanvas" width="360" height="520"></canvas>
+      <div class="dj-touch-hints">
+        <div class="touch-hint left">◀ 按住向左</div>
+        <div class="touch-hint right">按住向右 ▶</div>
+      </div>
+    </div>
+
+    <footer class="dj-footer">
+      <div class="dj-hint">方向键 ← → 或 A D 控制左右移动 · 踩踏踏板自动起跳 · 穿过屏幕边缘可瞬移</div>
+    </footer>
+  </div>
+
+  <div class="modal-overlay" id="djModal">
+    <div class="modal-card">
+      <div class="modal-emoji" id="modalEmoji">🦘</div>
+      <h2 class="modal-title" id="modalTitle">跌落深渊！</h2>
+      <p class="modal-desc" id="modalDesc">最终高度: 4,820 分 · 新纪录！</p>
+      <div class="modal-actions">
+        <button id="modalRestartBtn" class="modal-btn modal-btn-primary">再跳一次</button>
+      </div>
+    </div>
+  </div>
+
+  <script src="game.js"></script>
+</body>
+</html>

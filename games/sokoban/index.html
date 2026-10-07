@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover"
+    />
+    <title>经典推箱子 · OmniGame</title>
+    <link rel="stylesheet" href="style.css" />
+  </head>
+  <body>
+    <div class="app-wrap">
+      <header class="game-header">
+        <div class="level-selector-wrap">
+          <button id="prevLvlBtn" class="nav-lvl-btn" title="上一关">‹</button>
+          <span class="level-badge" id="levelBadge">第 1 / 30 关</span>
+          <button id="nextLvlBtn" class="nav-lvl-btn" title="下一关">›</button>
+        </div>
+        <div class="stats-zone">
+          <div class="stat-pill"><span class="lbl">步数:</span><b id="stepsVal">0</b></div>
+          <div class="stat-pill"><span class="lbl">目标:</span><b id="goalsVal">0/0</b></div>
+        </div>
+        <div class="header-tools">
+          <button id="undoBtn" class="tool-btn" title="撤销一步 (Z)">↩️</button>
+          <button id="restartBtn" class="tool-btn" title="重玩本关 (R)">🔄</button>
+          <button id="soundBtn" class="tool-btn" title="开关音效">🔊</button>
+        </div>
+      </header>
+
+      <main class="canvas-container" id="canvasContainer">
+        <canvas id="gameCanvas" width="380" height="460"></canvas>
+      </main>
+
+      <footer class="game-footer">
+        <div class="dpad" id="dpad">
+          <button class="dpad-btn up" data-dir="up">▲</button>
+          <div class="dpad-row">
+            <button class="dpad-btn left" data-dir="left">◀</button>
+            <div class="dpad-center">🎮</div>
+            <button class="dpad-btn right" data-dir="right">▶</button>
+          </div>
+          <button class="dpad-btn down" data-dir="down">▼</button>
+        </div>
+        <p class="tip-text">键盘 <code>WASD</code> / 方向键移动；<code>Z</code> 撤销，<code>R</code> 重开</p>
+      </footer>
+
+      <!-- Level Clear Modal -->
+      <div id="modalOverlay" class="modal-overlay hidden">
+        <div class="modal-card">
+          <div class="modal-emoji">🎉</div>
+          <h2 class="modal-title">通关大捷！</h2>
+          <p class="modal-desc" id="modalDesc">本关用时 12 步，全部箱子已归位！</p>
+          <div class="modal-actions">
+            <button id="nextLevelBtn" class="modal-btn primary">下一关 🚀</button>
+            <button id="replayLevelBtn" class="modal-btn secondary">再玩一次</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <script src="../_shared/storage.js"></script>
+    <script src="game.js"></script>
+  </body>
+</html>

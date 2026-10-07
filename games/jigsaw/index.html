@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>经典拼图 (Jigsaw Puzzle) - OmniGame</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <div class="jigsaw-container">
+    <header class="jigsaw-header">
+      <div class="jigsaw-title-row">
+        <h1 class="jigsaw-title">艺术拼图 <span>Jigsaw</span></h1>
+        <div class="jigsaw-tools">
+          <button id="soundBtn" class="jigsaw-icon-btn" title="声音开关">🔊</button>
+          <button id="previewBtn" class="jigsaw-btn jigsaw-btn-ghost" title="原图对照">👁️ 原图</button>
+          <button id="restartBtn" class="jigsaw-btn jigsaw-btn-accent" title="重排">重新洗牌</button>
+        </div>
+      </div>
+
+      <div class="theme-selector">
+        <button class="theme-btn active" data-theme="sunset">🌅 晚霞</button>
+        <button class="theme-btn" data-theme="galaxy">🌌 极光</button>
+        <button class="theme-btn" data-theme="mountain">🏔️ 雪山</button>
+      </div>
+
+      <div class="jigsaw-status-row">
+        <div class="jigsaw-badge">完成度: <span id="progressText">0 / 9</span></div>
+        <div class="jigsaw-badge">步数: <span id="movesText">0</span></div>
+        <div class="jigsaw-badge timer">时间: <span id="timerText">00:00</span></div>
+      </div>
+    </header>
+
+    <div class="board-wrapper" id="boardWrapper">
+      <div class="puzzle-board" id="puzzleBoard"></div>
+      <div class="preview-overlay" id="previewOverlay"></div>
+    </div>
+
+    <!-- Piece Tray -->
+    <div class="tray-section">
+      <div class="tray-label">待拼碎片池</div>
+      <div class="pieces-tray" id="piecesTray"></div>
+    </div>
+
+    <footer class="jigsaw-footer">
+      <div class="jigsaw-hint">拖拽碎片到上方网格槽位中 · 靠近正确槽位自动磁吸归位</div>
+    </footer>
+  </div>
+
+  <div class="modal-overlay" id="victoryModal">
+    <div class="modal-card">
+      <div class="modal-emoji">🏆</div>
+      <h2 class="modal-title">拼图大功告成！</h2>
+      <p class="modal-desc" id="modalDesc">用时 01:25 · 步数 18 步</p>
+      <div class="modal-actions">
+        <button id="modalRestartBtn" class="modal-btn modal-btn-primary">再拼一幅</button>
+      </div>
+    </div>
+  </div>
+
+  <script src="game.js"></script>
+</body>
+</html>

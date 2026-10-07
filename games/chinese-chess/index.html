@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>中国象棋 (Chinese Chess) - OmniGame</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <div class="cc-container">
+    <header class="cc-header">
+      <div class="cc-title-row">
+        <h1 class="cc-title">中国象棋 <span>Xiangqi</span></h1>
+        <div class="cc-tools">
+          <button id="soundBtn" class="cc-icon-btn" title="声音开关">🔊</button>
+          <button id="undoBtn" class="cc-btn cc-btn-ghost" title="悔棋">悔棋</button>
+          <button id="restartBtn" class="cc-btn cc-btn-accent" title="重开">新局</button>
+        </div>
+      </div>
+      <div class="cc-status-row">
+        <div class="cc-badge">当前回合: <span id="turnText" class="turn-red">红方走子</span></div>
+        <div class="cc-badge">对战模式: <span id="modeText">人机对弈</span></div>
+        <div class="cc-badge">步数: <span id="movesText">0</span></div>
+      </div>
+    </header>
+
+    <div class="board-wrapper" id="boardWrapper">
+      <div class="cc-board" id="board"></div>
+    </div>
+
+    <footer class="cc-footer">
+      <div class="cc-hint">马走日·象走田·炮隔子打·卒过河横移 · 击杀黑方【将】即可大获全胜</div>
+    </footer>
+  </div>
+
+  <div class="modal-overlay" id="gameOverModal">
+    <div class="modal-card">
+      <div class="modal-emoji" id="modalEmoji">👑</div>
+      <h2 class="modal-title" id="modalTitle">红方绝杀获胜！</h2>
+      <p class="modal-desc" id="modalDesc">总计用时 03:20 · 42 回合</p>
+      <div class="modal-actions">
+        <button id="modalRestartBtn" class="modal-btn modal-btn-primary">再弈一局</button>
+      </div>
+    </div>
+  </div>
+
+  <script src="game.js"></script>
+</body>
+</html>

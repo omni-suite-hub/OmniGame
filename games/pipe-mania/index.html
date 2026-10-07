@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>接水管 (Pipe Mania) - OmniGame</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <div class="pipe-container">
+    <header class="pipe-header">
+      <div class="pipe-title-row">
+        <h1 class="pipe-title">接水管 <span>Pipe Mania</span></h1>
+        <div class="pipe-tools">
+          <button id="soundBtn" class="pipe-icon-btn" title="声音开关">🔊</button>
+          <button id="flowNowBtn" class="pipe-btn pipe-btn-flow" title="立即放水">🌊 立即通水</button>
+          <button id="restartBtn" class="pipe-btn pipe-btn-accent" title="重开本关">重置</button>
+        </div>
+      </div>
+
+      <div class="pipe-status-row">
+        <div class="pipe-badge">第 <span id="levelText">1</span> 关</div>
+        <div class="pipe-badge">旋转步数: <span id="rotText">0</span></div>
+        <div class="pipe-badge highlight">放水倒计: <span id="countdownText">15</span>s</div>
+      </div>
+    </header>
+
+    <div class="pipe-board-wrap">
+      <div class="pipe-board" id="board">
+        <!-- Grid of pipe tiles -->
+      </div>
+    </div>
+
+    <footer class="pipe-footer">
+      <div class="pipe-hint">点击旋转管件使水路闭合贯通 · 从 💧 入水口顺利流向 🏁 终点</div>
+    </footer>
+  </div>
+
+  <div class="modal-overlay" id="pipeModal">
+    <div class="modal-card">
+      <div class="modal-emoji" id="modalEmoji">🌊</div>
+      <h2 class="modal-title" id="modalTitle">管道通畅！</h2>
+      <p class="modal-desc" id="modalDesc">水流顺利抵达终点 · 用时 12 秒</p>
+      <div class="modal-actions">
+        <button id="modalActionBtn" class="modal-btn modal-btn-primary">进入下一关</button>
+      </div>
+    </div>
+  </div>
+
+  <script src="game.js"></script>
+</body>
+</html>

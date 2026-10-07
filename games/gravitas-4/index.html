@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover"
+    />
+    <title>重力方阵 · OmniGame</title>
+    <link rel="stylesheet" href="style.css" />
+  </head>
+  <body>
+    <div class="wrap">
+      <header class="head">
+        <div class="title-group">
+          <h1 class="title">重力方阵</h1>
+          <span class="sub">Gravitas 4 · 摸鱼联机</span>
+        </div>
+        <div class="mode-btn-group">
+          <button class="mode-btn" id="modeSelectBtn">模式: 🤖 人机</button>
+        </div>
+      </header>
+
+      <!-- Status Bar -->
+      <div class="status-bar">
+        <div class="player-pill p1 active" id="p1Pill">
+          <span class="avatar">🔵</span>
+          <b id="p1Name">你 (蓝)</b>
+        </div>
+        <div class="turn-indicator" id="turnIndicator">你的回合</div>
+        <div class="player-pill p2" id="p2Pill">
+          <span class="avatar">🔴</span>
+          <b id="p2Name">AI (红)</b>
+        </div>
+      </div>
+
+      <!-- Board Stage -->
+      <div class="board-stage">
+        <!-- Drop Indicators -->
+        <div class="drop-row" id="dropRow"></div>
+        <!-- Rotating Board Frame -->
+        <div class="board-frame" id="boardFrame">
+          <div class="board" id="board"></div>
+        </div>
+      </div>
+
+      <!-- Action Controls -->
+      <div class="actions">
+        <button class="action-btn rot-btn" id="rotLeftBtn" title="逆时针旋转 90 度">
+          <span class="icon">↺</span> 逆时针翻转
+        </button>
+        <button class="action-btn rot-btn" id="rotRightBtn" title="顺时针旋转 90 度">
+          <span class="icon">↻</span> 顺时针翻转
+        </button>
+        <button class="action-btn online-btn" id="onlineLobbyBtn">
+          🌐 联机对战
+        </button>
+      </div>
+
+      <!-- Game Over Overlay -->
+      <div class="overlay" id="overlay" hidden>
+        <div class="modal">
+          <div class="trophy" id="trophyEmoji">🏆</div>
+          <h2 id="winnerTitle">蓝方获胜！</h2>
+          <p id="winnerDesc">精妙的 4 子连珠，势不可挡！</p>
+          <div class="stats-row" id="matchStats"></div>
+          <div class="modal-actions">
+            <button class="btn primary" id="playAgainBtn">再来一局</button>
+            <button class="btn secondary" id="changeModeBtn">更换模式</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <script src="../_shared/storage.js"></script>
+    <script src="../_shared/omni-net.js"></script>
+    <script src="game.js"></script>
+  </body>
+</html>

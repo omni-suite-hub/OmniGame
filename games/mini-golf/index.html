@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>迷你高尔夫 (Mini Golf) - OmniGame</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <div class="mg-container">
+    <header class="mg-header">
+      <div class="mg-title-row">
+        <h1 class="mg-title">迷你高尔夫 <span>Mini Golf</span></h1>
+        <div class="mg-tools">
+          <button id="soundBtn" class="mg-icon-btn" title="声音">🔊</button>
+          <button id="restartBtn" class="mg-btn mg-btn-accent">重新推杆</button>
+        </div>
+      </div>
+      <div class="mg-status-row">
+        <div class="mg-badge">球洞: <span id="holeText">第 1/4 洞 (标准杆 2)</span></div>
+        <div class="mg-badge">当前杆数: <span id="strokesText">0</span> 杆</div>
+        <div class="mg-badge">总得分: <span id="totalText">0</span></div>
+      </div>
+    </header>
+
+    <div class="course-wrap">
+      <canvas id="gameCanvas" width="340" height="340"></canvas>
+      <div class="mg-overlay-hint" id="overlayHint">按住高尔夫球反向拉扯蓄力，松手推杆</div>
+    </div>
+
+    <!-- Power indicator -->
+    <div class="power-bar-wrap">
+      <div class="power-label">推杆力度: <span id="powerPercent">0%</span></div>
+      <div class="power-track"><div class="power-fill" id="powerFill"></div></div>
+    </div>
+
+    <footer class="mg-footer">
+      <div class="mg-hint">利用围墙折射反弹 · 避开沙坑减速与风车扇叶 · 一杆进洞挑战信天翁！</div>
+    </footer>
+  </div>
+
+  <div class="modal-overlay" id="gameOverModal">
+    <div class="modal-card">
+      <div class="modal-emoji" id="modalEmoji">⛳</div>
+      <h2 class="modal-title" id="modalTitle">一杆进洞！HOLE IN ONE!</h2>
+      <p class="modal-desc" id="modalDesc">完美的推杆弧线，仅用 1 杆进洞！</p>
+      <div class="modal-actions">
+        <button id="modalNextBtn" class="modal-btn">前往下一洞</button>
+      </div>
+    </div>
+  </div>
+
+  <script src="game.js"></script>
+</body>
+</html>

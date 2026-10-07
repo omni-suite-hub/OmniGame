@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+  <title>掉落2048 - OmniGame</title>
+  <link rel="stylesheet" href="../_shared/game-layout.css">
+  <style>
+    body {
+      background: #0f172a;
+      color: #f8fafc;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      margin: 0;
+      padding: 0;
+      display: flex;
+      flex-direction: column;
+      height: 100vh;
+      overflow: hidden;
+      touch-action: none;
+      user-select: none;
+    }
+    .hud {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 10px 16px;
+      background: #1e293b;
+      border-bottom: 1px solid #334155;
+      font-size: 14px;
+      z-index: 10;
+    }
+    .hud-val {
+      font-weight: bold;
+      color: #facc15;
+    }
+    .main-wrap {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 10px;
+      position: relative;
+    }
+    .next-preview-bar {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 10px;
+      font-size: 14px;
+      color: #94a3b8;
+    }
+    .drop-board {
+      display: grid;
+      grid-template-columns: repeat(5, 54px);
+      grid-template-rows: repeat(7, 54px);
+      gap: 4px;
+      background: #1e293b;
+      padding: 8px;
+      border-radius: 12px;
+      box-shadow: 0 4px 20px rgba(0,0,0,0.6);
+      cursor: pointer;
+    }
+    .block-cell {
+      background: #334155;
+      border-radius: 8px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 18px;
+      font-weight: bold;
+      color: #ffffff;
+      transition: transform 0.15s, background-color 0.15s;
+    }
+    .b-2    { background: #38bdf8; color: #0f172a; }
+    .b-4    { background: #0284c7; }
+    .b-8    { background: #f97316; }
+    .b-16   { background: #ea580c; }
+    .b-32   { background: #ef4444; }
+    .b-64   { background: #dc2626; }
+    .b-128  { background: #facc15; color: #0f172a; }
+    .b-256  { background: #eab308; color: #0f172a; }
+    .b-512  { background: #22c55e; }
+    .b-1024 { background: #16a34a; }
+    .b-2048 { background: #a855f7; box-shadow: 0 0 12px #a855f7; }
+    .b-super{ background: #ec4899; }
+
+    .modal {
+      position: absolute;
+      inset: 0;
+      background: rgba(15, 23, 42, 0.9);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      z-index: 50;
+    }
+    .modal.hidden { display: none; }
+    .modal h2 { font-size: 30px; margin: 0 0 10px 0; color: #facc15; }
+    .btn-restart {
+      margin-top: 16px;
+      padding: 10px 24px;
+      background: #2563eb;
+      color: #fff;
+      border: none;
+      border-radius: 8px;
+      font-weight: bold;
+      font-size: 15px;
+      cursor: pointer;
+    }
+  </style>
+</head>
+<body>
+  <div class="hud">
+    <div>🎲 掉落2048 (2048 Drop)</div>
+    <div>得分: <span id="score-el" class="hud-val">0</span></div>
+    <div>最高: <span id="best-el" class="hud-val">0</span></div>
+  </div>
+
+  <div class="main-wrap">
+    <div class="next-preview-bar">
+      <span>准备下落方块:</span>
+      <div id="next-tile" class="block-cell b-2" style="width:42px;height:42px;">2</div>
+    </div>
+
+    <div class="drop-board" id="board"></div>
+
+    <div class="modal hidden" id="game-over-modal">
+      <h2>游戏结束！</h2>
+      <p id="final-score">最终得分: 1,420</p>
+      <button class="btn-restart" id="btn-restart">重新挑战</button>
+    </div>
+  </div>
+
+  <script src="game.js"></script>
+</body>
+</html>

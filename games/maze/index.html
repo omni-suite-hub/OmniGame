@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>走迷宫 (Maze) - OmniGame</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <div class="mz-container">
+    <header class="mz-header">
+      <div class="mz-title-row">
+        <h1 class="mz-title">走迷宫 <span>Maze</span></h1>
+        <div class="mz-tools">
+          <button id="soundBtn" class="mz-icon-btn" title="声音开关">🔊</button>
+          <button id="fogBtn" class="mz-btn mz-btn-ghost" title="迷雾模式">🌫️ 迷雾: 关</button>
+          <button id="restartBtn" class="mz-btn mz-btn-accent" title="生成新迷宫">新迷宫</button>
+        </div>
+      </div>
+
+      <div class="mz-status-row">
+        <div class="mz-diff-wrap">
+          <select id="diffSelect" class="mz-select">
+            <option value="11" selected>简单 (11×11)</option>
+            <option value="17">中等 (17×17)</option>
+            <option value="23">困难 (23×23)</option>
+          </select>
+        </div>
+        <div class="mz-badge">步数: <span id="stepsText">0</span></div>
+        <div class="mz-badge timer">时间: <span id="timerText">00:00</span></div>
+      </div>
+    </header>
+
+    <div class="mz-canvas-wrap">
+      <canvas id="gameCanvas" width="360" height="360"></canvas>
+    </div>
+
+    <!-- Virtual D-Pad for mobile / sidepanel -->
+    <div class="mz-dpad">
+      <button class="dpad-btn up" data-dir="up">▲</button>
+      <div class="dpad-mid">
+        <button class="dpad-btn left" data-dir="left">◀</button>
+        <div class="dpad-center"></div>
+        <button class="dpad-btn right" data-dir="right">▶</button>
+      </div>
+      <button class="dpad-btn down" data-dir="down">▼</button>
+    </div>
+
+    <footer class="mz-footer">
+      <div class="mz-hint">使用键盘方向键 / WASD 或屏幕按键移动 · 寻找从 🟢 出发到 🏁 终点的通路</div>
+    </footer>
+  </div>
+
+  <div class="modal-overlay" id="mzModal">
+    <div class="modal-card">
+      <div class="modal-emoji" id="modalEmoji">🏁</div>
+      <h2 class="modal-title" id="modalTitle">成功走出迷宫！</h2>
+      <p class="modal-desc" id="modalDesc">用时 00:24 · 移动 42 步完美抵达！</p>
+      <div class="modal-actions">
+        <button id="modalActionBtn" class="modal-btn modal-btn-primary">挑战下一座迷宫</button>
+      </div>
+    </div>
+  </div>
+
+  <script src="game.js"></script>
+</body>
+</html>

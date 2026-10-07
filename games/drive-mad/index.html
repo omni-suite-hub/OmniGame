@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>疯狂驾驶 (Drive Mad) - OmniGame</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <div class="dm-container">
+    <header class="dm-header">
+      <div class="dm-title-row">
+        <h1 class="dm-title">疯狂驾驶 <span>Drive Mad</span></h1>
+        <div class="dm-tools">
+          <button id="soundBtn" class="dm-icon-btn" title="声音">🔊</button>
+          <button id="restartBtn" class="dm-btn dm-btn-accent">重来</button>
+        </div>
+      </div>
+      <div class="dm-status-row">
+        <div class="dm-badge">关卡: <span id="levelText">第 1 关</span></div>
+        <div class="dm-badge">重试: <span id="retriesText">0</span></div>
+        <div class="dm-badge">通关记录: <span id="recordText">0</span></div>
+      </div>
+    </header>
+
+    <div class="canvas-wrap">
+      <canvas id="gameCanvas" width="380" height="300"></canvas>
+      <div class="dm-overlay-hint" id="overlayHint">按 → 踩油门 · ← 倒车/刹车</div>
+    </div>
+
+    <!-- Onscreen pedal buttons -->
+    <div class="touch-controls">
+      <button class="t-btn btn-reverse" id="btnBack">◀ 倒车 / 刹车</button>
+      <button class="t-btn btn-gas" id="btnGas">前进 / 加速 ▶</button>
+    </div>
+
+    <footer class="dm-footer">
+      <div class="dm-hint">灵活控制油门与刹车平衡车身 · 切勿翻车头触地 · 稳稳驶过终点旗！</div>
+    </footer>
+  </div>
+
+  <div class="modal-overlay" id="gameOverModal">
+    <div class="modal-card">
+      <div class="modal-emoji" id="modalEmoji">🏁</div>
+      <h2 class="modal-title" id="modalTitle">闯关大获全胜！</h2>
+      <p class="modal-desc" id="modalDesc">成功跨越极限路障抵达终点！</p>
+      <div class="modal-actions">
+        <button id="modalNextBtn" class="modal-btn">下一关</button>
+      </div>
+    </div>
+  </div>
+
+  <script src="game.js"></script>
+</body>
+</html>

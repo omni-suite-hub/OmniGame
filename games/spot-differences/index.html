@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+  <title>两图找茬 - OmniGame</title>
+  <link rel="stylesheet" href="../_shared/game-layout.css">
+  <style>
+    body {
+      background: #0f172a;
+      color: #f8fafc;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      margin: 0;
+      padding: 0;
+      display: flex;
+      flex-direction: column;
+      height: 100vh;
+      overflow: hidden;
+      touch-action: manipulation;
+      user-select: none;
+    }
+    .hud {
+      display: flex;
+      justify-content: space-around;
+      align-items: center;
+      padding: 8px 12px;
+      background: #1e293b;
+      border-bottom: 2px solid #334155;
+      font-size: 13px;
+      z-index: 10;
+    }
+    .hud-val {
+      font-weight: bold;
+      color: #facc15;
+    }
+    .toolbar {
+      display: flex;
+      justify-content: center;
+      gap: 12px;
+      padding: 6px;
+      background: #0f172a;
+      border-bottom: 1px solid #334155;
+    }
+    .tool-btn {
+      padding: 6px 16px;
+      background: #334155;
+      border: 1px solid #64748b;
+      color: #fff;
+      border-radius: 6px;
+      font-size: 13px;
+      font-weight: bold;
+      cursor: pointer;
+    }
+    .arena-container {
+      flex: 1;
+      position: relative;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      background: #1e293b;
+      overflow: hidden;
+    }
+    canvas {
+      box-shadow: 0 4px 25px rgba(0,0,0,0.6);
+      border-radius: 8px;
+      cursor: crosshair;
+    }
+    .modal {
+      position: absolute;
+      inset: 0;
+      background: rgba(15, 23, 42, 0.92);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      z-index: 50;
+    }
+    .modal.hidden { display: none; }
+    .modal h2 { font-size: 28px; margin: 0 0 10px 0; color: #facc15; }
+    .btn-action {
+      margin-top: 16px;
+      padding: 10px 24px;
+      background: #2563eb;
+      color: #fff;
+      border: none;
+      border-radius: 8px;
+      font-weight: bold;
+      font-size: 15px;
+      cursor: pointer;
+    }
+  </style>
+</head>
+<body>
+  <div class="hud">
+    <div>🔍 差异: <span id="diff-el" class="hud-val">0 / 5</span></div>
+    <div>⏱️ 时间: <span id="time-el" class="hud-val">60s</span></div>
+    <div>关卡: <span id="level-el" class="hud-val">1 / 3</span></div>
+  </div>
+
+  <div class="toolbar">
+    <button class="tool-btn" id="btn-hint">💡 提示 (剩余 2 次)</button>
+    <button class="tool-btn" id="btn-restart-round">🔄 重新开始</button>
+  </div>
+
+  <div class="arena-container" id="container">
+    <canvas id="game-canvas"></canvas>
+
+    <div class="modal hidden" id="game-modal">
+      <h2 id="modal-title">🏆 火眼金睛！</h2>
+      <p id="modal-desc" style="font-size:16px;">5处细微差异已全部找齐！</p>
+      <button class="btn-action" id="btn-next">进入下一关</button>
+    </div>
+  </div>
+
+  <script src="game.js"></script>
+</body>
+</html>

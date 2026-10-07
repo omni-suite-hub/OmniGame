@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+  <title>色彩跳跃 - OmniGame</title>
+  <link rel="stylesheet" href="../_shared/game-layout.css">
+  <style>
+    body {
+      background: #0f172a;
+      color: #f8fafc;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      margin: 0;
+      padding: 0;
+      display: flex;
+      flex-direction: column;
+      height: 100vh;
+      overflow: hidden;
+      touch-action: manipulation;
+      user-select: none;
+    }
+    .hud {
+      display: flex;
+      justify-content: space-around;
+      align-items: center;
+      padding: 8px 12px;
+      background: #1e293b;
+      border-bottom: 2px solid #334155;
+      font-size: 14px;
+      z-index: 10;
+    }
+    .hud-val {
+      font-weight: bold;
+      color: #facc15;
+    }
+    .arena-container {
+      flex: 1;
+      position: relative;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      background: #090d16;
+      overflow: hidden;
+    }
+    canvas {
+      background: #0f172a;
+      box-shadow: 0 4px 25px rgba(0,0,0,0.8);
+      touch-action: none;
+    }
+    .modal {
+      position: absolute;
+      inset: 0;
+      background: rgba(15, 23, 42, 0.92);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      z-index: 50;
+    }
+    .modal.hidden { display: none; }
+    .modal h2 { font-size: 28px; margin: 0 0 10px 0; color: #facc15; }
+    .btn-action {
+      margin-top: 16px;
+      padding: 10px 24px;
+      background: #ec4899;
+      color: #fff;
+      border: none;
+      border-radius: 8px;
+      font-weight: bold;
+      font-size: 15px;
+      cursor: pointer;
+    }
+  </style>
+</head>
+<body>
+  <div class="hud">
+    <div>⭐ 星星: <span id="score-el" class="hud-val">0</span></div>
+    <div>🏆 最高分: <span id="best-el" class="hud-val">0</span></div>
+    <div>提示: <span style="color:#38bdf8;">点击跳跃穿过同色圆环</span></div>
+  </div>
+
+  <div class="arena-container" id="container">
+    <canvas id="game-canvas"></canvas>
+
+    <div class="modal hidden" id="game-modal">
+      <h2 id="modal-title">💥 颜色撞击！</h2>
+      <p id="modal-desc" style="font-size:16px;">最终得分: <span id="final-score" style="color:#facc15;font-weight:bold;">0</span></p>
+      <button class="btn-action" id="btn-restart">再战一局</button>
+    </div>
+  </div>
+
+  <script src="game.js"></script>
+</body>
+</html>

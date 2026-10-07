@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>UNO 纸牌 (UNO) - OmniGame</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <div class="uno-container">
+    <header class="uno-header">
+      <div class="uno-title-row">
+        <h1 class="uno-title">UNO 纸牌 <span>Card Duel</span></h1>
+        <div class="uno-tools">
+          <button id="soundBtn" class="uno-icon-btn" title="声音">🔊</button>
+          <button id="restartBtn" class="uno-btn uno-btn-accent">新局</button>
+        </div>
+      </div>
+      <div class="uno-status-row">
+        <div class="uno-badge">当前颜色: <span id="currentColorBadge" class="color-badge color-red">红色</span></div>
+        <div class="uno-badge">当前回合: <span id="turnText">你的回合</span></div>
+        <div class="uno-badge">出牌方向: <span id="directionText">顺时针 ↻</span></div>
+      </div>
+    </header>
+
+    <div class="uno-table">
+      <!-- Top Bot -->
+      <div class="bot-box bot-top">
+        <div class="bot-name">🤖 选手二</div>
+        <div class="bot-cards-badge" id="bot2Count">7张</div>
+      </div>
+
+      <!-- Left Bot -->
+      <div class="bot-box bot-left">
+        <div class="bot-name">🤖 选手一</div>
+        <div class="bot-cards-badge" id="bot1Count">7张</div>
+      </div>
+
+      <!-- Right Bot -->
+      <div class="bot-box bot-right">
+        <div class="bot-name">🤖 选手三</div>
+        <div class="bot-cards-badge" id="bot3Count">7张</div>
+      </div>
+
+      <!-- Center Deck & Discard Pile -->
+      <div class="center-pile-area">
+        <div class="draw-pile" id="drawPile" title="点击摸牌">
+          <div class="uno-card-back">UNO</div>
+          <span class="pile-label">摸牌堆</span>
+        </div>
+        <div class="discard-pile" id="discardPile"></div>
+      </div>
+
+      <!-- Color Picker Modal for Wild Cards -->
+      <div class="color-picker-overlay" id="colorPicker">
+        <div class="color-picker-card">
+          <div class="picker-title">选择新颜色</div>
+          <div class="color-options">
+            <button class="color-choice bg-red" data-color="red"></button>
+            <button class="color-choice bg-blue" data-color="blue"></button>
+            <button class="color-choice bg-green" data-color="green"></button>
+            <button class="color-choice bg-yellow" data-color="yellow"></button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Player Hand -->
+      <div class="player-hand-area">
+        <div class="player-tools-row">
+          <span class="player-name">👤 我的手牌 (<span id="playerHandCount">7</span>)</span>
+          <button id="unoShoutBtn" class="uno-shout-btn">UNO!</button>
+        </div>
+        <div class="player-cards" id="playerCards"></div>
+      </div>
+    </div>
+
+    <footer class="uno-footer">
+      <div class="uno-hint">同色或同数字即可出牌 · +2/+4让对手摸牌 · 变色牌转色 · 剩一张牌喊 UNO！</div>
+    </footer>
+  </div>
+
+  <div class="modal-overlay" id="gameOverModal">
+    <div class="modal-card">
+      <div class="modal-emoji" id="modalEmoji">🎉</div>
+      <h2 class="modal-title" id="modalTitle">UNO 大获全胜！</h2>
+      <p class="modal-desc" id="modalDesc">你率先清空全部手牌！</p>
+      <div class="modal-actions">
+        <button id="modalRestartBtn" class="modal-btn">再来一局</button>
+      </div>
+    </div>
+  </div>
+
+  <script src="game.js"></script>
+</body>
+</html>

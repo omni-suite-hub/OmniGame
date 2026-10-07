@@ -1,0 +1,198 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+  <title>轻量回合战斗 - OmniGame</title>
+  <link rel="stylesheet" href="../_shared/game-layout.css">
+  <style>
+    body {
+      background: #0f172a;
+      color: #f8fafc;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      margin: 0;
+      padding: 0;
+      display: flex;
+      flex-direction: column;
+      height: 100vh;
+      overflow: hidden;
+      user-select: none;
+    }
+    .hud {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 8px 16px;
+      background: #1e293b;
+      border-bottom: 1px solid #334155;
+      font-size: 14px;
+    }
+    .arena-view {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      padding: 12px;
+      gap: 10px;
+      max-width: 600px;
+      margin: 0 auto;
+      width: 100%;
+      box-sizing: border-box;
+      overflow-y: auto;
+    }
+    .battle-stage {
+      flex: 1;
+      background: linear-gradient(180deg, #1e1b4b 0%, #0f172a 100%);
+      border: 1px solid #334155;
+      border-radius: 16px;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-around;
+      align-items: center;
+      position: relative;
+      min-height: 220px;
+      box-shadow: 0 4px 20px rgba(0,0,0,0.6);
+    }
+    .boss-area {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 6px;
+    }
+    .boss-avatar {
+      font-size: 64px;
+      filter: drop-shadow(0 4px 10px rgba(239,68,68,0.5));
+      animation: float 2s infinite ease-in-out alternate;
+    }
+    @keyframes float {
+      0% { transform: translateY(0); }
+      100% { transform: translateY(-8px); }
+    }
+    .hero-area {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      width: 90%;
+      background: rgba(15, 23, 42, 0.7);
+      padding: 8px 14px;
+      border-radius: 12px;
+      border: 1px solid #334155;
+    }
+    .hero-avatar {
+      font-size: 40px;
+    }
+    .stat-bar-box {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+      font-size: 12px;
+    }
+    .bar-wrap {
+      height: 8px;
+      background: #334155;
+      border-radius: 4px;
+      overflow: hidden;
+    }
+    .bar-fill {
+      height: 100%;
+      transition: width 0.3s ease-out;
+    }
+    .log-strip {
+      background: #1e293b;
+      border: 1px solid #334155;
+      border-radius: 8px;
+      padding: 8px 12px;
+      font-size: 13px;
+      color: #94a3b8;
+      min-height: 20px;
+      text-align: center;
+    }
+    .command-panel {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 8px;
+    }
+    .cmd-btn {
+      padding: 12px;
+      background: #1e293b;
+      border: 1px solid #475569;
+      border-radius: 10px;
+      color: #f8fafc;
+      font-size: 14px;
+      font-weight: bold;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+      transition: all 0.1s;
+    }
+    .cmd-btn:hover {
+      background: #334155;
+      border-color: #38bdf8;
+    }
+    .cmd-btn:active {
+      transform: scale(0.96);
+    }
+    .cmd-btn:disabled {
+      opacity: 0.4;
+      cursor: not-allowed;
+    }
+  </style>
+</head>
+<body>
+  <div class="hud">
+    <div>⚔️ 轻量回合战斗 (RPG-lite)</div>
+    <div>回合: <span id="turn-el" style="color:#facc15;font-weight:bold;">1</span></div>
+  </div>
+
+  <div class="arena-view">
+    <div class="battle-stage" id="stage">
+      <!-- Boss -->
+      <div class="boss-area">
+        <div class="boss-avatar" id="boss-avatar">🐉</div>
+        <div style="font-weight:bold; font-size:15px; color:#ef4444;" id="boss-name">暗夜魔龙 (Boss)</div>
+        <div style="width:160px;" class="bar-wrap">
+          <div class="bar-fill" id="boss-hp-fill" style="width:100%; background:#ef4444;"></div>
+        </div>
+        <div style="font-size:11px; color:#94a3b8;" id="boss-hp-text">200 / 200 HP</div>
+      </div>
+
+      <!-- Hero -->
+      <div class="hero-area">
+        <div class="hero-avatar">🧙‍♂️</div>
+        <div class="stat-bar-box">
+          <div style="display:flex; justify-content:space-between;">
+            <span style="font-weight:bold;">勇者亚瑟</span>
+            <span id="hero-hp-text" style="color:#22c55e;">100 / 100 HP</span>
+          </div>
+          <div class="bar-wrap">
+            <div class="bar-fill" id="hero-hp-fill" style="width:100%; background:#22c55e;"></div>
+          </div>
+          <div style="display:flex; justify-content:space-between; margin-top:2px;">
+            <span>法力值 (MP)</span>
+            <span id="hero-mp-text" style="color:#38bdf8;">60 / 60 MP</span>
+          </div>
+          <div class="bar-wrap">
+            <div class="bar-fill" id="hero-mp-fill" style="width:100%; background:#38bdf8;"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="log-strip" id="battle-log">
+      遭遇强敌！请选择你的战术指令发起进攻！
+    </div>
+
+    <div class="command-panel" id="cmd-panel">
+      <button class="cmd-btn" id="btn-attack">⚔️ 普通挥斩 (0 MP)</button>
+      <button class="cmd-btn" id="btn-fireball">🔥 烈焰火球 (15 MP)</button>
+      <button class="cmd-btn" id="btn-heal">✨ 圣光治疗 (20 MP)</button>
+      <button class="cmd-btn" id="btn-defend">🛡️ 举盾防御 (回蓝+防)</button>
+    </div>
+  </div>
+
+  <script src="game.js"></script>
+</body>
+</html>

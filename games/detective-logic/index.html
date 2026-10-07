@@ -1,0 +1,191 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+  <title>推理侦探 - OmniGame</title>
+  <link rel="stylesheet" href="../_shared/game-layout.css">
+  <style>
+    body {
+      background: #0f172a;
+      color: #f8fafc;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "PingFang SC", sans-serif;
+      margin: 0;
+      padding: 0;
+      display: flex;
+      flex-direction: column;
+      height: 100vh;
+      overflow: hidden;
+      user-select: none;
+    }
+    .hud {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 10px 16px;
+      background: #1e293b;
+      border-bottom: 1px solid #334155;
+      font-size: 14px;
+    }
+    .main-wrap {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      padding: 12px;
+      gap: 12px;
+      max-width: 650px;
+      margin: 0 auto;
+      width: 100%;
+      box-sizing: border-box;
+      overflow-y: auto;
+    }
+    .clues-card {
+      background: #1e293b;
+      border: 1px solid #334155;
+      border-radius: 12px;
+      padding: 14px;
+    }
+    .clues-title {
+      font-weight: bold;
+      color: #facc15;
+      font-size: 15px;
+      margin-bottom: 8px;
+    }
+    .clue-list {
+      list-style-type: none;
+      padding: 0;
+      margin: 0;
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+      font-size: 13px;
+      color: #cbd5e1;
+      line-height: 1.5;
+    }
+    .grid-container {
+      background: #1e293b;
+      border: 1px solid #334155;
+      border-radius: 12px;
+      padding: 12px;
+      overflow-x: auto;
+    }
+    .logic-table {
+      border-collapse: collapse;
+      width: 100%;
+      font-size: 12px;
+      text-align: center;
+    }
+    .logic-table th, .logic-table td {
+      border: 1px solid #475569;
+      padding: 6px;
+    }
+    .logic-table th {
+      background: #334155;
+      color: #38bdf8;
+    }
+    .grid-cell {
+      cursor: pointer;
+      font-weight: bold;
+      font-size: 14px;
+      width: 32px;
+      height: 32px;
+    }
+    .grid-cell.yes { color: #22c55e; background: rgba(34, 197, 94, 0.15); }
+    .grid-cell.no  { color: #ef4444; background: rgba(239, 68, 68, 0.1); }
+    .accusation-section {
+      background: #1e293b;
+      border: 1px solid #334155;
+      border-radius: 12px;
+      padding: 14px;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+    .accuse-row {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-size: 14px;
+    }
+    .accuse-select {
+      flex: 1;
+      background: #0f172a;
+      border: 1px solid #475569;
+      color: #f8fafc;
+      padding: 6px 10px;
+      border-radius: 6px;
+      font-size: 14px;
+    }
+    .btn-accuse {
+      padding: 10px;
+      background: linear-gradient(135deg, #b91c1c, #991b1b);
+      color: #fff;
+      border: none;
+      border-radius: 8px;
+      font-weight: bold;
+      font-size: 15px;
+      cursor: pointer;
+    }
+  </style>
+</head>
+<body>
+  <div class="hud">
+    <div>🕵️ 推理侦探 (Detective Logic)</div>
+    <div>案件: 庄园失窃奇案</div>
+  </div>
+
+  <div class="main-wrap">
+    <div class="clues-card">
+      <div class="clues-title">📋 侦探手记（调查线索）</div>
+      <ul class="clue-list">
+        <li>1. 拿钥匙的人不在书房，也不是画家。</li>
+        <li>2. 医生在花园被目击，且他没有拿怀表。</li>
+        <li>3. 拿遗嘱的人案发时身处地窖。</li>
+        <li>4. 伯爵坚称自己没去过地窖和画室，也没有拿毒药。</li>
+        <li>5. 管家一直在书房服侍客人。</li>
+      </ul>
+    </div>
+
+    <div class="grid-container">
+      <div style="font-size:12px; color:#94a3b8; margin-bottom:6px;">
+        💡 逻辑推演表（点击方格切换：空白 → ✖排除 → ✔确认）
+      </div>
+      <div id="table-wrap"></div>
+    </div>
+
+    <div class="accusation-section">
+      <div style="font-weight:bold; color:#facc15; font-size:14px;">⚖️ 结案指控：谁拿了真正的赃物？</div>
+      <div class="accuse-row">
+        <span>嫌疑人:</span>
+        <select class="accuse-select" id="sel-suspect">
+          <option value="伯爵">伯爵</option>
+          <option value="管家">管家</option>
+          <option value="画家">画家</option>
+          <option value="医生">医生</option>
+        </select>
+      </div>
+      <div class="accuse-row">
+        <span>案发地点:</span>
+        <select class="accuse-select" id="sel-room">
+          <option value="书房">书房</option>
+          <option value="画室">画室</option>
+          <option value="花园">花园</option>
+          <option value="地窖">地窖</option>
+        </select>
+      </div>
+      <div class="accuse-row">
+        <span>随身物品:</span>
+        <select class="accuse-select" id="sel-item">
+          <option value="怀表">怀表</option>
+          <option value="遗嘱">遗嘱</option>
+          <option value="钥匙">钥匙</option>
+          <option value="毒药">毒药</option>
+        </select>
+      </div>
+      <button class="btn-accuse" id="btn-submit">指控真凶并结案！</button>
+    </div>
+  </div>
+
+  <script src="game.js"></script>
+</body>
+</html>

@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>漂移老板 (Drift Boss) - OmniGame</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <div class="drift-container">
+    <header class="drift-header">
+      <div class="drift-title-row">
+        <h1 class="drift-title">漂移老板 <span>Drift Boss</span></h1>
+        <div class="drift-tools">
+          <button id="soundBtn" class="drift-icon-btn" title="声音开关">🔊</button>
+          <button id="restartBtn" class="drift-btn drift-btn-accent" title="重开">重新开局</button>
+        </div>
+      </div>
+      <div class="drift-status-row">
+        <div class="drift-badge">行驶距离: <span id="distanceText">0m</span></div>
+        <div class="drift-badge">金币: <span id="coinsText">0</span></div>
+        <div class="drift-badge">最佳记录: <span id="bestText">0m</span></div>
+      </div>
+    </header>
+
+    <div class="canvas-wrapper" id="canvasWrapper">
+      <canvas id="gameCanvas"></canvas>
+      <div class="drive-hint" id="driveHint">按住屏幕或空格键向右漂移，松手向左转弯！注意别跌下悬崖</div>
+    </div>
+
+    <footer class="drift-footer">
+      <div class="drift-hint">极简一键漂移操作 · 按住向右转，松手向左拐 · 考验指尖微操与节奏感</div>
+    </footer>
+  </div>
+
+  <div class="modal-overlay" id="gameOverModal">
+    <div class="modal-card">
+      <div class="modal-emoji">🏎️</div>
+      <h2 class="modal-title" id="modalTitle">冲出跑道！</h2>
+      <p class="modal-desc" id="modalDesc">行驶距离: 0m · 金币: 0</p>
+      <div class="modal-actions">
+        <button id="modalRestartBtn" class="modal-btn modal-btn-primary">再漂一次</button>
+      </div>
+    </div>
+  </div>
+
+  <script src="game.js"></script>
+</body>
+</html>

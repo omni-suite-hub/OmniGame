@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>黑白棋 - OmniGame</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <div class="rev-container">
+    <header class="rev-header">
+      <div class="rev-title-row">
+        <h1 class="rev-title">黑白棋 <span>Reversi / Othello</span></h1>
+        <div class="rev-tools">
+          <button id="soundBtn" class="rev-icon-btn" title="声音开关">🔊</button>
+          <button id="undoBtn" class="rev-btn rev-btn-ghost" title="悔棋">悔棋</button>
+          <button id="restartBtn" class="rev-btn rev-btn-accent" title="新局">新局</button>
+        </div>
+      </div>
+      
+      <div class="rev-controls-row">
+        <div class="rev-seg-control" id="modeControl">
+          <button class="seg-btn active" data-mode="ai">人机对战</button>
+          <button class="seg-btn" data-mode="pvp">双人同屏</button>
+        </div>
+        <div class="rev-diff-control" id="diffControl">
+          <select id="diffSelect" class="rev-select">
+            <option value="easy">入门 AI</option>
+            <option value="medium">进阶 AI</option>
+            <option value="master" selected>大师 AI</option>
+          </select>
+        </div>
+      </div>
+    </header>
+
+    <div class="rev-scoreboard">
+      <div class="rev-score-card score-black active" id="cardBlack">
+        <div class="disc-preview disc-black"></div>
+        <div class="rev-player-info">
+          <div class="rev-player-name" id="nameBlack">黑方 (玩家)</div>
+          <div class="rev-player-count" id="countBlack">2</div>
+        </div>
+      </div>
+      <div class="rev-vs-badge">VS</div>
+      <div class="rev-score-card score-white" id="cardWhite">
+        <div class="disc-preview disc-white"></div>
+        <div class="rev-player-info">
+          <div class="rev-player-name" id="nameWhite">白方 (AI)</div>
+          <div class="rev-player-count" id="countWhite">2</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="rev-status-bar">
+      <div id="statusText" class="rev-status-text">轮到黑方落子</div>
+    </div>
+
+    <div class="rev-board-wrap">
+      <div class="rev-board" id="board">
+        <!-- 64 cells dynamically injected or 8x8 grid -->
+      </div>
+    </div>
+
+    <footer class="rev-footer">
+      <div class="rev-tip">夹住对方棋子即可翻转 · 占领四角是制胜关键</div>
+    </footer>
+  </div>
+
+  <div class="modal-overlay" id="gameOverModal">
+    <div class="modal-card">
+      <div class="modal-emoji" id="modalEmoji">🏆</div>
+      <h2 class="modal-title" id="modalTitle">黑方获胜！</h2>
+      <p class="modal-desc" id="modalDesc">黑方 42 颗 : 白方 22 颗</p>
+      <div class="modal-actions">
+        <button id="modalRestartBtn" class="modal-btn modal-btn-primary">再来一局</button>
+      </div>
+    </div>
+  </div>
+
+  <script src="game.js"></script>
+</body>
+</html>

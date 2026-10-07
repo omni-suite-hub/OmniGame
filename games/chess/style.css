@@ -1,0 +1,326 @@
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+  user-select: none;
+  -webkit-user-select: none;
+}
+
+body {
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", sans-serif;
+  background: radial-gradient(circle at center, #1e293b, #0f172a);
+  color: #f1f5f9;
+  min-height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 8px;
+  overflow-x: hidden;
+}
+
+.chess-container {
+  width: 100%;
+  max-width: 440px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+}
+
+.chess-header {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.chess-title-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: 100%;
+}
+
+.chess-title {
+  font-size: 20px;
+  font-weight: 800;
+  letter-spacing: -0.5px;
+  color: #f8fafc;
+  display: flex;
+  align-items: baseline;
+  gap: 8px;
+}
+
+.chess-title span {
+  font-size: 13px;
+  font-weight: 500;
+  color: #60a5fa;
+  text-transform: uppercase;
+}
+
+.chess-tools {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.chess-btn {
+  border: none;
+  border-radius: 8px;
+  padding: 5px 12px;
+  font-size: 12px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.chess-btn-ghost {
+  background: rgba(255, 255, 255, 0.1);
+  color: #cbd5e1;
+  border: 1px solid rgba(255, 255, 255, 0.15);
+}
+.chess-btn-ghost:hover {
+  background: rgba(255, 255, 255, 0.18);
+  color: #fff;
+}
+
+.chess-btn-accent {
+  background: linear-gradient(135deg, #3b82f6, #2563eb);
+  color: #fff;
+  box-shadow: 0 2px 8px rgba(37, 99, 235, 0.3);
+}
+.chess-btn-accent:hover {
+  background: linear-gradient(135deg, #60a5fa, #3b82f6);
+  transform: translateY(-1px);
+}
+
+.chess-icon-btn {
+  background: rgba(255, 255, 255, 0.08);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  color: #cbd5e1;
+  width: 30px;
+  height: 30px;
+  border-radius: 8px;
+  font-size: 14px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s;
+}
+.chess-icon-btn:hover {
+  background: rgba(255, 255, 255, 0.18);
+}
+
+.chess-status-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background: rgba(15, 23, 42, 0.7);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 10px;
+  padding: 6px 12px;
+}
+
+.chess-badge {
+  font-size: 11px;
+  color: #94a3b8;
+  font-weight: 500;
+}
+.chess-badge span {
+  font-weight: 700;
+  color: #e2e8f0;
+}
+.chess-badge .turn-white {
+  color: #f8fafc;
+  background: #334155;
+  padding: 2px 6px;
+  border-radius: 4px;
+}
+.chess-badge .turn-black {
+  color: #f59e0b;
+  background: #1e1b4b;
+  padding: 2px 6px;
+  border-radius: 4px;
+}
+
+.board-wrapper {
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  padding: 6px;
+  background: #0f172a;
+  border-radius: 12px;
+  box-shadow: 0 12px 30px rgba(0, 0, 0, 0.5), inset 0 0 0 1px rgba(255, 255, 255, 0.08);
+}
+
+.chess-board {
+  display: grid;
+  grid-template-columns: repeat(8, 1fr);
+  grid-template-rows: repeat(8, 1fr);
+  width: min(92vw, 400px);
+  height: min(92vw, 400px);
+  border: 4px solid #334155;
+  border-radius: 6px;
+  overflow: hidden;
+  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.4);
+}
+
+.chess-cell {
+  position: relative;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  cursor: pointer;
+  transition: background-color 0.15s ease;
+}
+
+.chess-cell.light {
+  background-color: #eedab6;
+}
+
+.chess-cell.dark {
+  background-color: #a47449;
+}
+
+.chess-cell.selected {
+  background-color: #bbc753 !important;
+}
+
+.chess-cell.last-move {
+  background-color: #f7e77b !important;
+}
+
+.chess-cell.in-check {
+  background-color: #e05353 !important;
+}
+
+.chess-cell.hint::after {
+  content: '';
+  position: absolute;
+  width: 28%;
+  height: 28%;
+  background: rgba(30, 41, 59, 0.4);
+  border-radius: 50%;
+  pointer-events: none;
+}
+
+.chess-cell.hint-capture::after {
+  content: '';
+  position: absolute;
+  width: 78%;
+  height: 78%;
+  border: 4px solid rgba(239, 68, 68, 0.7);
+  border-radius: 50%;
+  pointer-events: none;
+}
+
+.chess-piece {
+  font-size: clamp(26px, 7.5vw, 36px);
+  line-height: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: transform 0.15s ease;
+  user-select: none;
+}
+
+.chess-piece.white {
+  color: #ffffff;
+  text-shadow: 0 1px 2px rgba(0,0,0,0.8), 0 0 1px #000;
+  filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.35));
+}
+
+.chess-piece.black {
+  color: #1a1a1a;
+  text-shadow: 0 1px 1px rgba(255,255,255,0.4);
+  filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.5));
+}
+
+.chess-cell:hover .chess-piece {
+  transform: scale(1.1);
+}
+
+.chess-footer {
+  width: 100%;
+  text-align: center;
+}
+
+.chess-hint {
+  font-size: 11px;
+  color: #64748b;
+  line-height: 1.5;
+}
+
+/* Modal */
+.modal-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(15, 23, 42, 0.85);
+  backdrop-filter: blur(4px);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 100;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.3s ease;
+}
+
+.modal-overlay.active {
+  opacity: 1;
+  pointer-events: auto;
+}
+
+.modal-card {
+  background: #1e293b;
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  border-radius: 16px;
+  padding: 24px;
+  text-align: center;
+  max-width: 320px;
+  width: 90%;
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.6);
+  transform: scale(0.9);
+  transition: transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+.modal-overlay.active .modal-card {
+  transform: scale(1);
+}
+
+.modal-emoji {
+  font-size: 44px;
+  margin-bottom: 8px;
+}
+
+.modal-title {
+  font-size: 18px;
+  font-weight: 800;
+  color: #f8fafc;
+  margin-bottom: 6px;
+}
+
+.modal-desc {
+  font-size: 13px;
+  color: #94a3b8;
+  margin-bottom: 18px;
+}
+
+.modal-btn {
+  width: 100%;
+  padding: 10px;
+  border-radius: 10px;
+  border: none;
+  font-weight: 700;
+  font-size: 14px;
+  cursor: pointer;
+  background: linear-gradient(135deg, #3b82f6, #2563eb);
+  color: #fff;
+  transition: all 0.2s;
+}
+
+.modal-btn:hover {
+  background: linear-gradient(135deg, #60a5fa, #3b82f6);
+  transform: translateY(-1px);
+}

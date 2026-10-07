@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>猜词 (Wordle) - OmniGame</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <div class="wd-container">
+    <header class="wd-header">
+      <div class="wd-title-row">
+        <h1 class="wd-title">猜词 <span>Wordle</span></h1>
+        <div class="wd-tools">
+          <button id="soundBtn" class="wd-icon-btn" title="声音开关">🔊</button>
+          <button id="statsBtn" class="wd-icon-btn" title="战绩统计">📊</button>
+          <button id="newWordBtn" class="wd-btn wd-btn-accent" title="换一个新词">新题</button>
+        </div>
+      </div>
+      <div class="wd-status-bar" id="statusBar">
+        猜出 5 个字母的目标英文单词，你有 6 次机会！
+      </div>
+    </header>
+
+    <div class="wd-board-wrap">
+      <div class="wd-board" id="board">
+        <!-- 6 rows x 5 letters -->
+      </div>
+    </div>
+
+    <div class="wd-keyboard" id="keyboard">
+      <!-- QWERTY rows -->
+      <div class="kb-row" id="kbRow1"></div>
+      <div class="kb-row" id="kbRow2"></div>
+      <div class="kb-row" id="kbRow3"></div>
+    </div>
+  </div>
+
+  <!-- Win / Game Over Modal -->
+  <div class="modal-overlay" id="wdModal">
+    <div class="modal-card">
+      <div class="modal-emoji" id="modalEmoji">🎉</div>
+      <h2 class="modal-title" id="modalTitle">精彩绝伦！</h2>
+      <p class="modal-desc" id="modalDesc">答案是：<b>REACT</b></p>
+      <div class="modal-actions">
+        <button id="modalActionBtn" class="modal-btn modal-btn-primary">再猜一局</button>
+      </div>
+    </div>
+  </div>
+
+  <script src="game.js"></script>
+</body>
+</html>

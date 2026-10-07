@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>麻将接龙 (Mahjong Solitaire) - OmniGame</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <div class="game-container">
+    <header class="header">
+      <div class="title-row">
+        <h1 class="title">麻将接龙 <span>Mahjong</span></h1>
+        <div class="tools">
+          <button id="soundBtn" class="icon-btn" title="声音">🔊</button>
+          <button id="hintBtn" class="btn btn-ghost" title="提示">提示</button>
+          <button id="undoBtn" class="btn btn-ghost" title="撤销">撤回</button>
+          <button id="restartBtn" class="btn btn-accent" title="新局">新局</button>
+        </div>
+      </div>
+      <div class="status-row">
+        <div class="badge">剩余牌数: <span id="remainingText">0</span></div>
+        <div class="badge">可用匹配: <span id="matchesText">0</span></div>
+        <div class="badge">连击: <span id="comboText">0</span></div>
+      </div>
+    </header>
+
+    <div class="board-viewport" id="viewport">
+      <div class="mahjong-board" id="board"></div>
+    </div>
+
+    <footer class="footer">
+      <div class="hint-text">规则：两边未被卡住且上方无压牌的相同麻将牌可配对消除 · 消除全盘取胜</div>
+    </footer>
+  </div>
+
+  <div class="modal-overlay" id="gameOverModal">
+    <div class="modal-card">
+      <div class="modal-emoji" id="modalEmoji">🀄</div>
+      <h2 class="modal-title" id="modalTitle">大获全胜！</h2>
+      <p class="modal-desc" id="modalDesc">成功清空所有麻将牌！</p>
+      <div class="modal-actions">
+        <button id="modalRestartBtn" class="modal-btn">再来一局</button>
+      </div>
+    </div>
+  </div>
+
+  <script src="game.js"></script>
+</body>
+</html>

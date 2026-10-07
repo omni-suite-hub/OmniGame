@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover"
+    />
+    <title>方块死斗 · OmniGame</title>
+    <link rel="stylesheet" href="style.css" />
+  </head>
+  <body>
+    <div class="wrap">
+      <header class="head">
+        <div class="title-group">
+          <h1 class="title">方块死斗</h1>
+          <span class="sub">Tetris Clash · 摸鱼联机</span>
+        </div>
+        <div class="match-score" id="matchScore">0 : 0</div>
+        <button class="mode-btn" id="modeSelectBtn">模式: 🤖 竞技人机</button>
+      </header>
+
+      <!-- Duel Arena (Left: Me, Right: Opponent) -->
+      <div class="arena" id="arena">
+        <!-- Player 1 Zone -->
+        <div class="player-zone p1-zone">
+          <div class="zone-header">
+            <span class="avatar">🐱</span>
+            <b class="name" id="p1Name">你</b>
+            <span class="ko-badge" id="p1KoCount">0 胜</span>
+          </div>
+
+          <div class="board-wrapper">
+            <div class="garbage-indicator" id="p1GarbageBar" title="即将遭受的垃圾行"></div>
+            <div class="board-canvas-box">
+              <canvas id="cv1"></canvas>
+              <div class="attack-float" id="p1AttackFloat"></div>
+            </div>
+            <!-- Side Panel (Next & Stats) -->
+            <div class="p1-side">
+              <div class="box next-box">
+                <span>下一个</span>
+                <canvas id="nextCv1"></canvas>
+              </div>
+              <div class="box stat-box">
+                <span>消除</span>
+                <b id="p1Lines">0</b>
+              </div>
+              <div class="box stat-box">
+                <span>攻击</span>
+                <b id="p1Attacks">0</b>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- VS Divider -->
+        <div class="vs-divider">
+          <span class="vs-text">VS</span>
+        </div>
+
+        <!-- Player 2 Zone (AI / Online Opponent) -->
+        <div class="player-zone p2-zone" id="p2Zone">
+          <div class="zone-header">
+            <span class="avatar">🤖</span>
+            <b class="name" id="p2Name">对手</b>
+            <span class="ko-badge" id="p2KoCount">0 胜</span>
+          </div>
+
+          <div class="board-wrapper">
+            <div class="garbage-indicator" id="p2GarbageBar" title="即将遭受的垃圾行"></div>
+            <div class="board-canvas-box mini-box">
+              <canvas id="cv2"></canvas>
+              <div class="attack-float" id="p2AttackFloat"></div>
+            </div>
+            <div class="p2-side">
+              <div class="box next-box" id="p2NextBox">
+                <span>下一个</span>
+                <canvas id="nextCv2"></canvas>
+              </div>
+              <div class="box stat-box">
+                <span>消除</span>
+                <b id="p2Lines">0</b>
+              </div>
+              <div class="box stat-box">
+                <span>攻击</span>
+                <b id="p2Attacks">0</b>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Mobile / On-screen Controls (for Local or Touch) -->
+      <div class="controls-panel">
+        <div class="ctrl-group">
+          <button class="ctrl" id="btnLeft" aria-label="左移">←</button>
+          <button class="ctrl" id="btnRight" aria-label="右移">→</button>
+          <button class="ctrl rotate" id="btnRot" aria-label="旋转">⟳</button>
+          <button class="ctrl" id="btnDown" aria-label="软降">↓</button>
+          <button class="ctrl drop" id="btnDrop" aria-label="硬降">⤓</button>
+        </div>
+        <button class="online-btn" id="onlineLobbyBtn">🌐 联机死斗大厅</button>
+      </div>
+
+      <!-- Match Over Overlay -->
+      <div class="overlay" id="overlay" hidden>
+        <div class="modal">
+          <div class="trophy" id="trophyIcon">🏆</div>
+          <h2 id="winnerTitle">KO! 胜出！</h2>
+          <p id="winnerDesc">狂暴的垃圾行淹没了对手的场地！</p>
+          <div class="stats-row" id="finalStats"></div>
+          <div class="modal-actions">
+            <button class="btn primary" id="playAgainBtn">再战一局</button>
+            <button class="btn secondary" id="changeModeBtn">更换对手</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <script src="../_shared/storage.js"></script>
+    <script src="../_shared/omni-net.js"></script>
+    <script src="game.js"></script>
+  </body>
+</html>

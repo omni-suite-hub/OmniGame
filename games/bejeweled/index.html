@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>宝石迷阵 (Bejeweled) - OmniGame</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <div class="bj-container">
+    <header class="bj-header">
+      <div class="bj-title-row">
+        <h1 class="bj-title">宝石迷阵 <span>Bejeweled</span></h1>
+        <div class="bj-tools">
+          <button id="soundBtn" class="bj-icon-btn" title="声音开关">🔊</button>
+          <button id="restartBtn" class="bj-btn bj-btn-accent" title="新对局">重置</button>
+        </div>
+      </div>
+
+      <div class="bj-status-row">
+        <div class="bj-badge">步数: <span id="movesText">25</span></div>
+        <div class="bj-badge highlight">得分: <span id="scoreText">0</span></div>
+        <div class="bj-badge">目标: <span id="targetText">2,500</span></div>
+      </div>
+    </header>
+
+    <div class="bj-board-wrap">
+      <div class="bj-board" id="board">
+        <!-- 8x8 grid of gems -->
+      </div>
+    </div>
+
+    <footer class="bj-footer">
+      <div class="bj-hint">点击两颗相邻宝石互换位置 · 3 颗同色相连消除 · 4 连与 5 连生成爆破特殊宝石</div>
+    </footer>
+  </div>
+
+  <div class="modal-overlay" id="bjModal">
+    <div class="modal-card">
+      <div class="modal-emoji" id="modalEmoji">💎</div>
+      <h2 class="modal-title" id="modalTitle">过关大捷！</h2>
+      <p class="modal-desc" id="modalDesc">最终得分: 3,850 · 达标过关！</p>
+      <div class="modal-actions">
+        <button id="modalActionBtn" class="modal-btn modal-btn-primary">进入下一关</button>
+      </div>
+    </div>
+  </div>
+
+  <script src="game.js"></script>
+</body>
+</html>

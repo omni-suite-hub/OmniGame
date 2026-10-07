@@ -1,0 +1,1445 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1, viewport-fit=cover"
+    />
+    <meta name="theme-color" content="#0e1020" />
+    <meta name="color-scheme" content="dark" />
+    <title>OmniGame</title>
+    <style>
+      /* Surface page styles. Inline <style> is allowed under MV3 CSP
+         (script-src 'self' restricts scripts, not styles). No external fonts /
+         images — emoji glyphs only. */
+      * {
+        box-sizing: border-box;
+      }
+      /* Completely hide all scrollbars across all browsers/platforms */
+      * {
+        scrollbar-width: none !important;
+        -ms-overflow-style: none !important;
+      }
+      *::-webkit-scrollbar {
+        display: none !important;
+        width: 0 !important;
+        height: 0 !important;
+        background: transparent !important;
+      }
+      html,
+      body,
+      .surf-home,
+      .surf-cat-bar,
+      .surf-grid,
+      .surf-player,
+      .surf-frame {
+        scrollbar-width: none !important;
+        -ms-overflow-style: none !important;
+      }
+      html::-webkit-scrollbar,
+      body::-webkit-scrollbar,
+      .surf-home::-webkit-scrollbar,
+      .surf-cat-bar::-webkit-scrollbar,
+      .surf-grid::-webkit-scrollbar,
+      .surf-player::-webkit-scrollbar,
+      .surf-frame::-webkit-scrollbar {
+        display: none !important;
+        width: 0 !important;
+        height: 0 !important;
+        background: transparent !important;
+      }
+      html,
+      body {
+        margin: 0;
+        padding: 0;
+        height: 100%;
+        background: #0e1020;
+        color: #eef1ff;
+        font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC",
+          "Hiragino Sans GB", "Microsoft YaHei", Roboto, Helvetica, Arial,
+          sans-serif;
+        -webkit-font-smoothing: antialiased;
+      }
+      body {
+        display: flex;
+        flex-direction: column;
+        min-height: 0;
+      }
+
+      /* Top hover-to-reveal header panel */
+      .surf-hover-trigger {
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        height: 20px;
+        z-index: 95;
+        pointer-events: auto;
+        cursor: pointer;
+        display: flex;
+        justify-content: center;
+        align-items: flex-start;
+        padding-top: 3px;
+        background: transparent;
+      }
+      .surf-peek-pill {
+        width: 38px;
+        height: 3px;
+        border-radius: 999px;
+        background: rgba(255, 255, 255, 0.22);
+        box-shadow: 0 1px 3px rgba(0, 0, 0, 0.4);
+        transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+      }
+      .surf-hover-trigger:hover .surf-peek-pill {
+        background: #38bdf8;
+        width: 54px;
+        height: 4px;
+        box-shadow: 0 0 10px rgba(56, 189, 248, 0.7);
+      }
+
+      /* Common header styles */
+      .surf-topbar {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 10px;
+        flex-wrap: nowrap;
+      }
+      .surf-brand {
+        font-weight: 700;
+        font-size: 15px;
+        display: flex;
+        align-items: center;
+        gap: 6px;
+        white-space: nowrap;
+        flex-shrink: 0;
+      }
+      .surf-site-badge {
+        display: inline-flex;
+        align-items: center;
+        gap: 4px;
+        font-size: 11px;
+        font-weight: 600;
+        color: #38bdf8;
+        background: rgba(56, 189, 248, 0.12);
+        border: 1px solid rgba(56, 189, 248, 0.35);
+        border-radius: 999px;
+        padding: 2px 8px;
+        text-decoration: none;
+        cursor: pointer;
+        transition: all 0.16s ease;
+        user-select: none;
+      }
+      .surf-site-badge:hover {
+        background: rgba(56, 189, 248, 0.24);
+        border-color: #38bdf8;
+        color: #fff;
+        transform: translateY(-1px);
+        box-shadow: 0 2px 8px rgba(56, 189, 248, 0.35);
+      }
+      .surf-site-badge:active {
+        transform: scale(0.96);
+      }
+      @media (max-width: 360px) {
+        .surf-site-badge {
+          font-size: 10px;
+          padding: 1px 6px;
+        }
+      }
+      @media (max-width: 310px) {
+        .surf-site-badge {
+          display: none;
+        }
+      }
+      .surf-topbar-actions {
+        margin-left: auto;
+        display: flex;
+        align-items: center;
+        justify-content: flex-end;
+        gap: 6px;
+        flex-shrink: 0;
+        white-space: nowrap;
+      }
+      body.is-iframe .surf-topbar {
+        display: none !important;
+      }
+      body.in-player .surf-header-area,
+      body.in-player .surf-hover-trigger {
+        display: none !important;
+      }
+
+      .surf-top-btn {
+        border: 1px solid rgba(255, 255, 255, 0.14);
+        background: #1e2448;
+        color: #eef1ff;
+        border-radius: 9px;
+        cursor: pointer;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        transition: all 0.14s ease;
+        user-select: none;
+      }
+      .surf-top-btn:hover {
+        background: #2a3366;
+        border-color: rgba(255, 255, 255, 0.28);
+        transform: translateY(-1px);
+      }
+      .surf-top-btn:active {
+        transform: scale(0.92);
+      }
+      .surf-top-btn-accent {
+        border: 0;
+        background: linear-gradient(135deg, #0e7490, #2563eb);
+        color: #fff;
+        box-shadow: 0 2px 8px rgba(14, 116, 144, 0.35);
+      }
+      .surf-top-btn-accent:hover {
+        filter: brightness(1.15);
+        box-shadow: 0 4px 12px rgba(14, 116, 144, 0.5);
+      }
+      .surf-top-btn-close:hover {
+        background: #ef4444 !important;
+        border-color: transparent !important;
+        color: #fff !important;
+      }
+
+      /* Mode 1: Window Mode (独立小窗 / 弹窗)
+         - 顶部常驻导航，杜绝任何浮动遮挡
+         ======================================================== */
+      body.is-window .surf-hover-trigger {
+        display: none !important;
+      }
+      body.is-window .surf-header-area {
+        position: sticky !important;
+        top: 0 !important;
+        transform: none !important;
+        opacity: 1 !important;
+        pointer-events: auto !important;
+        background: #0e1020 !important;
+        box-shadow: 0 6px 18px rgba(0, 0, 0, 0.4) !important;
+        border-bottom: 1px solid rgba(255, 255, 255, 0.06) !important;
+      }
+      body.is-window .surf-topbar {
+        background: #141831 !important;
+        border-bottom: 1px solid rgba(255, 255, 255, 0.06) !important;
+        padding: 8px 12px !important;
+      }
+      body.is-window .surf-top-btn {
+        width: auto !important;
+        height: auto !important;
+        padding: 5px 10px !important;
+        font-size: 12px !important;
+        font-weight: 600 !important;
+        border-radius: 9px !important;
+        gap: 5px !important;
+        flex: 0 0 auto !important;
+      }
+      body.is-window .surf-btn-text {
+        display: inline !important;
+      }
+      body.is-window #surfPinBtn {
+        display: none !important;
+      }
+      body.is-window .surf-home {
+        padding: 12px 12px 20px 12px !important;
+      }
+
+      /* ========================================================
+         Mode 2: Side Panel Mode (Chrome 侧边栏)
+         - 侧边栏保持原样不要动！常驻顶部，完整图文胶囊按钮
+         - 绝无 🎯、×、📌 等窗口专属小 icon
+         - 只有【🪟 开小窗】和【🙈 隐藏小球】
+         ======================================================== */
+      #centerBtn,
+      #closeBtn,
+      #surfPinBtn {
+        display: none !important;
+      }
+      body.is-sidepanel .surf-hover-trigger {
+        display: none !important;
+      }
+      body.is-sidepanel .surf-header-area {
+        position: sticky !important;
+        top: 0 !important;
+        transform: none !important;
+        opacity: 1 !important;
+        pointer-events: auto !important;
+        background: #0e1020 !important;
+        box-shadow: 0 6px 18px rgba(0, 0, 0, 0.4) !important;
+        border-bottom: 1px solid rgba(255, 255, 255, 0.06) !important;
+      }
+      body.is-sidepanel .surf-topbar {
+        background: #141831 !important;
+        border-bottom: 1px solid rgba(255, 255, 255, 0.06) !important;
+        padding: 10px 12px !important;
+      }
+      body.is-sidepanel .surf-top-btn {
+        width: auto !important;
+        height: auto !important;
+        padding: 5px 10px !important;
+        font-size: 12px !important;
+        font-weight: 600 !important;
+        border-radius: 9px !important;
+        gap: 5px !important;
+        flex: 0 0 auto !important;
+      }
+      body.is-sidepanel .surf-btn-text {
+        display: inline !important;
+      }
+      body.is-sidepanel #centerBtn,
+      body.is-sidepanel #closeBtn,
+      body.is-sidepanel #surfPinBtn {
+        display: none !important;
+      }
+      body.is-sidepanel .surf-home {
+        padding: 12px 12px 20px 12px !important;
+      }
+
+      .surf-home {
+        flex: 1 1 auto;
+        overflow-y: auto;
+      }
+      .surf-grid {
+        display: grid;
+        grid-template-columns: 1fr;
+        gap: 12px;
+      }
+      @media (min-width: 360px) {
+        .surf-grid {
+          grid-template-columns: 1fr 1fr;
+        }
+      }
+      @media (min-width: 600px) {
+        .surf-grid {
+          grid-template-columns: repeat(3, 1fr);
+        }
+      }
+      @media (min-width: 860px) {
+        .surf-grid {
+          grid-template-columns: repeat(4, 1fr);
+        }
+      }
+
+      /* Search & Category Filter Bar */
+      .surf-nav-wrap {
+        padding: 8px 12px 10px 12px;
+        background: transparent;
+      }
+      .surf-search-bar {
+        position: relative;
+        display: flex;
+        align-items: center;
+        background: #181d38;
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        border-radius: 12px;
+        padding: 0 10px;
+        height: 38px;
+        transition: border-color 0.15s ease, box-shadow 0.15s ease;
+      }
+      .surf-search-bar:focus-within {
+        border-color: #3b82f6;
+        box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.25);
+      }
+      .surf-search-icon {
+        font-size: 14px;
+        color: #8b92b6;
+        margin-right: 8px;
+        pointer-events: none;
+      }
+      .surf-search-input {
+        flex: 1;
+        background: transparent;
+        border: none;
+        outline: none;
+        color: #eef1ff;
+        font-size: 13px;
+        font-family: inherit;
+      }
+      .surf-search-input::placeholder {
+        color: #6d759e;
+      }
+      .surf-search-clear {
+        background: none;
+        border: none;
+        color: #8b92b6;
+        font-size: 16px;
+        cursor: pointer;
+        padding: 0 4px;
+        line-height: 1;
+        transition: color 0.1s ease;
+      }
+      .surf-search-clear:hover {
+        color: #fff;
+      }
+      .surf-count-badge {
+        font-size: 11px;
+        color: #8b92b6;
+        background: rgba(255, 255, 255, 0.06);
+        padding: 2px 7px;
+        border-radius: 999px;
+        margin-left: 6px;
+        white-space: nowrap;
+      }
+      .surf-view-switch {
+        display: inline-flex;
+        align-items: center;
+        background: rgba(0, 0, 0, 0.35);
+        border: 1px solid rgba(255, 255, 255, 0.08);
+        border-radius: 8px;
+        padding: 2px;
+        margin-left: 6px;
+        gap: 2px;
+        flex-shrink: 0;
+      }
+      .surf-view-btn {
+        border: 0;
+        background: transparent;
+        color: #8b92b6;
+        border-radius: 6px;
+        width: 24px;
+        height: 22px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 13px;
+        cursor: pointer;
+        transition: all 0.12s ease;
+        padding: 0;
+      }
+      .surf-view-btn:hover {
+        color: #fff;
+      }
+      .surf-view-btn.active {
+        background: #242844;
+        color: #00E5FF;
+        box-shadow: 0 1px 4px rgba(0, 0, 0, 0.4);
+      }
+      .surf-cat-bar {
+        display: flex;
+        gap: 6px;
+        overflow-x: auto;
+        padding-top: 8px;
+        padding-bottom: 2px;
+        scrollbar-width: none;
+        -ms-overflow-style: none;
+      }
+      .surf-cat-bar::-webkit-scrollbar {
+        display: none;
+      }
+      .surf-cat-pill {
+        flex: 0 0 auto;
+        border: 1px solid rgba(255, 255, 255, 0.08);
+        background: #181d38;
+        color: #a6abce;
+        border-radius: 999px;
+        padding: 5px 12px;
+        font-size: 12px;
+        font-weight: 600;
+        cursor: pointer;
+        transition: all 0.15s ease;
+      }
+      .surf-cat-pill:hover {
+        background: #252c54;
+        color: #fff;
+      }
+      .surf-cat-pill.active {
+        background: linear-gradient(135deg, #0e7490, #3b82f6);
+        color: #fff;
+        border-color: transparent;
+        box-shadow: 0 2px 8px rgba(59, 130, 246, 0.35);
+      }
+      .surf-cat-badge {
+        display: inline-block;
+        background: rgba(255, 255, 255, 0.2);
+        color: #fff;
+        font-size: 10px;
+        font-weight: 700;
+        border-radius: 999px;
+        padding: 0 5px;
+        margin-left: 3px;
+        line-height: 14px;
+        vertical-align: middle;
+      }
+
+      /* Horizontal Recently-Played Bar */
+      .surf-recent-bar {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        padding: 6px 14px 4px 14px;
+        background: rgba(14, 18, 40, 0.55);
+        border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+        overflow-x: auto;
+        scrollbar-width: none;
+      }
+      .surf-recent-bar::-webkit-scrollbar { display: none; }
+      .surf-recent-bar[hidden] { display: none !important; }
+      .surf-recent-title {
+        display: flex;
+        align-items: center;
+        gap: 4px;
+        font-size: 11px;
+        font-weight: 700;
+        color: #94a3b8;
+        white-space: nowrap;
+        flex-shrink: 0;
+      }
+      .surf-recent-list {
+        display: flex;
+        align-items: center;
+        gap: 6px;
+        flex: 1 1 auto;
+        overflow-x: auto;
+        scrollbar-width: none;
+      }
+      .surf-recent-list::-webkit-scrollbar { display: none; }
+      .surf-recent-pill {
+        border: 1px solid rgba(255, 255, 255, 0.12);
+        background: #181d38;
+        color: #eef1ff;
+        border-radius: 999px;
+        padding: 3px 10px;
+        font-size: 11px;
+        font-weight: 600;
+        cursor: pointer;
+        display: inline-flex;
+        align-items: center;
+        gap: 4px;
+        white-space: nowrap;
+        flex-shrink: 0;
+        transition: all 0.12s ease;
+      }
+      .surf-recent-pill:hover {
+        background: #252c54;
+        border-color: #00E5FF;
+        transform: translateY(-1px);
+        box-shadow: 0 2px 8px rgba(0, 229, 255, 0.25);
+      }
+      .surf-recent-clear {
+        border: 0;
+        background: transparent;
+        color: #64748b;
+        font-size: 13px;
+        cursor: pointer;
+        padding: 2px 6px;
+        border-radius: 4px;
+        flex-shrink: 0;
+        line-height: 1;
+        transition: color 0.12s;
+      }
+      .surf-recent-clear:hover {
+        color: #ef4444;
+      }
+
+      /* Card Favorite Star & Action Group */
+      .surf-card-actions {
+        display: flex;
+        align-items: center;
+        gap: 6px;
+      }
+      .surf-card-fav {
+        border: 0;
+        background: rgba(0, 0, 0, 0.32);
+        color: rgba(255, 255, 255, 0.5);
+        border-radius: 50%;
+        width: 22px;
+        height: 22px;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 13px;
+        line-height: 1;
+        cursor: pointer;
+        transition: all 0.15s ease;
+        padding: 0;
+      }
+      .surf-card-fav:hover {
+        transform: scale(1.2);
+        color: #fbbf24;
+        background: rgba(0, 0, 0, 0.55);
+      }
+      .surf-card-fav.active {
+        color: #fbbf24;
+        filter: drop-shadow(0 0 6px rgba(251, 191, 36, 0.8));
+        background: rgba(0, 0, 0, 0.5);
+      }
+
+      /* Player Toolbar Enhanced Buttons */
+      .surf-player-btn {
+        border: 1px solid rgba(255, 255, 255, 0.09);
+        background: rgba(255, 255, 255, 0.06);
+        color: #cfd4ec;
+        border-radius: 8px;
+        padding: 5px 9px;
+        font-size: 12px;
+        font-weight: 600;
+        cursor: pointer;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        gap: 4px;
+        line-height: 1;
+        white-space: nowrap;
+        flex-shrink: 0;
+        transition: all 0.15s cubic-bezier(0.16, 1, 0.3, 1);
+      }
+      .surf-player-btn:hover {
+        background: rgba(255, 255, 255, 0.12);
+        color: #fff;
+        border-color: rgba(255, 255, 255, 0.18);
+        transform: translateY(-1px);
+      }
+      .surf-player-btn:active {
+        transform: translateY(0) scale(0.97);
+      }
+      .surf-btn-icon {
+        width: 14px;
+        height: 14px;
+        flex-shrink: 0;
+        display: inline-block;
+        vertical-align: middle;
+        pointer-events: none;
+      }
+      .surf-btn-label {
+        display: inline-block;
+        line-height: 1;
+        pointer-events: none;
+      }
+      .surf-player-btn.active,
+      .surf-player-btn.surf-fav.active {
+        background: rgba(245, 158, 11, 0.18);
+        color: #fbbf24;
+        border: 1px solid rgba(245, 158, 11, 0.55);
+        box-shadow: 0 0 10px rgba(245, 158, 11, 0.22);
+      }
+      .surf-player-btn.surf-fav.active .fav-star-icon {
+        fill: #fbbf24;
+        stroke: #f59e0b;
+      }
+      .surf-player-btn.surf-mute {
+        width: 30px;
+        height: 28px;
+        padding: 0;
+      }
+      .surf-player-btn.surf-mute.active {
+        background: rgba(244, 63, 94, 0.18);
+        border-color: rgba(244, 63, 94, 0.45);
+        color: #fb7185;
+      }
+      .surf-top-btn-svg {
+        width: 15px;
+        height: 15px;
+        flex-shrink: 0;
+        display: inline-block;
+        vertical-align: middle;
+        pointer-events: none;
+      }
+
+      /* Random Game / Lottery Modal */
+      .surf-modal-overlay {
+        position: fixed;
+        inset: 0;
+        z-index: 2147483647;
+        background: rgba(10, 14, 30, 0.82);
+        backdrop-filter: blur(14px);
+        -webkit-backdrop-filter: blur(14px);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 20px;
+        animation: omg-modal-fade 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+      }
+      .surf-modal-overlay[hidden] {
+        display: none !important;
+      }
+      @keyframes omg-modal-fade {
+        from { opacity: 0; }
+        to { opacity: 1; }
+      }
+      .surf-modal-card {
+        width: 100%;
+        max-width: 320px;
+        background: #141831;
+        border: 1px solid rgba(0, 229, 255, 0.4);
+        box-shadow: 0 20px 50px rgba(0, 0, 0, 0.75), 0 0 30px rgba(0, 229, 255, 0.2);
+        border-radius: 20px;
+        padding: 20px;
+        text-align: center;
+        display: flex;
+        flex-direction: column;
+        gap: 14px;
+        animation: omg-modal-pop 0.22s cubic-bezier(0.16, 1, 0.3, 1);
+      }
+      @keyframes omg-modal-pop {
+        from { transform: scale(0.85); opacity: 0; }
+        to { transform: scale(1); opacity: 1; }
+      }
+      .surf-modal-head {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        font-size: 14px;
+        font-weight: 700;
+        color: #00E5FF;
+      }
+      .surf-modal-close {
+        border: 0;
+        background: transparent;
+        color: #94a3b8;
+        font-size: 18px;
+        cursor: pointer;
+        line-height: 1;
+        padding: 4px;
+        border-radius: 6px;
+        transition: color 0.12s;
+      }
+      .surf-modal-close:hover {
+        color: #fff;
+      }
+      .surf-random-body {
+        padding: 14px 10px;
+        background: radial-gradient(circle at center, rgba(0, 229, 255, 0.12), transparent 70%), #1a1d35;
+        border-radius: 14px;
+        border: 1px solid rgba(255, 255, 255, 0.08);
+      }
+      .surf-random-emoji {
+        font-size: 52px;
+        line-height: 1;
+        margin-bottom: 8px;
+        transition: transform 0.15s cubic-bezier(0.34, 1.56, 0.64, 1);
+      }
+      .surf-random-name {
+        font-size: 18px;
+        font-weight: 800;
+        color: #fff;
+        margin-bottom: 4px;
+      }
+      .surf-random-tag {
+        font-size: 12px;
+        color: #a6abce;
+      }
+      .surf-modal-actions {
+        display: flex;
+        gap: 10px;
+        margin-top: 4px;
+      }
+      .surf-modal-btn {
+        flex: 1;
+        border: 1px solid rgba(255, 255, 255, 0.16);
+        background: #1e2448;
+        color: #eef1ff;
+        padding: 9px 12px;
+        font-size: 13px;
+        font-weight: 700;
+        border-radius: 10px;
+        cursor: pointer;
+        transition: all 0.14s ease;
+      }
+      .surf-modal-btn:hover {
+        background: #2a3366;
+      }
+      .surf-modal-btn-primary {
+        border: 0;
+        background: linear-gradient(135deg, #00E5FF, #2563eb);
+        color: #fff;
+        box-shadow: 0 4px 16px rgba(0, 229, 255, 0.35);
+      }
+      .surf-modal-btn-primary:hover {
+        filter: brightness(1.12);
+        box-shadow: 0 6px 20px rgba(0, 229, 255, 0.5);
+      }
+      .surf-empty {
+        text-align: center;
+        padding: 40px 16px;
+        color: #8b92b6;
+      }
+      .surf-empty.hidden {
+        display: none;
+      }
+      .surf-empty-emoji {
+        font-size: 40px;
+        margin-bottom: 8px;
+      }
+      .surf-empty-title {
+        font-size: 15px;
+        font-weight: 700;
+        color: #eef1ff;
+        margin-bottom: 4px;
+      }
+      .surf-empty-desc {
+        font-size: 12px;
+        color: #8b92b6;
+        margin-bottom: 16px;
+      }
+      .surf-empty-btn {
+        border: none;
+        background: #252c54;
+        color: #eef1ff;
+        padding: 8px 16px;
+        border-radius: 8px;
+        font-size: 12px;
+        font-weight: 600;
+        cursor: pointer;
+        transition: background 0.15s ease;
+      }
+      .surf-empty-btn:hover {
+        background: #3b82f6;
+      }
+
+      /* ========================================================
+         Modern Cyber Dark Game Card Design (Tier-1 Quality)
+         ======================================================== */
+      .surf-grid {
+        display: grid;
+        grid-template-columns: 1fr;
+        gap: 10px;
+      }
+      @media (min-width: 330px) {
+        .surf-grid {
+          grid-template-columns: repeat(2, 1fr);
+        }
+      }
+      @media (min-width: 620px) {
+        .surf-grid {
+          grid-template-columns: repeat(3, 1fr);
+        }
+      }
+      @media (min-width: 860px) {
+        .surf-grid {
+          grid-template-columns: repeat(4, 1fr);
+        }
+      }
+      @media (min-width: 1100px) {
+        .surf-grid {
+          grid-template-columns: repeat(5, 1fr);
+        }
+      }
+
+      /* Card Mode */
+      .surf-card {
+        position: relative;
+        border: 1px solid rgba(255, 255, 255, 0.08);
+        border-radius: 15px;
+        padding: 12px 11px 10px;
+        min-height: 124px;
+        text-align: left;
+        background: linear-gradient(180deg, #161b36 0%, #111428 100%);
+        color: #eef1ff;
+        cursor: pointer;
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+        box-shadow: 0 8px 24px rgba(0, 0, 0, 0.4);
+        transition: transform 0.15s cubic-bezier(0.16, 1, 0.3, 1),
+                    border-color 0.15s ease,
+                    box-shadow 0.15s ease;
+        overflow: hidden;
+        user-select: none;
+      }
+      .surf-card::before {
+        content: "";
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        height: 2px;
+        background: linear-gradient(90deg, transparent, var(--card-accent, #00E5FF), transparent);
+        opacity: 0.35;
+        transition: opacity 0.2s ease;
+      }
+      .surf-card:hover,
+      .surf-card:focus-visible {
+        transform: translateY(-3px);
+        border-color: rgba(0, 229, 255, 0.45);
+        box-shadow: 0 14px 32px rgba(0, 0, 0, 0.55), 0 0 20px rgba(0, 229, 255, 0.12);
+        outline: none;
+      }
+      .surf-card:hover::before {
+        opacity: 0.9;
+      }
+      .surf-card:active {
+        transform: scale(0.98);
+      }
+
+      .surf-card-top {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        width: 100%;
+        gap: 6px;
+      }
+      .surf-card-icon {
+        width: 38px;
+        height: 38px;
+        border-radius: 11px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 22px;
+        flex-shrink: 0;
+        box-shadow: 0 3px 10px rgba(0, 0, 0, 0.3);
+        transition: transform 0.15s cubic-bezier(0.34, 1.56, 0.64, 1);
+      }
+      .surf-card:hover .surf-card-icon {
+        transform: scale(1.08) rotate(-2deg);
+      }
+      .surf-card-top-meta {
+        display: flex;
+        align-items: center;
+        gap: 5px;
+      }
+      .surf-card-cat-pill {
+        font-size: 10px;
+        font-weight: 700;
+        border-radius: 6px;
+        padding: 1px 6px;
+        border: 1px solid;
+        letter-spacing: 0.3px;
+        white-space: nowrap;
+      }
+      .surf-card-info-btn {
+        border: 0;
+        background: rgba(255, 255, 255, 0.08);
+        color: #94a3b8;
+        border-radius: 50%;
+        width: 20px;
+        height: 20px;
+        font-size: 11px;
+        cursor: help;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        transition: all 0.12s;
+        padding: 0;
+      }
+      .surf-card-info-btn:hover {
+        background: rgba(255, 255, 255, 0.2);
+        color: #fff;
+        transform: scale(1.15);
+      }
+
+      .surf-card-content {
+        margin-top: 8px;
+        flex: 1 1 auto;
+        min-width: 0;
+      }
+      .surf-card-name {
+        font-size: 14px;
+        font-weight: 700;
+        color: #f8fafc;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        letter-spacing: 0.2px;
+      }
+      .surf-card:hover .surf-card-name {
+        color: #00E5FF;
+      }
+      .surf-card-tag {
+        font-size: 11px;
+        color: #94a3b8;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        margin-top: 2px;
+      }
+
+      .surf-card-footer {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        margin-top: 9px;
+        padding-top: 7px;
+        border-top: 1px solid rgba(255, 255, 255, 0.06);
+        font-size: 11px;
+      }
+      .surf-card-best {
+        display: flex;
+        align-items: center;
+        gap: 3px;
+        color: #64748b;
+      }
+      .surf-best-val {
+        font-weight: 700;
+        color: #cbd5e1;
+      }
+      .surf-card-play-hint {
+        font-size: 11px;
+        font-weight: 700;
+        color: #00E5FF;
+        display: inline-flex;
+        align-items: center;
+        gap: 2px;
+        opacity: 0.8;
+        transition: all 0.15s ease;
+      }
+      .surf-card:hover .surf-card-play-hint {
+        opacity: 1;
+        transform: translateX(2px);
+        color: #7dd3fc;
+      }
+
+      /* Compact List View Mode */
+      body.view-list .surf-grid {
+        display: flex;
+        flex-direction: column;
+        gap: 6px;
+      }
+      .surf-list-row {
+        position: relative;
+        border: 1px solid rgba(255, 255, 255, 0.08);
+        border-radius: 12px;
+        padding: 8px 12px;
+        background: #141830;
+        color: #eef1ff;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        transition: all 0.14s ease;
+        user-select: none;
+      }
+      .surf-list-row:hover {
+        background: #1c2244;
+        border-color: rgba(0, 229, 255, 0.45);
+        transform: translateX(2px);
+        box-shadow: 0 6px 18px rgba(0, 0, 0, 0.4);
+      }
+      .surf-row-icon {
+        width: 36px;
+        height: 36px;
+        border-radius: 10px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 20px;
+        flex-shrink: 0;
+      }
+      .surf-row-main {
+        flex: 1 1 auto;
+        min-width: 0;
+      }
+      .surf-row-title-row {
+        display: flex;
+        align-items: center;
+        gap: 6px;
+      }
+      .surf-row-name {
+        font-size: 13px;
+        font-weight: 700;
+        color: #f8fafc;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+      }
+      .surf-list-row:hover .surf-row-name {
+        color: #00E5FF;
+      }
+      .surf-row-desc {
+        font-size: 11px;
+        color: #94a3b8;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        margin-top: 1px;
+      }
+      .surf-row-meta {
+        font-size: 11px;
+        color: #64748b;
+        white-space: nowrap;
+        margin-left: auto;
+        text-align: right;
+      }
+      .surf-row-actions {
+        display: flex;
+        align-items: center;
+        gap: 6px;
+        margin-left: 8px;
+      }
+      .surf-row-play-btn {
+        border: 0;
+        background: linear-gradient(135deg, #0e7490, #2563eb);
+        color: #fff;
+        border-radius: 8px;
+        padding: 4px 10px;
+        font-size: 11px;
+        font-weight: 700;
+        cursor: pointer;
+        transition: all 0.12s ease;
+        white-space: nowrap;
+      }
+      .surf-row-play-btn:hover {
+        filter: brightness(1.15);
+        box-shadow: 0 2px 8px rgba(14, 116, 144, 0.4);
+      }
+
+      .surf-footer {
+        margin: 20px 0 12px 0;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 10px;
+      }
+      .surf-hint {
+        text-align: center;
+        color: #a6abce;
+        font-size: 12px;
+        margin: 0;
+      }
+      .surf-site-banner {
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        padding: 6px 14px;
+        background: rgba(26, 32, 64, 0.85);
+        border: 1px solid rgba(108, 140, 255, 0.25);
+        border-radius: 999px;
+        font-size: 12px;
+        color: #a6abce;
+        text-decoration: none;
+        cursor: pointer;
+        transition: all 0.16s ease;
+        user-select: none;
+      }
+      .surf-site-banner:hover {
+        background: rgba(36, 44, 88, 0.95);
+        border-color: rgba(56, 189, 248, 0.55);
+        box-shadow: 0 4px 14px rgba(0, 0, 0, 0.35);
+        transform: translateY(-1px);
+      }
+      .surf-site-banner:active {
+        transform: scale(0.97);
+      }
+      .surf-site-icon {
+        font-size: 13px;
+      }
+      .surf-site-title {
+        color: #94a3b8;
+        font-weight: 500;
+      }
+      .surf-site-link {
+        color: #38bdf8;
+        font-weight: 700;
+        text-decoration: none;
+        letter-spacing: 0.3px;
+        transition: color 0.12s ease;
+      }
+      .surf-site-banner:hover .surf-site-link {
+        color: #7dd3fc;
+      }
+      .surf-site-arrow {
+        color: #38bdf8;
+        font-size: 11px;
+        font-weight: 700;
+        opacity: 0.8;
+        transition: transform 0.12s ease;
+      }
+      .surf-site-banner:hover .surf-site-arrow {
+        transform: translate(1px, -1px);
+        opacity: 1;
+      }
+
+      .surf-player {
+        flex: 1 1 auto;
+        display: flex;
+        flex-direction: column;
+        min-height: 0;
+      }
+      .surf-player.hidden,
+      .surf-home.hidden {
+        display: none;
+      }
+      .surf-playerbar {
+        flex: 0 0 auto;
+        display: flex;
+        align-items: center;
+        gap: 6px;
+        padding: 8px 12px;
+        background: #1a1d35;
+        border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+        user-select: none;
+      }
+      .surf-ptitle {
+        flex: 1 1 auto;
+        text-align: center;
+        font-weight: 700;
+        font-size: 14.5px;
+        color: #f1f4ff;
+        letter-spacing: 0.2px;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+        padding: 0 4px;
+        min-width: 0;
+      }
+      .surf-card-header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        width: 100%;
+      }
+      .surf-info-pill {
+        font-size: 11px;
+        font-weight: 700;
+        background: rgba(0, 0, 0, 0.38);
+        border: 1px solid rgba(255, 255, 255, 0.32);
+        border-radius: 999px;
+        padding: 2px 8px;
+        color: #fff;
+        cursor: help;
+        transition: background 0.12s ease, transform 0.1s ease;
+      }
+      .surf-info-pill:hover {
+        background: rgba(255, 255, 255, 0.28);
+        transform: scale(1.06);
+      }
+      /* Floating Tooltip Popover */
+      .omg-tooltip {
+        position: fixed;
+        z-index: 2147483647;
+        max-width: 320px;
+        width: max-content;
+        background: rgba(14, 18, 40, 0.96);
+        backdrop-filter: blur(14px);
+        -webkit-backdrop-filter: blur(14px);
+        border: 1px solid rgba(108, 140, 255, 0.35);
+        box-shadow: 0 16px 45px rgba(0, 0, 0, 0.65), 0 0 0 1px rgba(255, 255, 255, 0.08);
+        border-radius: 14px;
+        padding: 12px 14px;
+        color: #eef1ff;
+        font-size: 12px;
+        line-height: 1.5;
+        pointer-events: none;
+        opacity: 0;
+        transform: translateY(6px) scale(0.97);
+        transition: opacity 0.15s ease, transform 0.15s cubic-bezier(0.16, 1, 0.3, 1);
+        display: flex;
+        flex-direction: column;
+        gap: 6px;
+      }
+      .omg-tooltip.visible {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+      }
+      .omg-tooltip-title {
+        font-size: 14px;
+        font-weight: 700;
+        display: flex;
+        align-items: center;
+        gap: 6px;
+        padding-bottom: 6px;
+        border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        color: #fff;
+      }
+      .omg-tooltip-row {
+        display: flex;
+        gap: 6px;
+        align-items: flex-start;
+      }
+      .omg-tooltip-label {
+        flex: 0 0 auto;
+        font-weight: 700;
+        color: #60a5fa;
+      }
+      .omg-tooltip-val {
+        color: #cbd5e1;
+      }
+      .omg-tooltip-tip {
+        margin-top: 2px;
+        padding: 5px 8px;
+        background: rgba(245, 158, 11, 0.12);
+        border-left: 2px solid #f59e0b;
+        border-radius: 4px;
+        color: #fde68a;
+        font-size: 11px;
+      }
+      .surf-frame {
+        flex: 1 1 auto;
+        width: 100%;
+        border: 0;
+        background: #0e1020;
+        min-height: 0;
+      }
+    </style>
+  </head>
+  <body class="is-sidepanel">
+    <!-- Top Hover Trigger Area (Mouse hover to reveal navigation in Window mode) -->
+    <div id="surfHoverTrigger" class="surf-hover-trigger" title="鼠标移至顶部显示工具栏与搜索">
+      <div class="surf-peek-pill"></div>
+    </div>
+
+    <!-- Floating Top Header Group (Default hidden, slides down on hover) -->
+    <header id="surfHeaderArea" class="surf-header-area">
+      <div class="surf-topbar">
+        <div class="surf-brand">
+          <span aria-hidden="true">🎮</span> OmniGame
+          <a id="surfSiteBadge" class="surf-site-badge" href="https://omnigame.top" target="_blank" rel="noopener noreferrer" title="访问官方网站: omnigame.top">
+            🌐 omnigame.top
+          </a>
+        </div>
+        <div class="surf-topbar-actions">
+          <button id="surfMuteBtn" class="surf-top-btn" type="button" title="一键静音/解除静音 (摸鱼模式)" aria-label="一键静音">
+            <svg class="surf-top-btn-svg" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+              <path d="M8.5 4.5L5 7.5H2.5v5H5l3.5 3V4.5z"/>
+              <path d="M12.5 7a4 4 0 0 1 0 6"/>
+              <path d="M14.5 4.5a7.5 7.5 0 0 1 0 11"/>
+            </svg>
+          </button>
+          <button id="surfRandomBtn" class="surf-top-btn surf-top-btn-accent" type="button" title="摸鱼盲盒：随机抽一款游戏即玩！" aria-label="随机抽选">
+            <span class="surf-top-btn-icon">🎲</span><span class="surf-btn-text">随机</span>
+          </button>
+          <button id="surfPinBtn" class="surf-top-btn" type="button" title="固定顶部栏 (默认悬停自显)" aria-label="固定顶部栏">📌</button>
+          <button id="summonBallBtn" class="surf-top-btn" type="button" title="隐藏摸鱼小球 (快捷键 Option+Q)" aria-label="切换小球">
+            <span id="summonBallIcon">🙈</span><span id="summonBallText" class="surf-btn-text">隐藏小球</span>
+          </button>
+          <button id="ctxBtn" class="surf-top-btn surf-top-btn-accent" type="button" title="开小窗 (在网页开启悬浮小窗)" aria-label="开小窗">
+            <span id="ctxBtnIcon">🪟</span><span id="ctxBtnText" class="surf-btn-text">开小窗</span>
+          </button>
+          <button id="centerBtn" class="surf-top-btn" type="button" title="屏幕居中" aria-label="屏幕居中">🎯</button>
+          <button id="closeBtn" class="surf-top-btn surf-top-btn-close" type="button" title="关闭窗口" aria-label="关闭">×</button>
+        </div>
+      </div>
+
+      <!-- Search & Category Filters (Scales to 140+ games) -->
+      <div class="surf-nav-wrap">
+        <div class="surf-search-bar">
+          <span class="surf-search-icon">🔍</span>
+          <input type="search" id="surfSearchInput" class="surf-search-input" placeholder="搜索游戏 / 拼音 (如 2048、扫雷、西瓜、wzq)..." autocomplete="off" spellcheck="false" />
+          <button type="button" id="surfSearchClear" class="surf-search-clear" title="清空搜索" hidden>×</button>
+          <span id="surfCountBadge" class="surf-count-badge">160 款</span>
+          <div class="surf-view-switch" role="group" aria-label="视图切换">
+            <button type="button" id="viewGridBtn" class="surf-view-btn active" title="网格卡片视图">⊞</button>
+            <button type="button" id="viewListBtn" class="surf-view-btn" title="紧凑列表视图">☰</button>
+          </div>
+        </div>
+        <div class="surf-cat-bar" role="tablist">
+          <button class="surf-cat-pill active" data-cat="all" role="tab" aria-selected="true">全部</button>
+          <button class="surf-cat-pill" data-cat="fav" role="tab" aria-selected="false">⭐ 收藏 <span id="favCountBadge" class="surf-cat-badge">0</span></button>
+          <button class="surf-cat-pill" data-cat="original" role="tab" aria-selected="false">✨ 自研原创 <span id="origCountBadge" class="surf-cat-badge">19</span></button>
+          <button class="surf-cat-pill" data-cat="hot" role="tab" aria-selected="false">🔥 热门精选</button>
+          <button class="surf-cat-pill" data-cat="multiplayer" role="tab" aria-selected="false">⚔️ 双人联机</button>
+          <button class="surf-cat-pill" data-cat="puzzle" role="tab" aria-selected="false">🧩 益智解谜</button>
+          <button class="surf-cat-pill" data-cat="match" role="tab" aria-selected="false">💥 消除连线</button>
+          <button class="surf-cat-pill" data-cat="board" role="tab" aria-selected="false">♟️ 经典棋牌</button>
+          <button class="surf-cat-pill" data-cat="arcade" role="tab" aria-selected="false">🕹️ 街机动作</button>
+          <button class="surf-cat-pill" data-cat="physics" role="tab" aria-selected="false">⚡ 物理敏捷</button>
+        </div>
+      </div>
+
+      <!-- Recently-Played Quick Bar -->
+      <div id="surfRecentBar" class="surf-recent-bar" hidden>
+        <div class="surf-recent-title">
+          <span class="surf-recent-icon">🕒</span>
+          <span class="surf-recent-text">最近:</span>
+        </div>
+        <div id="surfRecentList" class="surf-recent-list"></div>
+        <button type="button" id="surfRecentClear" class="surf-recent-clear" title="清空最近游玩记录">×</button>
+      </div>
+    </header>
+
+    <main id="home" class="surf-home">
+      <div id="grid" class="surf-grid" role="list"></div>
+
+      <div id="surfEmpty" class="surf-empty hidden">
+        <div class="surf-empty-emoji">🔍</div>
+        <div class="surf-empty-title">未找到相关游戏</div>
+        <div class="surf-empty-desc">换个关键词试试，或点击下方按钮重置筛选</div>
+        <button type="button" id="surfEmptyReset" class="surf-empty-btn">显示全部游戏</button>
+      </div>
+
+      <footer class="surf-footer">
+        <p class="surf-hint">点击卡片即玩 · 悬停 ℹ️ 查玩法 · ⭐ 一键收藏 · 全部离线运行</p>
+        <a id="surfOfficialBanner" class="surf-site-banner" href="https://omnigame.top" target="_blank" rel="noopener noreferrer" title="访问 OmniGame 官方网站 (omnigame.top)">
+          <span class="surf-site-icon">🌐</span>
+          <span class="surf-site-title">官方网站：</span>
+          <span class="surf-site-link">omnigame.top</span>
+          <span class="surf-site-arrow">↗</span>
+        </a>
+      </footer>
+    </main>
+
+    <section id="player" class="surf-player hidden">
+      <div class="surf-playerbar">
+        <button id="backBtn" class="surf-player-btn surf-back" type="button" title="返回大厅" aria-label="返回">
+          <svg class="surf-btn-icon" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <path d="M12.5 15l-5-5 5-5"/>
+          </svg>
+          <span class="surf-btn-label">返回</span>
+        </button>
+        <div id="playerTitle" class="surf-ptitle"></div>
+        <button id="restartBtn" class="surf-player-btn surf-restart" type="button" title="重新开始本局游戏" aria-label="重开">
+          <svg class="surf-btn-icon" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <path d="M3.5 4.5v4.5h4.5"/>
+            <path d="M4.2 12.8a6.5 6.5 0 1 0 1.3-6.6L3.5 9"/>
+          </svg>
+          <span class="surf-btn-label">重开</span>
+        </button>
+        <button id="playerFavBtn" class="surf-player-btn surf-fav" type="button" title="收藏此游戏" aria-label="收藏">
+          <svg class="surf-btn-icon fav-star-icon" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <polygon points="10 2.5 12.3 7.3 17.5 8 13.8 11.7 14.6 17 10 14.5 5.4 17 6.2 11.7 2.5 8 7.7 7.3 10 2.5"/>
+          </svg>
+          <span class="surf-btn-label">收藏</span>
+        </button>
+        <button id="howBtn" class="surf-player-btn surf-how" type="button" title="查看玩法说明" aria-label="玩法说明">
+          <svg class="surf-btn-icon" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <circle cx="10" cy="10" r="7.5"/>
+            <path d="M10 6.5h.01"/>
+            <path d="M9.2 9.5h1.6v4.5h.8"/>
+            <path d="M9.2 14h3.2"/>
+          </svg>
+          <span class="surf-btn-label">玩法</span>
+        </button>
+        <button id="tabBtn" class="surf-player-btn surf-tab" type="button" title="在新标签独立大屏打开" aria-label="大屏">
+          <svg class="surf-btn-icon" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <path d="M12.5 3.5h4v4"/>
+            <path d="M9.5 10.5l7-7"/>
+            <path d="M14.5 11.5v4a1.5 1.5 0 0 1-1.5 1.5h-8A1.5 1.5 0 0 1 3.5 15.5v-8A1.5 1.5 0 0 1 5 6h4"/>
+          </svg>
+          <span class="surf-btn-label">大屏</span>
+        </button>
+        <button id="playerMuteBtn" class="surf-player-btn surf-mute" type="button" title="一键静音/解除静音" aria-label="静音切换">
+          <svg class="surf-btn-icon mute-icon" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <path d="M8.5 4.5L5 7.5H2.5v5H5l3.5 3V4.5z"/>
+            <path d="M12.5 7a4 4 0 0 1 0 6"/>
+            <path d="M14.5 4.5a7.5 7.5 0 0 1 0 11"/>
+          </svg>
+        </button>
+      </div>
+      <iframe
+        id="gameFrame"
+        class="surf-frame"
+        title="游戏画面"
+        frameborder="0"
+        scrolling="auto"
+        allow="fullscreen; clipboard-write"
+      ></iframe>
+    </section>
+
+    <!-- Random Game (摸鱼盲盒) Lottery Modal -->
+    <div id="surfRandomModal" class="surf-modal-overlay" hidden>
+      <div class="surf-modal-card">
+        <div class="surf-modal-head">
+          <span class="surf-modal-title">🎲 摸鱼盲盒 · 随心开局</span>
+          <button type="button" id="surfRandomClose" class="surf-modal-close" title="关闭">×</button>
+        </div>
+        <div class="surf-random-body">
+          <div id="surfRandomEmoji" class="surf-random-emoji">🎲</div>
+          <div id="surfRandomName" class="surf-random-name">正在摇奖中…</div>
+          <div id="surfRandomTag" class="surf-random-tag">随机挑选一款游戏</div>
+        </div>
+        <div class="surf-modal-actions">
+          <button type="button" id="surfRandomLaunch" class="surf-modal-btn surf-modal-btn-primary">🚀 立即开玩 (<span id="surfRandomCountdown">3</span>s)</button>
+          <button type="button" id="surfRandomReroll" class="surf-modal-btn">🎲 换一个</button>
+        </div>
+      </div>
+    </div>
+
+    <div id="gameHowTooltip" class="omg-tooltip" hidden></div>
+
+    <script src="games/_shared/storage.js"></script>
+    <script src="games/_shared/catalog.js"></script>
+    <script src="surface.js"></script>
+  </body>
+</html>

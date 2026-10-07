@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>下坡疾驰 (Slope) - OmniGame</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <div class="slope-container">
+    <header class="slope-header">
+      <div class="slope-title-row">
+        <h1 class="slope-title">下坡疾驰 <span>Slope 3D</span></h1>
+        <div class="slope-tools">
+          <button id="soundBtn" class="slope-icon-btn" title="声音">🔊</button>
+          <button id="restartBtn" class="slope-btn slope-btn-accent">重来</button>
+        </div>
+      </div>
+      <div class="slope-status-row">
+        <div class="slope-badge">疾驰距离: <span id="distText">0m</span></div>
+        <div class="slope-badge">时速: <span id="speedText">60km/h</span></div>
+        <div class="slope-badge">最佳: <span id="bestText">0m</span></div>
+      </div>
+    </header>
+
+    <div class="canvas-wrap">
+      <canvas id="gameCanvas" width="360" height="400"></canvas>
+      <div class="slope-overlay-hint" id="overlayHint">按 ← → 键或滑动屏幕控制滚球</div>
+    </div>
+
+    <!-- Onscreen touch steering -->
+    <div class="touch-controls">
+      <button class="t-btn" id="btnLeft">← 左倾</button>
+      <button class="t-btn" id="btnRight">右倾 →</button>
+    </div>
+
+    <footer class="slope-footer">
+      <div class="slope-hint">控制小球在斜坡跑道上极速滚落 · 避开红色方块障碍 · 切勿跌落虚空悬崖！</div>
+    </footer>
+  </div>
+
+  <div class="modal-overlay" id="gameOverModal">
+    <div class="modal-card">
+      <div class="modal-emoji" id="modalEmoji">☄️</div>
+      <h2 class="modal-title" id="modalTitle">小球坠入深渊！</h2>
+      <p class="modal-desc" id="modalDesc">极限疾驰 320 米！</p>
+      <div class="modal-actions">
+        <button id="modalRestartBtn" class="modal-btn">再次起滚</button>
+      </div>
+    </div>
+  </div>
+
+  <script src="game.js"></script>
+</body>
+</html>

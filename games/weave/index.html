@@ -1,0 +1,239 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no, viewport-fit=cover">
+<title>光棱织网 - OmniGame</title>
+<link rel="stylesheet" href="../_shared/game-layout.css">
+<style>
+  :root {
+    --bg: #060814;
+    --card: #10142a;
+    --laser-cyan: #00f2fe;
+    --laser-glow: rgba(0, 242, 254, 0.45);
+    --gold: #f59e0b;
+    --pink: #ff007f;
+    --text: #f8fafc;
+    --text-dim: #94a3b8;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; user-select: none; -webkit-user-select: none; }
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    overflow: hidden;
+    height: 100vh;
+    display: flex;
+    flex-direction: column;
+  }
+  #gameContainer {
+    position: relative;
+    width: 100%;
+    height: 100%;
+    max-width: 520px;
+    margin: 0 auto;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    background: radial-gradient(ellipse at 50% 20%, #15193a 0%, #060814 85%);
+  }
+  /* Top HUD */
+  .top-hud {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    z-index: 20;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 10px 16px;
+    background: linear-gradient(180deg, rgba(6, 8, 20, 0.95) 0%, transparent 100%);
+    pointer-events: none;
+  }
+  .hud-stat {
+    display: flex;
+    flex-direction: column;
+  }
+  .hud-label {
+    font-size: 10px;
+    font-weight: 700;
+    color: var(--text-dim);
+    letter-spacing: 1px;
+    text-transform: uppercase;
+  }
+  .hud-val {
+    font-size: 17px;
+    font-weight: 800;
+    color: #fff;
+    text-shadow: 0 0 10px var(--laser-glow);
+  }
+  .btn-reset-chamber {
+    pointer-events: auto;
+    padding: 6px 12px;
+    border-radius: 999px;
+    border: 1px solid rgba(255, 255, 255, 0.15);
+    background: rgba(255, 255, 255, 0.06);
+    color: var(--text-dim);
+    font-size: 11px;
+    font-weight: 700;
+    cursor: pointer;
+    transition: all 0.15s ease;
+  }
+  .btn-reset-chamber:active {
+    background: rgba(255, 255, 255, 0.2);
+    color: #fff;
+    transform: scale(0.95);
+  }
+  /* Canvas */
+  #gameCanvas {
+    width: 100%;
+    height: 100%;
+    display: block;
+    cursor: pointer;
+  }
+  /* Bottom Tip Deck */
+  .tip-deck {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    padding: 12px 16px 16px;
+    z-index: 15;
+    background: linear-gradient(0deg, rgba(6, 8, 20, 0.9) 0%, transparent 100%);
+    display: flex;
+    justify-content: center;
+    pointer-events: none;
+  }
+  .tip-text {
+    font-size: 12px;
+    color: var(--text-dim);
+    background: rgba(16, 20, 42, 0.85);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    padding: 6px 14px;
+    border-radius: 999px;
+  }
+  /* Overlay */
+  .overlay {
+    position: absolute;
+    inset: 0;
+    background: rgba(6, 8, 20, 0.92);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    z-index: 30;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 24px;
+    text-align: center;
+  }
+  .overlay.hidden { display: none; }
+  .modal-title {
+    font-size: 26px;
+    font-weight: 800;
+    color: #fff;
+    margin-bottom: 8px;
+    text-shadow: 0 0 20px var(--laser-glow);
+  }
+  .modal-sub {
+    font-size: 13px;
+    color: var(--text-dim);
+    margin-bottom: 24px;
+    line-height: 1.6;
+    max-width: 320px;
+  }
+  .btn-start {
+    padding: 12px 36px;
+    border-radius: 999px;
+    border: 0;
+    background: linear-gradient(135deg, #00f2fe, #38bdf8);
+    color: #060814;
+    font-size: 16px;
+    font-weight: 900;
+    cursor: pointer;
+    box-shadow: 0 4px 20px rgba(0, 242, 254, 0.4);
+    transition: all 0.15s ease;
+  }
+  .btn-start:hover { transform: translateY(-2px); }
+  .btn-start:active { transform: scale(0.97); }
+  .score-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+    width: 100%;
+    max-width: 280px;
+    margin-bottom: 24px;
+  }
+  .score-card {
+    background: rgba(255, 255, 255, 0.04);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    border-radius: 12px;
+    padding: 10px;
+  }
+  .score-card-num {
+    font-size: 20px;
+    font-weight: 800;
+    color: var(--laser-cyan);
+  }
+  .score-card-lbl {
+    font-size: 11px;
+    color: var(--text-dim);
+    font-weight: 600;
+  }
+</style>
+</head>
+<body>
+<div id="gameContainer">
+  <div class="top-hud">
+    <div class="hud-stat">
+      <span class="hud-label">光棱密室</span>
+      <span id="chamberVal" class="hud-val">第 1 关</span>
+    </div>
+    <div class="hud-stat" style="align-items: center;">
+      <span class="hud-label">能量水晶</span>
+      <span id="targetVal" class="hud-val" style="color: var(--gold);">0 / 2</span>
+    </div>
+    <button id="btnResetChamber" class="btn-reset-chamber">🔄 重置 (Z)</button>
+  </div>
+
+  <canvas id="gameCanvas"></canvas>
+
+  <div class="tip-deck">
+    <div class="tip-text">💡 点击棱镜反射镜调整朝向 · 引导激光激活全部水晶</div>
+  </div>
+
+  <!-- Start Overlay -->
+  <div id="startOverlay" class="overlay">
+    <h1 class="modal-title">💎 光棱织网</h1>
+    <p class="modal-sub">
+      激光折射与分光织网！<br>
+      点击旋转反射镜与分光三棱镜，折射高能激光光束！<br>
+      穿透障碍将激光引导至所有能量水晶节点完成矩阵共振！<br>
+      点击镜面即可旋转 90° 导光
+    </p>
+    <button id="startBtn" class="btn-start">聚焦光棱</button>
+  </div>
+
+  <!-- Clear Overlay -->
+  <div id="clearOverlay" class="overlay hidden">
+    <h2 class="modal-title" id="clearTitle">光网共鸣！</h2>
+    <p class="modal-sub" id="clearSub">激光回路闭合，能量水晶全部点亮</p>
+    <div class="score-grid">
+      <div class="score-card">
+        <div id="finalChamber" class="score-card-num">1</div>
+        <div class="score-card-lbl">完成密室</div>
+      </div>
+      <div class="score-card">
+        <div id="finalTime" class="score-card-num">12s</div>
+        <div class="score-card-lbl">校准用时</div>
+      </div>
+    </div>
+    <button id="nextBtn" class="btn-start">下一密室</button>
+  </div>
+</div>
+
+<script src="../_shared/storage.js"></script>
+<script src="game.js"></script>
+</body>
+</html>

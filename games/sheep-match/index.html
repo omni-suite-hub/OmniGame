@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>羊了个羊 (Sheep Match) - OmniGame</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <div class="sheep-container">
+    <header class="sheep-header">
+      <div class="sheep-title-row">
+        <h1 class="sheep-title">羊了个羊 <span>Sheep Match</span></h1>
+        <div class="sheep-tools">
+          <button id="soundBtn" class="sheep-icon-btn" title="声音开关">🔊</button>
+          <button id="restartBtn" class="sheep-btn sheep-btn-accent" title="重开">重新开局</button>
+        </div>
+      </div>
+      <div class="sheep-status-row">
+        <div class="sheep-badge">关卡: <span id="levelText">第 1 关</span></div>
+        <div class="sheep-badge">得分: <span id="scoreText">0</span></div>
+        <div class="sheep-badge">剩余卡牌: <span id="cardsLeftText">0</span></div>
+      </div>
+    </header>
+
+    <!-- 3D Overlapping Card Playfield -->
+    <div class="playfield-wrapper" id="playfieldWrapper">
+      <div class="cards-stage" id="cardsStage"></div>
+    </div>
+
+    <!-- Power-up Props -->
+    <div class="props-bar">
+      <button class="prop-btn" id="propUndo" title="移回上张牌">🔙 移回 (1)</button>
+      <button class="prop-btn" id="propOut" title="移出3张牌">⬆️ 移出3张 (1)</button>
+      <button class="prop-btn" id="propShuffle" title="洗乱全场">🔀 洗牌 (1)</button>
+    </div>
+
+    <!-- Bottom Collection Slots (7 Slots) -->
+    <div class="collection-area">
+      <div class="collection-bar" id="collectionBar"></div>
+    </div>
+
+    <footer class="sheep-footer">
+      <div class="sheep-hint">点击亮色未遮挡的方块进入卡槽 · 凑齐 3 张同图案消除 · 卡槽满 7 张判定挑战失败</div>
+    </footer>
+  </div>
+
+  <div class="modal-overlay" id="gameOverModal">
+    <div class="modal-card">
+      <div class="modal-emoji" id="modalEmoji">🐑</div>
+      <h2 class="modal-title" id="modalTitle">挑战失败！</h2>
+      <p class="modal-desc" id="modalDesc">卡槽已满，再接再厉！</p>
+      <div class="modal-actions">
+        <button id="modalRestartBtn" class="modal-btn modal-btn-primary">再来一次</button>
+      </div>
+    </div>
+  </div>
+
+  <script src="game.js"></script>
+</body>
+</html>

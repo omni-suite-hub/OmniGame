@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover"
+    />
+    <title>俄罗斯方块 · OmniGame</title>
+    <link rel="stylesheet" href="style.css" />
+  </head>
+  <body>
+    <div class="wrap">
+      <div class="head">
+        <div class="title">俄罗斯方块</div>
+        <button class="pause" id="pauseBtn" aria-label="暂停">⏸</button>
+      </div>
+
+      <div class="stage">
+        <div class="board-area">
+          <canvas id="cv"></canvas>
+          <div class="overlay" id="overlay" hidden>
+            <div class="overlay-inner">
+              <h2 id="ovTitle"></h2>
+              <p id="ovText"></p>
+              <button id="ovBtn" class="btn">开始</button>
+            </div>
+          </div>
+        </div>
+
+        <div class="side">
+          <div class="stat"><span>分数</span><b id="score">0</b></div>
+          <div class="stat"><span>最佳</span><b id="best">0</b></div>
+          <div class="stat"><span>等级</span><b id="level">1</b></div>
+          <div class="stat"><span>消行</span><b id="lines">0</b></div>
+          <div class="next">
+            <span>下一个</span>
+            <canvas id="next" width="96" height="96"></canvas>
+          </div>
+        </div>
+
+        <div class="controls">
+          <button class="ctrl" data-act="left" aria-label="左">◀</button>
+          <button class="ctrl" data-act="rotate" aria-label="旋转">⟳</button>
+          <button class="ctrl" data-act="down" aria-label="下落">▼</button>
+          <button class="ctrl" data-act="right" aria-label="右">▶</button>
+          <button class="ctrl ctrl-wide" data-act="drop" aria-label="硬降">⤓ 硬降</button>
+        </div>
+      </div>
+
+      <p class="tip">← → 移动 · ↑ 旋转 · ↓ 软降 · 空格 硬降 · P 暂停</p>
+    </div>
+
+    <script src="../_shared/storage.js"></script>
+    <script src="game.js"></script>
+  </body>
+</html>

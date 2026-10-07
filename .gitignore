@@ -1,0 +1,25 @@
+# 打包产物（旧版本 zip，构建时重新生成）
+*.zip
+
+# 品牌素材（设计资源，非代码；体积 9.6MB）
+omnigame-brand_assets/
+
+# 交付物（截图与文档输出）
+deliverables/
+
+# Agent 工作记忆
+.workbuddy/
+
+# 系统与编辑器
+.DS_Store
+Thumbs.db
+*.swp
+*~
+
+# 日志与临时文件
+*.log
+*.tmp
+
+# 本地环境变量
+.env
+.env.local

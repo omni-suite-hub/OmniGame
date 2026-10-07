@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>色线连接 (Line Connect) - OmniGame</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <div class="lc-container">
+    <header class="lc-header">
+      <div class="lc-title-row">
+        <h1 class="lc-title">色线连接 <span>Line Connect</span></h1>
+        <div class="lc-tools">
+          <button id="soundBtn" class="lc-icon-btn" title="声音">🔊</button>
+          <button id="resetLevelBtn" class="lc-btn lc-btn-ghost">重置</button>
+          <button id="restartBtn" class="lc-btn lc-btn-accent">新关</button>
+        </div>
+      </div>
+      <div class="lc-status-row">
+        <div class="lc-badge">关卡: <span id="levelText">第 1 关</span></div>
+        <div class="lc-badge">已连管道: <span id="flowText">0/5</span></div>
+        <div class="lc-badge">铺满率: <span id="coverageText">0%</span></div>
+      </div>
+    </header>
+
+    <div class="board-wrap">
+      <canvas id="gameCanvas" width="320" height="320"></canvas>
+    </div>
+
+    <footer class="lc-footer">
+      <div class="lc-hint">连接相同颜色的圆点 · 管道不可交叉 · 必须 100% 填满棋盘所有格子！</div>
+    </footer>
+  </div>
+
+  <div class="modal-overlay" id="gameOverModal">
+    <div class="modal-card">
+      <div class="modal-emoji" id="modalEmoji">🌈</div>
+      <h2 class="modal-title" id="modalTitle">全网格连通！</h2>
+      <p class="modal-desc" id="modalDesc">100% 铺满棋盘，管道畅通无阻！</p>
+      <div class="modal-actions">
+        <button id="modalNextBtn" class="modal-btn">下一关</button>
+      </div>
+    </div>
+  </div>
+
+  <script src="game.js"></script>
+</body>
+</html>

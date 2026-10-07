@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>水果忍者 (Fruit Ninja) - OmniGame</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <div class="ninja-container">
+    <header class="ninja-header">
+      <div class="ninja-title-row">
+        <h1 class="ninja-title">水果忍者 <span>Fruit Ninja</span></h1>
+        <div class="ninja-tools">
+          <button id="soundBtn" class="ninja-icon-btn" title="声音开关">🔊</button>
+          <button id="restartBtn" class="ninja-btn ninja-btn-accent" title="重新开始">重新开始</button>
+        </div>
+      </div>
+      <div class="ninja-status-row">
+        <div class="ninja-badge">得分: <span id="scoreText">0</span></div>
+        <div class="ninja-badge">连击: <span id="comboText">0</span></div>
+        <div class="ninja-badge lives" id="livesContainer">
+          生命: <span class="heart active">❤️</span><span class="heart active">❤️</span><span class="heart active">❤️</span>
+        </div>
+      </div>
+    </header>
+
+    <div class="canvas-wrapper" id="canvasWrapper">
+      <canvas id="gameCanvas"></canvas>
+      <div class="slice-hint" id="sliceHint">滑动屏幕或按住鼠标切开水果！千万别碰炸弹 💣</div>
+    </div>
+
+    <footer class="ninja-footer">
+      <div class="ninja-hint">一刀切中多个水果触发 COMBO 连击额外加分 · 掉落未切水果损失生命</div>
+    </footer>
+  </div>
+
+  <div class="modal-overlay" id="gameOverModal">
+    <div class="modal-card">
+      <div class="modal-emoji" id="modalEmoji">🍉</div>
+      <h2 class="modal-title" id="modalTitle">游戏结束</h2>
+      <p class="modal-desc" id="modalDesc">最终得分: 0 分</p>
+      <div class="modal-actions">
+        <button id="modalRestartBtn" class="modal-btn modal-btn-primary">再切一局</button>
+      </div>
+    </div>
+  </div>
+
+  <script src="game.js"></script>
+</body>
+</html>

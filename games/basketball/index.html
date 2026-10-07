@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>街头投篮 (Basketball Shootout) - OmniGame</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <div class="hoop-container">
+    <header class="hoop-header">
+      <div class="hoop-title-row">
+        <h1 class="hoop-title">街头投篮 <span>Basketball</span></h1>
+        <div class="hoop-tools">
+          <button id="soundBtn" class="hoop-icon-btn" title="声音开关">🔊</button>
+          <button id="restartBtn" class="hoop-btn hoop-btn-accent" title="重开">重新开局</button>
+        </div>
+      </div>
+      <div class="hoop-status-row">
+        <div class="hoop-badge">得分: <span id="scoreText">0</span></div>
+        <div class="hoop-badge">连中: <span id="streakText">0</span></div>
+        <div class="hoop-badge timer">倒计时: <span id="timerText">60s</span></div>
+      </div>
+    </header>
+
+    <div class="canvas-wrapper" id="canvasWrapper">
+      <canvas id="gameCanvas"></canvas>
+      <div class="shoot-hint" id="shootHint">按住篮球向后拉动或向前滑出投篮！空心入网得 3 分与空心火炎奖励</div>
+    </div>
+
+    <footer class="hoop-footer">
+      <div class="hoop-hint">60 秒限时街头投篮锦标赛 · 连续空心入网触发连击暴击高分</div>
+    </footer>
+  </div>
+
+  <div class="modal-overlay" id="gameOverModal">
+    <div class="modal-card">
+      <div class="modal-emoji">🏀</div>
+      <h2 class="modal-title" id="modalTitle">全场哨响，比赛结束！</h2>
+      <p class="modal-desc" id="modalDesc">最终命中得分: 0 分</p>
+      <div class="modal-actions">
+        <button id="modalRestartBtn" class="modal-btn modal-btn-primary">再战一场</button>
+      </div>
+    </div>
+  </div>
+
+  <script src="game.js"></script>
+</body>
+</html>

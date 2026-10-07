@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>祖玛 (Zuma) - OmniGame</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <div class="zuma-container">
+    <header class="zuma-header">
+      <div class="zuma-title-row">
+        <h1 class="zuma-title">经典祖玛 <span>Zuma</span></h1>
+        <div class="zuma-tools">
+          <button id="soundBtn" class="zuma-icon-btn" title="声音开关">🔊</button>
+          <button id="restartBtn" class="zuma-btn zuma-btn-accent" title="重开">重新开始</button>
+        </div>
+      </div>
+      <div class="zuma-status-row">
+        <div class="zuma-badge">得分: <span id="scoreText">0</span></div>
+        <div class="zuma-badge">连击: <span id="comboText">0</span></div>
+        <div class="zuma-badge">剩余珠子: <span id="ballsLeftText">0</span></div>
+      </div>
+    </header>
+
+    <div class="canvas-wrapper" id="canvasWrapper">
+      <canvas id="gameCanvas"></canvas>
+      <div class="aim-hint" id="aimHint">移动鼠标瞄准，点击发射彩珠！阻断珠链进入骷髅洞</div>
+    </div>
+
+    <footer class="zuma-footer">
+      <div class="zuma-hint">打出 3 颗及以上同色珠消除 · 两端同色触发磁吸倒流与连环爆破</div>
+    </footer>
+  </div>
+
+  <div class="modal-overlay" id="gameOverModal">
+    <div class="modal-card">
+      <div class="modal-emoji" id="modalEmoji">🐸</div>
+      <h2 class="modal-title" id="modalTitle">挑战结束</h2>
+      <p class="modal-desc" id="modalDesc">最终得分: 0 分</p>
+      <div class="modal-actions">
+        <button id="modalRestartBtn" class="modal-btn modal-btn-primary">再战一局</button>
+      </div>
+    </div>
+  </div>
+
+  <script src="game.js"></script>
+</body>
+</html>

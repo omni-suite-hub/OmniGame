@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover"
+    />
+    <title>贪吃蛇 · OmniGame</title>
+    <link rel="stylesheet" href="style.css" />
+  </head>
+  <body>
+    <div class="wrap">
+      <div class="head">
+        <div class="scores">
+          <div class="score-box"><span>得分</span><b id="score">0</b></div>
+          <div class="score-box"><span>等级</span><b id="level">1</b></div>
+          <div class="score-box"><span>最佳</span><b id="best">0</b></div>
+        </div>
+      </div>
+
+      <div class="stage">
+        <canvas id="cv"></canvas>
+        <div class="overlay" id="overlay" hidden>
+          <div class="overlay-inner">
+            <h2 id="ovTitle"></h2>
+            <p id="ovText"></p>
+            <button id="ovBtn" class="btn">开始</button>
+          </div>
+        </div>
+      </div>
+
+      <div class="controls">
+        <button class="ctrl" data-dir="up" aria-label="上">▲</button>
+        <div class="ctrl-row">
+          <button class="ctrl" data-dir="left" aria-label="左">◀</button>
+          <button class="ctrl" data-dir="down" aria-label="下">▼</button>
+          <button class="ctrl" data-dir="right" aria-label="右">▶</button>
+        </div>
+        <button class="ctrl ctrl-wide" id="pauseBtn" aria-label="暂停">⏸ 暂停</button>
+      </div>
+      <p class="tip">方向键 / WASD，或点按方向键、滑动屏幕</p>
+    </div>
+
+    <script src="../_shared/storage.js"></script>
+    <script src="game.js"></script>
+  </body>
+</html>

@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+  <title>猜拳巅峰赛 (RPS Duel) - OmniGame</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <div class="rps-container">
+    <!-- Top Header -->
+    <header class="rps-header">
+      <div class="header-top">
+        <h1 class="game-title">
+          <span class="title-emoji">✌️</span>
+          <span class="title-text">猜拳巅峰赛</span>
+          <span class="title-badge">联机决斗</span>
+        </h1>
+        <div class="header-actions">
+          <button id="soundBtn" class="icon-btn" title="声音开关">🔊</button>
+          <button id="rulesBtn" class="icon-btn" title="玩法规则">❓</button>
+          <button id="onlineBtn" class="btn btn-accent" title="发起/加入联机">🌐 联机对战</button>
+        </div>
+      </div>
+
+      <!-- Match Settings -->
+      <div class="settings-bar">
+        <div class="bo-pills" id="boPills">
+          <button class="pill active" data-bo="3">BO3 三局两胜</button>
+          <button class="pill" data-bo="5">BO5 五局三胜</button>
+          <button class="pill" data-bo="1">一局定胜负</button>
+        </div>
+        <div class="opponent-type">
+          <button id="opponentTypeBtn" class="pill pill-outline">🤖 人机: 心理学大师</button>
+        </div>
+      </div>
+
+      <!-- Scoreboard with Round Dots -->
+      <div class="scoreboard">
+        <div class="player-box p1-box">
+          <div class="avatar">🐱</div>
+          <div class="meta">
+            <div class="name" id="p1Name">你</div>
+            <div class="dots-row" id="p1Dots"></div>
+          </div>
+        </div>
+
+        <div class="center-round">
+          <div class="vs-text">VS</div>
+          <div class="streak-badge" id="streakBadge">🔥 连胜: 0</div>
+        </div>
+
+        <div class="player-box p2-box">
+          <div class="meta text-right">
+            <div class="name" id="p2Name">心理学大师</div>
+            <div class="dots-row" id="p2Dots"></div>
+          </div>
+          <div class="avatar" id="p2Avatar">🤖</div>
+        </div>
+      </div>
+    </header>
+
+    <!-- Duel Arena Stage -->
+    <main class="arena-stage" id="arenaStage">
+      <!-- Opponent Hand & Character -->
+      <div class="hand-zone opp-zone" id="oppHandZone">
+        <div class="character-row opp-char">
+          <div class="character-avatar" id="oppAvatarMood">😏</div>
+          <div class="speech-bubble opp-bubble" id="oppBubble">看招！</div>
+        </div>
+        <div class="arm-wrapper opp-arm-wrapper" id="oppArm">
+          <div class="sleeve opp-sleeve">👔</div>
+          <div class="hand-avatar" id="oppHand">
+            <span class="hand-emoji">✊</span>
+          </div>
+        </div>
+        <div class="hand-label" id="oppHandLabel">对方思考中…</div>
+      </div>
+
+      <!-- Clash Energy Center -->
+      <div class="clash-center">
+        <div class="chant-badge hidden" id="chantBadge">石头！</div>
+        <div class="countdown-number hidden" id="countdownEl">3</div>
+        <div class="clash-effect hidden" id="clashEffect">💥</div>
+        <div class="result-banner" id="resultBanner">请选择出拳手势！</div>
+      </div>
+
+      <!-- Player Hand & Character -->
+      <div class="hand-zone player-zone" id="playerHandZone">
+        <div class="hand-label" id="playerHandLabel">等待你出拳</div>
+        <div class="arm-wrapper player-arm-wrapper" id="playerArm">
+          <div class="hand-avatar" id="playerHand">
+            <span class="hand-emoji">✊</span>
+          </div>
+          <div class="sleeve player-sleeve">👕</div>
+        </div>
+        <div class="character-row player-char">
+          <div class="character-avatar" id="playerAvatarMood">🐱</div>
+          <div class="speech-bubble player-bubble" id="playerBubble">我出定你了！</div>
+        </div>
+      </div>
+    </main>
+
+    <!-- Hand Selector Tray -->
+    <footer class="rps-controls">
+      <div class="controls-label">
+        <span>👇 你的锦囊出拳 (支持快捷键 1/2/3)</span>
+      </div>
+      <div class="gesture-buttons">
+        <button class="gesture-btn" id="btnRock" data-gesture="rock">
+          <span class="g-icon">✊</span>
+          <span class="g-name">石头</span>
+          <span class="g-key">1</span>
+        </button>
+        <button class="gesture-btn" id="btnScissors" data-gesture="scissors">
+          <span class="g-icon">✌️</span>
+          <span class="g-name">剪刀</span>
+          <span class="g-key">2</span>
+        </button>
+        <button class="gesture-btn" id="btnPaper" data-gesture="paper">
+          <span class="g-icon">🖐️</span>
+          <span class="g-name">布</span>
+          <span class="g-key">3</span>
+        </button>
+      </div>
+    </footer>
+  </div>
+
+  <!-- Penalty Modal -->
+  <div class="modal-overlay hidden" id="penaltyModal">
+    <div class="modal-card penalty-card">
+      <div class="modal-emoji">🏆🎉🥤</div>
+      <h2 class="modal-title" id="matchOverTitle">对决结束！抽取输家惩罚</h2>
+      <p class="modal-desc" id="matchOverDesc">恭喜大获全胜！看看输家今天的惩罚是什么吧：</p>
+      
+      <div class="penalty-box">
+        <div class="penalty-tag">今日办公室惩罚</div>
+        <div class="penalty-text" id="finalPenaltyText">下楼请赢家喝一杯奶茶！</div>
+      </div>
+
+      <div class="modal-actions">
+        <button id="reRollPenaltyBtn" class="modal-btn btn-ghost">换个惩罚 🎲</button>
+        <button id="rematchBtn" class="modal-btn btn-primary">再战一局 ⏩</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Rules Modal -->
+  <div class="modal-overlay hidden" id="rulesModal">
+    <div class="modal-card rules-card">
+      <div class="rules-header">
+        <h3 class="rules-title">✌️ 猜拳巅峰赛 · 秘籍</h3>
+        <button id="closeRulesBtn" class="modal-close">&times;</button>
+      </div>
+      <div class="rules-body">
+        <div class="rule-item">
+          <span class="rule-icon">✊</span>
+          <div><strong>经典三相克制</strong>：石头克剪刀，剪刀克布，布克石头！</div>
+        </div>
+        <div class="rule-item">
+          <span class="rule-icon">⚡</span>
+          <div><strong>赛制与抢分</strong>：支持 BO3（三局两胜）、BO5（五局三胜）与一局定胜负，连胜更有专属酷炫火焰光效！</div>
+        </div>
+        <div class="rule-item">
+          <span class="rule-icon">🌐</span>
+          <div><strong>防偷看与网络盲选</strong>：双人联机采用加密信封同步，双方同时出拳瞬间解开揭晓，绝无作弊可能！</div>
+        </div>
+        <div class="rule-item">
+          <span class="rule-icon">🤖</span>
+          <div><strong>心理战 AI</strong>：AI 会结合博弈论推测你的心理模式（如“输了换手势”、“赢了继续出”等行为惯性）！</div>
+        </div>
+      </div>
+      <div class="modal-actions">
+        <button id="knowRulesBtn" class="modal-btn btn-primary">开始决斗！</button>
+      </div>
+    </div>
+  </div>
+
+  <script src="../_shared/storage.js"></script>
+  <script src="../_shared/omni-net.js"></script>
+  <script src="game.js"></script>
+</body>
+</html>

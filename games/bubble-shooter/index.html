@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>泡泡龙 - OmniGame</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <div class="bs-container">
+    <header class="bs-header">
+      <div class="bs-title-row">
+        <h1 class="bs-title">泡泡龙 <span>Bubble Shooter</span></h1>
+        <div class="bs-tools">
+          <button id="soundBtn" class="bs-icon-btn" title="声音开关">🔊</button>
+          <button id="restartBtn" class="bs-btn bs-btn-accent" title="重新开始">重玩</button>
+        </div>
+      </div>
+
+      <div class="bs-status-row">
+        <div class="bs-score-badge">得分: <span id="scoreText">0</span></div>
+        <div class="bs-foul-badge">下压倒计: <span id="foulDots">●●●●●</span></div>
+      </div>
+    </header>
+
+    <div class="bs-canvas-wrap">
+      <canvas id="gameCanvas" width="360" height="480"></canvas>
+    </div>
+
+    <footer class="bs-footer">
+      <div class="bs-hint">移动鼠标或滑动屏幕瞄准 · 点击发射 · 3个同色相连消除</div>
+    </footer>
+  </div>
+
+  <div class="modal-overlay" id="bsModal">
+    <div class="modal-card">
+      <div class="modal-emoji" id="modalEmoji">🎉</div>
+      <h2 class="modal-title" id="modalTitle">闯关大捷！</h2>
+      <p class="modal-desc" id="modalDesc">最终得分: 12,850</p>
+      <div class="modal-actions">
+        <button id="modalRestartBtn" class="modal-btn modal-btn-primary">再来一局</button>
+      </div>
+    </div>
+  </div>
+
+  <script src="game.js"></script>
+</body>
+</html>

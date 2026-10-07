@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+  <title>重排拼词 - OmniGame</title>
+  <link rel="stylesheet" href="../_shared/game-layout.css">
+  <style>
+    body {
+      background: #0f172a;
+      color: #f8fafc;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      margin: 0;
+      padding: 0;
+      display: flex;
+      flex-direction: column;
+      height: 100vh;
+      overflow: hidden;
+      user-select: none;
+    }
+    .hud {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 10px 16px;
+      background: #1e293b;
+      border-bottom: 1px solid #334155;
+      font-size: 14px;
+    }
+    .hud-val {
+      font-weight: bold;
+      color: #38bdf8;
+    }
+    .main-view {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      padding: 12px;
+      gap: 12px;
+      max-width: 600px;
+      margin: 0 auto;
+      width: 100%;
+      box-sizing: border-box;
+      overflow-y: auto;
+    }
+    .words-board {
+      flex: 1;
+      background: #1e293b;
+      border-radius: 12px;
+      padding: 12px;
+      display: flex;
+      flex-wrap: wrap;
+      align-content: flex-start;
+      gap: 8px;
+      min-height: 140px;
+    }
+    .word-slot {
+      padding: 6px 10px;
+      border-radius: 6px;
+      background: #334155;
+      color: #94a3b8;
+      font-family: monospace;
+      font-size: 14px;
+      letter-spacing: 2px;
+      font-weight: bold;
+      border: 1px dashed #475569;
+    }
+    .word-slot.found {
+      background: #059669;
+      color: #ffffff;
+      border: 1px solid #10b981;
+    }
+    .current-word-box {
+      min-height: 48px;
+      background: #1e293b;
+      border-radius: 10px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 26px;
+      font-weight: bold;
+      letter-spacing: 4px;
+      color: #facc15;
+      border: 2px solid #38bdf8;
+    }
+    .letter-tiles {
+      display: flex;
+      justify-content: center;
+      gap: 8px;
+      flex-wrap: wrap;
+      margin: 8px 0;
+    }
+    .tile-btn {
+      width: 52px;
+      height: 52px;
+      border-radius: 10px;
+      background: #38bdf8;
+      color: #0f172a;
+      font-size: 24px;
+      font-weight: bold;
+      border: none;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.3);
+      transition: all 0.1s;
+    }
+    .tile-btn:active {
+      transform: scale(0.92);
+      background: #bae6fd;
+    }
+    .tile-btn.used {
+      background: #475569;
+      color: #94a3b8;
+      opacity: 0.5;
+      cursor: not-allowed;
+    }
+    .action-controls {
+      display: flex;
+      justify-content: center;
+      gap: 10px;
+    }
+    .btn-ctl {
+      padding: 10px 20px;
+      border-radius: 8px;
+      font-size: 15px;
+      font-weight: bold;
+      border: none;
+      cursor: pointer;
+      color: #fff;
+    }
+    .btn-shuffle { background: #64748b; }
+    .btn-clear { background: #ef4444; }
+    .btn-submit { background: #22c55e; flex: 1.2; }
+  </style>
+</head>
+<body>
+  <div class="hud">
+    <div>🔤 重排拼词 (Anagrams)</div>
+    <div>关卡: <span id="level-el" class="hud-val">1</span></div>
+    <div>得分: <span id="score-el" class="hud-val">0</span></div>
+    <div>目标: <span id="progress-el" class="hud-val">0 / 0</span></div>
+  </div>
+
+  <div class="main-view">
+    <div class="words-board" id="words-board"></div>
+
+    <div class="current-word-box" id="current-word"></div>
+
+    <div class="letter-tiles" id="letter-tiles"></div>
+
+    <div class="action-controls">
+      <button class="btn-ctl btn-shuffle" id="btn-shuffle">🔀 打乱</button>
+      <button class="btn-ctl btn-clear" id="btn-clear">✖ 清空</button>
+      <button class="btn-ctl btn-submit" id="btn-submit">✔ 提交单词</button>
+    </div>
+  </div>
+
+  <script src="game.js"></script>
+</body>
+</html>

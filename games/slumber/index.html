@@ -1,0 +1,304 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no, viewport-fit=cover">
+<title>梦境潜行 - OmniGame</title>
+<link rel="stylesheet" href="../_shared/game-layout.css">
+<style>
+  :root {
+    --bg: #080a1c;
+    --card: #121633;
+    --dream: #a78bfa;
+    --dream-glow: rgba(167, 139, 250, 0.45);
+    --gold: #fbbf24;
+    --cyan: #38bdf8;
+    --nightmare: #f43f5e;
+    --text: #f8fafc;
+    --text-dim: #94a3b8;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; user-select: none; -webkit-user-select: none; }
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    overflow: hidden;
+    height: 100vh;
+    display: flex;
+    flex-direction: column;
+  }
+  #gameContainer {
+    position: relative;
+    width: 100%;
+    height: 100%;
+    max-width: 520px;
+    margin: 0 auto;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    background: radial-gradient(ellipse at 50% 25%, #191e47 0%, #080a1c 85%);
+  }
+  /* Top HUD */
+  .top-hud {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    z-index: 20;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 10px 16px;
+    background: linear-gradient(180deg, rgba(8, 10, 28, 0.95) 0%, transparent 100%);
+    pointer-events: none;
+  }
+  .hud-stat {
+    display: flex;
+    flex-direction: column;
+  }
+  .hud-label {
+    font-size: 10px;
+    font-weight: 700;
+    color: var(--text-dim);
+    letter-spacing: 1px;
+    text-transform: uppercase;
+  }
+  .hud-val {
+    font-size: 17px;
+    font-weight: 800;
+    color: #fff;
+    text-shadow: 0 0 10px var(--dream-glow);
+  }
+  /* Breath gauge */
+  .breath-meter {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 3px;
+  }
+  .breath-title {
+    font-size: 11px;
+    font-weight: 800;
+    color: var(--dream);
+  }
+  .breath-bar {
+    width: 90px;
+    height: 6px;
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 999px;
+    overflow: hidden;
+    border: 1px solid rgba(167, 139, 250, 0.35);
+  }
+  .breath-fill {
+    height: 100%;
+    width: 100%;
+    background: linear-gradient(90deg, #a78bfa, #38bdf8);
+    border-radius: 999px;
+    transition: width 0.1s linear;
+  }
+  /* Canvas */
+  #gameCanvas {
+    width: 100%;
+    height: 100%;
+    display: block;
+  }
+  /* Bottom Controls Deck */
+  .touch-deck {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    height: 130px;
+    z-index: 15;
+    pointer-events: none;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0 20px 16px;
+  }
+  .joy-zone {
+    width: 90px;
+    height: 90px;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.04);
+    border: 1.5px dashed rgba(255, 255, 255, 0.16);
+    position: relative;
+    pointer-events: auto;
+    touch-action: none;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  .joy-knob {
+    width: 38px;
+    height: 38px;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.25);
+    border: 2px solid rgba(255, 255, 255, 0.4);
+    pointer-events: none;
+  }
+  .btn-slumber {
+    width: 80px;
+    height: 70px;
+    border-radius: 20px;
+    background: linear-gradient(135deg, #a78bfa, #6366f1);
+    border: 0;
+    color: #fff;
+    font-weight: 800;
+    font-size: 13px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 3px;
+    cursor: pointer;
+    box-shadow: 0 4px 20px rgba(167, 139, 250, 0.45);
+    pointer-events: auto;
+    touch-action: manipulation;
+    transition: transform 0.08s ease;
+  }
+  .btn-slumber:active, .btn-slumber.active {
+    transform: scale(0.92);
+    box-shadow: 0 0 24px rgba(167, 139, 250, 0.8);
+  }
+  /* Overlay */
+  .overlay {
+    position: absolute;
+    inset: 0;
+    background: rgba(8, 10, 28, 0.92);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    z-index: 30;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 24px;
+    text-align: center;
+  }
+  .overlay.hidden { display: none; }
+  .modal-title {
+    font-size: 26px;
+    font-weight: 800;
+    color: #fff;
+    margin-bottom: 8px;
+    text-shadow: 0 0 20px var(--dream-glow);
+  }
+  .modal-sub {
+    font-size: 13px;
+    color: var(--text-dim);
+    margin-bottom: 24px;
+    line-height: 1.6;
+    max-width: 320px;
+  }
+  .btn-start {
+    padding: 12px 36px;
+    border-radius: 999px;
+    border: 0;
+    background: linear-gradient(135deg, #a78bfa, #6366f1);
+    color: #fff;
+    font-size: 16px;
+    font-weight: 800;
+    cursor: pointer;
+    box-shadow: 0 4px 20px rgba(167, 139, 250, 0.4);
+    transition: all 0.15s ease;
+  }
+  .btn-start:hover { transform: translateY(-2px); }
+  .btn-start:active { transform: scale(0.97); }
+  .score-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+    width: 100%;
+    max-width: 280px;
+    margin-bottom: 24px;
+  }
+  .score-card {
+    background: rgba(255, 255, 255, 0.04);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    border-radius: 12px;
+    padding: 10px;
+  }
+  .score-card-num {
+    font-size: 20px;
+    font-weight: 800;
+    color: var(--dream);
+  }
+  .score-card-lbl {
+    font-size: 11px;
+    color: var(--text-dim);
+    font-weight: 600;
+  }
+</style>
+</head>
+<body>
+<div id="gameContainer">
+  <div class="top-hud">
+    <div class="hud-stat">
+      <span class="hud-label">梦境层数</span>
+      <span id="levelVal" class="hud-val">第 1 层</span>
+    </div>
+    <div class="breath-meter">
+      <span class="breath-title">💤 假寐屏息</span>
+      <div class="breath-bar"><div id="breathFill" class="breath-fill"></div></div>
+    </div>
+    <div class="hud-stat" style="text-align: right;">
+      <span class="hud-label">星辉 / 得分</span>
+      <span id="scoreVal" class="hud-val" style="color: var(--gold);">0 ⭐</span>
+    </div>
+  </div>
+
+  <canvas id="gameCanvas"></canvas>
+
+  <div class="touch-deck">
+    <div id="joyZone" class="joy-zone">
+      <div id="joyKnob" class="joy-knob"></div>
+    </div>
+    <button id="btnSlumber" class="btn-slumber">
+      <span>💤 假寐</span>
+      <span style="font-size:9px; opacity:0.85;">空格 / 长按</span>
+    </button>
+  </div>
+
+  <!-- Start Overlay -->
+  <div id="startOverlay" class="overlay">
+    <h1 class="modal-title">🌙 梦境潜行</h1>
+    <p class="modal-sub">
+      唯美梦境潜行 · 避开梦魇红月巡查！<br>
+      穿梭回廊收集梦境星辉；遇到巡查红光时，长按<b>【假寐】</b>蜷缩入眠隐身伪装！<br>
+      松开假寐迅速清醒冲刺，收集全部星辉开启觉醒之门！<br>
+      方向键/摇杆移动 · 空格/长按假寐伪装
+    </p>
+    <button id="startBtn" class="btn-start">步入梦境</button>
+  </div>
+
+  <!-- Over Overlay -->
+  <div id="overOverlay" class="overlay hidden">
+    <h2 class="modal-title" id="overTitle">梦魇惊醒</h2>
+    <p class="modal-sub" id="overSub">被巡查的梦魇之眼捕获</p>
+    <div class="score-grid">
+      <div class="score-card">
+        <div id="finalScore" class="score-card-num">0 ⭐</div>
+        <div class="score-card-lbl">收集星辉</div>
+      </div>
+      <div class="score-card">
+        <div id="finalLevel" class="score-card-num">1</div>
+        <div class="score-card-lbl">深入梦境</div>
+      </div>
+      <div class="score-card">
+        <div id="finalStealth" class="score-card-num">0</div>
+        <div class="score-card-lbl">成功隐匿</div>
+      </div>
+      <div class="score-card">
+        <div id="finalTime" class="score-card-num">0s</div>
+        <div class="score-card-lbl">游弋用时</div>
+      </div>
+    </div>
+    <button id="retryBtn" class="btn-start">重凝梦境</button>
+  </div>
+</div>
+
+<script src="../_shared/storage.js"></script>
+<script src="game.js"></script>
+</body>
+</html>

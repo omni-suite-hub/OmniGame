@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover"
+    />
+    <title>合成大西瓜 · OmniGame</title>
+    <link rel="stylesheet" href="style.css" />
+  </head>
+  <body>
+    <div class="app-wrap">
+      <header class="game-header">
+        <div class="score-card">
+          <span class="label">分数</span>
+          <span class="val" id="scoreVal">0</span>
+        </div>
+        <div class="next-preview" title="下一个水果">
+          <span class="next-label">下一个</span>
+          <div class="next-icon-wrap" id="nextIconWrap"></div>
+        </div>
+        <div class="score-card best">
+          <span class="label">最高分</span>
+          <span class="val" id="bestVal">0</span>
+        </div>
+        <button id="soundBtn" class="tool-btn" title="开关音效">🔊</button>
+        <button id="restartBtn" class="tool-btn" title="重新开始">🔄</button>
+      </header>
+
+      <main class="canvas-container" id="canvasContainer">
+        <canvas id="gameCanvas" width="380" height="620"></canvas>
+      </main>
+
+      <footer class="game-footer">
+        <span class="tip-text">移动鼠标/手指瞄准，点击释放掉落；相同水果碰撞合成更大水果！</span>
+      </footer>
+
+      <!-- Game Over Modal -->
+      <div id="modalOverlay" class="modal-overlay hidden">
+        <div class="modal-card">
+          <div class="modal-emoji" id="modalEmoji">🍉</div>
+          <h2 class="modal-title" id="modalTitle">游戏结束</h2>
+          <div class="modal-stats">
+            <div class="stat-item">
+              <span class="stat-label">本次得分</span>
+              <span class="stat-num" id="finalScore">0</span>
+            </div>
+            <div class="stat-item">
+              <span class="stat-label">历史最高</span>
+              <span class="stat-num" id="finalBest">0</span>
+            </div>
+          </div>
+          <button id="playAgainBtn" class="modal-btn">再来一局 🍉</button>
+        </div>
+      </div>
+    </div>
+
+    <script src="../_shared/storage.js"></script>
+    <script src="game.js"></script>
+  </body>
+</html>

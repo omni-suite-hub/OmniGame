@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>经典台球 (8-Ball Pool) - OmniGame</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <div class="pool-container">
+    <header class="pool-header">
+      <div class="pool-title-row">
+        <h1 class="pool-title">经典台球 <span>8-Ball Pool</span></h1>
+        <div class="pool-tools">
+          <button id="soundBtn" class="pool-icon-btn" title="声音">🔊</button>
+          <button id="restartBtn" class="pool-btn pool-btn-accent">新球局</button>
+        </div>
+      </div>
+      <div class="pool-status-row">
+        <div class="pool-badge">剩余目标球: <span id="ballsLeftText">7</span></div>
+        <div class="pool-badge">出杆次数: <span id="shotsText">0</span></div>
+        <div class="pool-badge">进球得分: <span id="scoreText">0</span></div>
+      </div>
+    </header>
+
+    <div class="table-wrap">
+      <canvas id="gameCanvas" width="360" height="260"></canvas>
+      <div class="pool-overlay-hint" id="overlayHint">拖动白球反向蓄力瞄准，松手击球</div>
+    </div>
+
+    <!-- Power slider indicator -->
+    <div class="power-bar-wrap">
+      <div class="power-bar-label">击球力度: <span id="powerPercent">0%</span></div>
+      <div class="power-track"><div class="power-fill" id="powerFill"></div></div>
+    </div>
+
+    <footer class="pool-footer">
+      <div class="pool-hint">按住白球向后拖拽拉杆蓄力 · 瞄准虚线引导击球 · 清空目标球后击落8号黑球取胜！</div>
+    </footer>
+  </div>
+
+  <div class="modal-overlay" id="gameOverModal">
+    <div class="modal-card">
+      <div class="modal-emoji" id="modalEmoji">🎱</div>
+      <h2 class="modal-title" id="modalTitle">黑八一杆进洞！大获全胜！</h2>
+      <p class="modal-desc" id="modalDesc">总共耗费 14 杆清空球台！</p>
+      <div class="modal-actions">
+        <button id="modalRestartBtn" class="modal-btn">再开一局</button>
+      </div>
+    </div>
+  </div>
+
+  <script src="game.js"></script>
+</body>
+</html>

@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover, user-scalable=no" />
+    <title>五子棋 - OmniGame</title>
+    <link rel="stylesheet" href="style.css" />
+  </head>
+  <body>
+    <div class="app-wrap">
+      <header class="head">
+        <div class="title-wrap">
+          <span class="logo-emoji">♟️</span>
+          <span class="game-name">五子棋</span>
+          <span id="turnBadge" class="turn-badge black-turn">黑方执子</span>
+        </div>
+        <div class="actions">
+          <button id="soundBtn" class="btn-icon" type="button" title="声音开关">🔊</button>
+          <button id="undoBtn" class="btn-pill" type="button" title="悔棋一步">↩ 悔棋</button>
+          <button id="restartBtn" class="btn-pill btn-accent" type="button" title="重新开局">🔄 重开</button>
+        </div>
+      </header>
+
+      <div class="mode-bar">
+        <div class="mode-group" id="oppGroup">
+          <button class="mode-btn active" data-opp="ai">人机对战</button>
+          <button class="mode-btn" data-opp="pvp">双人同屏</button>
+        </div>
+        <div class="mode-group" id="diffGroup">
+          <button class="diff-btn" data-diff="easy">初级</button>
+          <button class="diff-btn active" data-diff="norm">进阶</button>
+          <button class="diff-btn" data-diff="hard">大师</button>
+        </div>
+      </div>
+
+      <main class="board-wrap">
+        <canvas id="boardCanvas"></canvas>
+      </main>
+
+      <footer class="foot">
+        <div class="status-msg" id="statusMsg">黑方先行，率先连成五子获胜</div>
+      </footer>
+
+      <!-- Modal Overlay -->
+      <div id="modalOverlay" class="modal-overlay hidden">
+        <div class="modal-box">
+          <div id="modalEmoji" class="modal-emoji">🎉</div>
+          <h2 id="modalTitle" class="modal-title">黑方获胜！</h2>
+          <p id="modalDesc" class="modal-desc">率先连成五子！</p>
+          <div class="modal-actions">
+            <button id="modalPlayAgain" class="modal-btn modal-btn-primary" type="button">再来一局</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <script src="../_shared/storage.js"></script>
+    <script src="game.js"></script>
+  </body>
+</html>

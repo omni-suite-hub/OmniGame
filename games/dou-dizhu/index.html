@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>斗地主 (Dou Dizhu) - OmniGame</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <div class="ddz-container">
+    <header class="ddz-header">
+      <div class="ddz-title-row">
+        <h1 class="ddz-title">经典斗地主 <span>Fight Landlord</span></h1>
+        <div class="ddz-tools">
+          <button id="soundBtn" class="ddz-icon-btn" title="声音">🔊</button>
+          <button id="restartBtn" class="ddz-btn ddz-btn-accent">新对局</button>
+        </div>
+      </div>
+      <div class="ddz-status-row">
+        <div class="ddz-badge">倍数: <span id="multiplierText">1</span>倍</div>
+        <div class="ddz-badge">底分: <span>100</span></div>
+        <div class="ddz-badge">当前回合: <span id="turnText">叫地主阶段</span></div>
+      </div>
+    </header>
+
+    <div class="ddz-table">
+      <!-- Top: 3 Hole cards -->
+      <div class="bottom-cards-box">
+        <div class="bottom-cards-title">底牌 (3张)</div>
+        <div class="bottom-cards" id="holeCards">
+          <div class="card-back"></div>
+          <div class="card-back"></div>
+          <div class="card-back"></div>
+        </div>
+      </div>
+
+      <!-- Left Bot -->
+      <div class="bot-seat seat-left">
+        <div class="avatar" id="avatarLeft">🤖 下家</div>
+        <div class="card-count-badge" id="countLeft">17张</div>
+        <div class="role-badge" id="roleLeft">农民</div>
+        <div class="played-slot" id="playedLeft"></div>
+      </div>
+
+      <!-- Right Bot -->
+      <div class="bot-seat seat-right">
+        <div class="avatar" id="avatarRight">🤖 上家</div>
+        <div class="card-count-badge" id="countRight">17张</div>
+        <div class="role-badge" id="roleRight">农民</div>
+        <div class="played-slot" id="playedRight"></div>
+      </div>
+
+      <!-- Center Last Played Cards -->
+      <div class="center-desk" id="centerDesk"></div>
+
+      <!-- Player Played Cards slot -->
+      <div class="played-slot-player" id="playedPlayer"></div>
+
+      <!-- Action Buttons Bar -->
+      <div class="action-bar" id="actionBar">
+        <!-- Bidding Buttons -->
+        <div class="btn-group" id="bidButtons">
+          <button id="btnCall" class="action-btn btn-call">叫地主</button>
+          <button id="btnPassBid" class="action-btn btn-pass">不叫</button>
+        </div>
+        <!-- Playing Buttons -->
+        <div class="btn-group" id="playButtons" style="display:none;">
+          <button id="btnHint" class="action-btn btn-hint">提示</button>
+          <button id="btnPassPlay" class="action-btn btn-pass">不出</button>
+          <button id="btnPlayCards" class="action-btn btn-play">出牌</button>
+        </div>
+      </div>
+
+      <!-- Player Hand -->
+      <div class="player-hand-container">
+        <div class="player-info-row">
+          <span class="player-name">👤 我</span>
+          <span class="player-role" id="playerRole">农民</span>
+          <span class="player-score" id="playerScore">1000分</span>
+        </div>
+        <div class="player-cards" id="playerCards"></div>
+      </div>
+    </div>
+
+    <footer class="ddz-footer">
+      <div class="ddz-hint">点击卡牌选中/取消，凑齐单张、对子、连对、顺子、三带、炸弹或王炸！</div>
+    </footer>
+  </div>
+
+  <div class="modal-overlay" id="gameOverModal">
+    <div class="modal-card">
+      <div class="modal-emoji" id="modalEmoji">🎉</div>
+      <h2 class="modal-title" id="modalTitle">农民胜利！</h2>
+      <p class="modal-desc" id="modalDesc">成功击败地主，得分 +200！</p>
+      <div class="modal-actions">
+        <button id="modalRestartBtn" class="modal-btn">再来一局</button>
+      </div>
+    </div>
+  </div>
+
+  <script src="game.js"></script>
+</body>
+</html>

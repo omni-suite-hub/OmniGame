@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover"
+    />
+    <title>Chrome 恐龙跑酷 · OmniGame</title>
+    <link rel="stylesheet" href="style.css" />
+  </head>
+  <body>
+    <div class="app-wrap" id="appWrap">
+      <header class="game-header">
+        <div class="brand-zone">
+          <span class="dino-badge">🦖</span>
+          <span class="brand-title">T-Rex Run</span>
+        </div>
+        <div class="score-board">
+          <span class="hi-label">HI</span>
+          <span class="hi-score" id="hiScore">00000</span>
+          <span class="cur-score" id="curScore">00000</span>
+        </div>
+        <div class="header-tools">
+          <button id="soundBtn" class="tool-btn" title="开关音效">🔊</button>
+          <button id="restartBtn" class="tool-btn" title="重新开始">🔄</button>
+        </div>
+      </header>
+
+      <main class="canvas-container" id="canvasContainer">
+        <canvas id="gameCanvas" width="600" height="220"></canvas>
+        <div id="startOverlay" class="start-hint">按 空格 或 点击屏幕 起跳 🦖</div>
+      </main>
+
+      <footer class="game-footer">
+        <div class="controls-hint">
+          <span><code>空格</code> / <code>↑</code> 跳跃</span>
+          <span><code>↓</code> 俯身 / 快速下落</span>
+          <span>触屏：点击跳跃</span>
+        </div>
+      </footer>
+
+      <!-- Game Over Modal -->
+      <div id="modalOverlay" class="modal-overlay hidden">
+        <div class="modal-card">
+          <div class="game-over-text">GAME OVER</div>
+          <div class="modal-stats">
+            <div class="stat-item">
+              <span class="stat-label">本次得分</span>
+              <span class="stat-num" id="finalScore">0</span>
+            </div>
+            <div class="stat-item">
+              <span class="stat-label">历史最高</span>
+              <span class="stat-num" id="finalBest">0</span>
+            </div>
+          </div>
+          <button id="playAgainBtn" class="modal-btn">🔄 再来一局 (按空格重开)</button>
+        </div>
+      </div>
+    </div>
+
+    <script src="../_shared/storage.js"></script>
+    <script src="game.js"></script>
+  </body>
+</html>

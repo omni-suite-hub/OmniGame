@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>滑块解锁 (Unblock Me) - OmniGame</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <div class="ub-container">
+    <header class="ub-header">
+      <div class="ub-title-row">
+        <h1 class="ub-title">滑块解锁 <span>Unblock Me</span></h1>
+        <div class="ub-tools">
+          <button id="soundBtn" class="ub-icon-btn" title="声音开关">🔊</button>
+          <button id="undoBtn" class="ub-btn ub-btn-ghost" title="撤销一步">撤销</button>
+          <button id="restartBtn" class="ub-btn ub-btn-accent" title="重开本关">重置</button>
+        </div>
+      </div>
+
+      <div class="ub-status-row">
+        <div class="ub-level-wrap">
+          <select id="levelSelect" class="ub-select">
+            <option value="1" selected>第 1 关 (初学)</option>
+            <option value="2">第 2 关 (进阶)</option>
+            <option value="3">第 3 关 (大师)</option>
+            <option value="4">第 4 关 (极难)</option>
+          </select>
+        </div>
+        <div class="ub-badge">步数: <span id="movesText">0</span> / 最少 <span id="optText">8</span> 步</div>
+      </div>
+    </header>
+
+    <div class="ub-board-wrap">
+      <div class="ub-exit-gate">出口 ➔</div>
+      <div class="ub-board" id="board">
+        <!-- 6x6 grid blocks -->
+      </div>
+    </div>
+
+    <footer class="ub-footer">
+      <div class="ub-hint">拖拽或点击移动木块 · 横向木块只能横移，纵向木块只能纵移 · 将 🟥 红色主车移出右侧出口</div>
+    </footer>
+  </div>
+
+  <div class="modal-overlay" id="ubModal">
+    <div class="modal-card">
+      <div class="modal-emoji" id="modalEmoji">🚗</div>
+      <h2 class="modal-title" id="modalTitle">解围脱困！</h2>
+      <p class="modal-desc" id="modalDesc">用时 00:35 · 8 步完美出关！</p>
+      <div class="modal-actions">
+        <button id="modalActionBtn" class="modal-btn modal-btn-primary">进入下一关</button>
+      </div>
+    </div>
+  </div>
+
+  <script src="game.js"></script>
+</body>
+</html>

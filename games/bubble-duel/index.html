@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+  <title>泡泡龙攻防战 - OmniGame</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <div class="game-container">
+    <!-- Header -->
+    <header class="game-header">
+      <div class="header-top">
+        <h1 class="game-title">
+          <span class="title-emoji">🫧</span>
+          <span class="title-text">泡泡龙攻防战</span>
+          <span class="title-badge">摸鱼联机</span>
+        </h1>
+        <div class="header-actions">
+          <button id="soundBtn" class="icon-btn" title="声音开关">🔊</button>
+          <button id="rulesBtn" class="icon-btn" title="玩法规则">❓</button>
+          <button id="onlineBtn" class="btn btn-accent" title="发起/加入联机">🌐 联机对战</button>
+        </div>
+      </div>
+
+      <!-- Settings Bar -->
+      <div class="settings-bar">
+        <div class="mode-pills" id="gameModePills">
+          <button class="pill active" data-submode="classic">经典模式</button>
+        </div>
+        <div class="opponent-select">
+          <button id="opponentTypeBtn" class="pill pill-outline">🤖 智能人机</button>
+        </div>
+      </div>
+
+      <!-- Scoreboard -->
+      <div class="scoreboard">
+        <div class="score-card player-card" id="p1Card">
+          <div class="avatar" id="p1Avatar">🐱</div>
+          <div class="meta">
+            <div class="name" id="p1Name">你</div>
+            <div class="score"><span id="p1Score">0</span> 分</div>
+          </div>
+        </div>
+
+        <div class="match-info">
+          <div class="vs-text">VS</div>
+          <div class="round-text" id="roundText">第 1 局</div>
+        </div>
+
+        <div class="score-card opp-card" id="p2Card">
+          <div class="meta text-right">
+            <div class="name" id="p2Name">摸鱼同事</div>
+            <div class="score"><span id="p2Score">0</span> 分</div>
+          </div>
+          <div class="avatar" id="p2Avatar">🤖</div>
+        </div>
+      </div>
+    </header>
+
+    <!-- Arena Stage -->
+    <main class="arena-stage" id="arenaStage">
+      <!-- Opponent Zone -->
+      <div class="character-row opp-char">
+        <div class="character-avatar" id="oppAvatarMood">😏</div>
+        <div class="speech-bubble" id="oppBubble">看我出奇制胜！</div>
+      </div>
+
+      <!-- Custom Play Area -->
+      <div class="play-area" id="playArea">
+        
+    <div class="bubble-arena">
+      <canvas id="bubbleCanvas" width="280" height="340"></canvas>
+    </div>
+  
+      </div>
+
+      <!-- Status Banner -->
+      <div class="status-banner" id="statusBanner">开局准备中…</div>
+
+      <!-- Player Zone -->
+      <div class="character-row my-char">
+        <div class="character-avatar" id="myAvatarMood">🐱</div>
+        <div class="speech-bubble" id="myBubble">今天我必赢！</div>
+      </div>
+    </main>
+
+    <!-- Controls Toolbar -->
+    <footer class="game-controls" id="gameControls">
+      <div class="controls-hint">移动瞄准 · 点击发射 · 3消爆破争先得18分</div>
+      <div class="action-buttons" id="actionButtons">
+        
+      </div>
+    </footer>
+  </div>
+
+  <!-- Penalty Modal -->
+  <div class="modal-overlay hidden" id="penaltyModal">
+    <div class="modal-card penalty-card">
+      <div class="modal-emoji">🏆🎉🥤</div>
+      <h2 class="modal-title" id="penaltyTitle">决斗胜负已分！</h2>
+      <p class="modal-desc" id="penaltyDesc">胜败乃兵家常事，快接受今天的摸鱼惩罚：</p>
+      
+      <div class="penalty-box">
+        <div class="penalty-tag">今日办公室惩罚</div>
+        <div class="penalty-text" id="penaltyResultText">请赢家喝一杯大杯拿铁！☕</div>
+      </div>
+
+      <div class="modal-actions">
+        <button id="reRollPenaltyBtn" class="btn btn-secondary">🎲 重新抽取</button>
+        <button id="nextRoundBtn" class="btn btn-primary">再战一局 🔥</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Rules Modal -->
+  <div class="modal-overlay hidden" id="rulesModal">
+    <div class="modal-card">
+      <h2 class="modal-title">📖 玩法说明</h2>
+      <div class="rules-content" id="rulesContent">
+        
+    <p>1. 移动鼠标瞄准，点击发射彩色泡泡！</p>
+    <p>2. 3 个或以上相同颜色泡泡连在一起即可爆破消除！</p>
+    <p>3. 泡泡触及底部红线则淘汰，先清空或得分最高者获胜！</p>
+  
+      </div>
+      <div class="modal-actions">
+        <button id="closeRulesBtn" class="btn btn-primary">我知道了</button>
+      </div>
+    </div>
+  </div>
+
+  <script src="../_shared/omni-net.js"></script>
+  <script src="game.js"></script>
+</body>
+</html>

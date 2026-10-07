@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover"
+    />
+    <title>扫雷 · OmniGame</title>
+    <link rel="stylesheet" href="style.css" />
+  </head>
+  <body>
+    <div class="wrap">
+      <div class="head">
+        <div class="scores">
+          <div class="score-box"><span>💣</span><b id="mines">0</b></div>
+          <div class="score-box"><span>⏱</span><b id="time">0</b></div>
+        </div>
+      </div>
+
+      <div class="diffs" id="diffs">
+        <button class="diff active" data-diff="beginner">初级 9×9</button>
+        <button class="diff" data-diff="inter">中级 16×16</button>
+        <button class="diff" data-diff="expert">高级 30×16</button>
+      </div>
+
+      <div class="toolbar">
+        <button id="flagBtn" class="tool" aria-pressed="false">🚩 标雷模式：关</button>
+        <button id="restartBtn" class="tool">🔄 重开</button>
+        <span class="best" id="bestTime"></span>
+      </div>
+
+      <div class="board-area">
+        <div class="board" id="board"></div>
+        <div class="overlay" id="overlay" hidden>
+          <div class="overlay-inner">
+            <h2 id="ovTitle"></h2>
+            <p id="ovText"></p>
+            <button id="ovBtn" class="btn">再来一局</button>
+          </div>
+        </div>
+      </div>
+
+      <p class="tip">点按翻开 · 右键 / 长按 / 标雷模式插旗</p>
+    </div>
+
+    <script src="../_shared/storage.js"></script>
+    <script src="game.js"></script>
+  </body>
+</html>

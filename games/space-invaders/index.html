@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover"
+    />
+    <title>太空小蜜蜂 · OmniGame</title>
+    <link rel="stylesheet" href="style.css" />
+  </head>
+  <body>
+    <div class="app-wrap">
+      <header class="game-header">
+        <div class="score-card">
+          <span class="label">得分</span>
+          <span class="val" id="scoreVal">0</span>
+        </div>
+        <div class="lives-card" title="战机生命">
+          <span class="lives-label">生命</span>
+          <div class="lives-icons" id="livesIcons">🚀🚀🚀</div>
+        </div>
+        <div class="wave-card" title="波次">
+          <span class="wave-label">波次</span>
+          <span class="wave-val" id="waveVal">1</span>
+        </div>
+        <div class="score-card best">
+          <span class="label">最高</span>
+          <span class="val" id="bestVal">0</span>
+        </div>
+        <div class="header-tools">
+          <button id="soundBtn" class="tool-btn" title="开关音效">🔊</button>
+          <button id="restartBtn" class="tool-btn" title="重开">🔄</button>
+        </div>
+      </header>
+
+      <main class="canvas-container" id="canvasContainer">
+        <canvas id="gameCanvas" width="380" height="480"></canvas>
+      </main>
+
+      <footer class="game-footer">
+        <div class="controls-bar">
+          <button class="ctrl-btn" id="leftBtn">◀ 移动</button>
+          <button class="ctrl-btn fire" id="fireBtn">🔥 射击 (空格)</button>
+          <button class="ctrl-btn" id="rightBtn">移动 ▶</button>
+        </div>
+        <p class="tip-text">方向键 <code>← →</code> 移动，<code>空格</code> 开火；击碎堡垒与外星母舰！</p>
+      </footer>
+
+      <!-- Game Over / Victory Modal -->
+      <div id="modalOverlay" class="modal-overlay hidden">
+        <div class="modal-card">
+          <div class="modal-emoji" id="modalEmoji">🛸</div>
+          <h2 class="modal-title" id="modalTitle">GAME OVER</h2>
+          <div class="modal-stats">
+            <div class="stat-item">
+              <span class="stat-label">本次得分</span>
+              <span class="stat-num" id="finalScore">0</span>
+            </div>
+            <div class="stat-item">
+              <span class="stat-label">最高纪录</span>
+              <span class="stat-num" id="finalBest">0</span>
+            </div>
+          </div>
+          <button id="playAgainBtn" class="modal-btn">🔄 再战太空 (按空格重开)</button>
+        </div>
+      </div>
+    </div>
+
+    <script src="../_shared/storage.js"></script>
+    <script src="game.js"></script>
+  </body>
+</html>

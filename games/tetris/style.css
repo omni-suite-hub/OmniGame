@@ -1,0 +1,132 @@
+/* 俄罗斯方块 — OmniGame */
+* { box-sizing: border-box; }
+html, body {
+  margin: 0;
+  height: 100%;
+  overflow: hidden;
+  background: #0e1020; color: #eef1ff;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC",
+    "Hiragino Sans GB", "Microsoft YaHei", Roboto, Helvetica, Arial, sans-serif;
+}
+.wrap {
+  height: 100%;
+  display: flex; flex-direction: column; align-items: center;
+  padding: 10px 14px 8px; gap: 8px;
+  box-sizing: border-box;
+}
+.head {
+  width: 100%; max-width: min(94vw, 760px);
+  display: flex; align-items: center; justify-content: space-between; gap: 10px;
+}
+.back, .pause {
+  border: 0; background: #242844; color: #eef1ff;
+  border-radius: 10px; padding: 8px 12px; font-size: 16px; cursor: pointer;
+}
+.back:hover, .pause:hover { background: #2e3358; }
+.title { font-weight: 700; font-size: 16px; }
+
+.stage {
+  width: 100%;
+  flex: 1 1 auto;
+  min-height: 0;
+  display: grid;
+  grid-template-columns: auto auto;
+  grid-template-areas:
+    "board side"
+    "controls controls";
+  gap: 12px;
+  align-items: center;
+  justify-content: center;
+}
+
+.board-area {
+  grid-area: board;
+  position: relative;
+  flex: 0 0 auto;
+  border-radius: 12px;
+  overflow: hidden;
+  background: #0a0c18;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.4);
+}
+#cv { display: block; width: 100%; height: 100%; }
+.overlay {
+  position: absolute; inset: 0; display: flex; align-items: center; justify-content: center;
+  background: rgba(14,16,32,0.82); backdrop-filter: blur(2px);
+}
+.overlay[hidden] { display: none; }
+.overlay-inner { text-align: center; padding: 18px; }
+.overlay-inner h2 { margin: 0 0 6px; font-size: 24px; }
+.overlay-inner p { margin: 0 0 14px; color: #a6abce; font-size: 13px; }
+.btn {
+  border: 0; background: linear-gradient(135deg,#a855f7,#7c3aed); color: #fff;
+  border-radius: 12px; padding: 11px 24px; font-size: 15px; font-weight: 700; cursor: pointer;
+}
+.btn:hover { filter: brightness(1.08); }
+
+.side {
+  grid-area: side;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  min-width: 96px;
+}
+.stat {
+  background: #242844; border-radius: 10px; padding: 6px 10px; text-align: center;
+}
+.stat span { display: block; font-size: 11px; color: #a6abce; }
+.stat b { font-size: 18px; font-variant-numeric: tabular-nums; }
+.next {
+  background: #242844; border-radius: 10px; padding: 8px; text-align: center;
+}
+.next span { display: block; font-size: 11px; color: #a6abce; margin-bottom: 4px; }
+#next { background: #0a0c18; border-radius: 8px; width: 96px; height: 96px; }
+
+.controls {
+  grid-area: controls;
+  width: 100%;
+  max-width: 360px;
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 8px;
+  user-select: none;
+  margin: 0 auto;
+}
+.ctrl {
+  width: 66px; height: 50px; border: 0; border-radius: 12px;
+  background: #242844; color: #eef1ff; font-size: 20px; cursor: pointer;
+  transition: transform 0.05s ease, background 0.1s ease;
+}
+.ctrl:active { background: #a855f7; transform: scale(0.95); }
+.ctrl-wide { width: 100%; height: 42px; font-size: 14px; }
+.tip { color: #a6abce; font-size: 12px; margin: 0; text-align: center; }
+
+@media (min-width: 500px) {
+  .stage {
+    grid-template-areas:
+      "board side"
+      "board controls";
+    align-items: center;
+    justify-content: center;
+    gap: 16px;
+  }
+  .controls {
+    max-width: 200px;
+    gap: 6px;
+  }
+  .ctrl {
+    width: 44px;
+    height: 40px;
+    font-size: 16px;
+  }
+  .ctrl-wide {
+    width: 100%;
+    height: 36px;
+    font-size: 12px;
+  }
+}
+
+@media (max-width: 380px) {
+  .side { min-width: 84px; }
+  .next { display: none; }
+}

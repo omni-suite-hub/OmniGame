@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+  <title>餐厅达人 - OmniGame</title>
+  <link rel="stylesheet" href="../_shared/game-layout.css">
+  <style>
+    body {
+      background: #0f172a;
+      color: #f8fafc;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      margin: 0;
+      padding: 0;
+      display: flex;
+      flex-direction: column;
+      height: 100vh;
+      overflow: hidden;
+      user-select: none;
+    }
+    .hud {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 10px 16px;
+      background: #1e293b;
+      border-bottom: 1px solid #334155;
+      font-size: 14px;
+    }
+    .hud-stat {
+      font-weight: bold;
+      color: #facc15;
+    }
+    .diner-floor {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      padding: 12px;
+      gap: 12px;
+      max-width: 600px;
+      margin: 0 auto;
+      width: 100%;
+      box-sizing: border-box;
+      justify-content: space-between;
+    }
+    .queue-section {
+      background: #1e293b;
+      border: 1px solid #334155;
+      border-radius: 12px;
+      padding: 10px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      min-height: 52px;
+    }
+    .customer-avatar {
+      width: 44px;
+      height: 44px;
+      background: #334155;
+      border: 2px solid #38bdf8;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 24px;
+      cursor: pointer;
+      position: relative;
+    }
+    .customer-avatar.selected {
+      border-color: #facc15;
+      transform: scale(1.1);
+      box-shadow: 0 0 10px #facc15;
+    }
+    .tables-section {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 12px;
+    }
+    .table-card {
+      background: #1e293b;
+      border: 2px solid #475569;
+      border-radius: 16px;
+      padding: 14px 8px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      min-height: 120px;
+      cursor: pointer;
+      position: relative;
+      transition: all 0.15s;
+    }
+    .table-card:hover {
+      border-color: #38bdf8;
+    }
+    .table-state {
+      font-size: 12px;
+      color: #94a3b8;
+      margin-top: 6px;
+      text-align: center;
+    }
+    .dish-bubble {
+      font-size: 26px;
+      animation: bounce 0.6s infinite alternate;
+    }
+    @keyframes bounce {
+      0% { transform: translateY(0); }
+      100% { transform: translateY(-4px); }
+    }
+    .kitchen-bar {
+      background: #1e293b;
+      border: 1px solid #334155;
+      border-radius: 12px;
+      padding: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+    .order-slots {
+      display: flex;
+      gap: 8px;
+    }
+    .order-slot {
+      width: 50px;
+      height: 50px;
+      background: #0f172a;
+      border: 1px solid #475569;
+      border-radius: 8px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 26px;
+      cursor: pointer;
+    }
+    .order-slot.ready {
+      border-color: #22c55e;
+      box-shadow: 0 0 8px rgba(34,197,94,0.4);
+    }
+    .order-slot.selected {
+      border-color: #facc15;
+    }
+  </style>
+</head>
+<body>
+  <div class="hud">
+    <div>🍽️ 餐厅达人 (Diner Dash)</div>
+    <div>目标: <span id="goal-el" class="hud-stat">$60.00</span></div>
+    <div>营业额: <span id="cash-el" class="hud-stat" style="color:#22c55e;">$0.00</span></div>
+    <div>⏱️ <span id="clock-el">01:30</span></div>
+  </div>
+
+  <div class="diner-floor">
+    <div>
+      <div style="font-size:12px; color:#94a3b8; margin-bottom:4px;">排队等位顾客（点击顾客再点击空桌安排就座）</div>
+      <div class="queue-section" id="queue-bar"></div>
+    </div>
+
+    <div class="tables-section" id="tables-grid"></div>
+
+    <div class="kitchen-bar">
+      <div style="font-size:13px; font-weight:bold; color:#38bdf8;">出餐口 (点击备好餐品送至对应餐桌):</div>
+      <div class="order-slots" id="kitchen-slots"></div>
+    </div>
+  </div>
+
+  <script src="game.js"></script>
+</body>
+</html>

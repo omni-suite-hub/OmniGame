@@ -1,0 +1,194 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+  <title>柠檬水摊 - OmniGame</title>
+  <link rel="stylesheet" href="../_shared/game-layout.css">
+  <style>
+    body {
+      background: #0f172a;
+      color: #f8fafc;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      margin: 0;
+      padding: 0;
+      display: flex;
+      flex-direction: column;
+      height: 100vh;
+      overflow: hidden;
+      user-select: none;
+    }
+    .hud {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 10px 16px;
+      background: #1e293b;
+      border-bottom: 1px solid #334155;
+      font-size: 14px;
+    }
+    .money-val {
+      font-weight: bold;
+      color: #22c55e;
+      font-size: 16px;
+    }
+    .main-view {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      padding: 12px;
+      gap: 12px;
+      max-width: 600px;
+      margin: 0 auto;
+      width: 100%;
+      box-sizing: border-box;
+      overflow-y: auto;
+    }
+    .weather-card {
+      background: #1e293b;
+      border: 1px solid #334155;
+      border-radius: 12px;
+      padding: 12px 16px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .weather-info {
+      font-size: 18px;
+      font-weight: bold;
+      color: #facc15;
+    }
+    .sec-card {
+      background: #1e293b;
+      border: 1px solid #334155;
+      border-radius: 12px;
+      padding: 14px;
+    }
+    .sec-title {
+      font-weight: bold;
+      font-size: 15px;
+      color: #38bdf8;
+      margin-bottom: 10px;
+      border-bottom: 1px solid #334155;
+      padding-bottom: 6px;
+    }
+    .item-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 8px;
+      font-size: 14px;
+    }
+    .btn-buy {
+      padding: 4px 12px;
+      background: #334155;
+      color: #38bdf8;
+      border: 1px solid #0284c7;
+      border-radius: 6px;
+      cursor: pointer;
+      font-weight: bold;
+    }
+    .btn-buy:active {
+      background: #0284c7;
+      color: #fff;
+    }
+    .slider-row {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 8px;
+      font-size: 14px;
+    }
+    .slider-row input[type=range] {
+      flex: 1;
+    }
+    .btn-start-day {
+      padding: 12px;
+      background: linear-gradient(135deg, #16a34a, #15803d);
+      color: #fff;
+      border: none;
+      border-radius: 10px;
+      font-size: 16px;
+      font-weight: bold;
+      cursor: pointer;
+      box-shadow: 0 4px 12px rgba(22, 163, 74, 0.4);
+    }
+    .log-box {
+      background: #0f172a;
+      border-radius: 8px;
+      padding: 10px;
+      font-size: 13px;
+      color: #94a3b8;
+      line-height: 1.5;
+      min-height: 50px;
+    }
+  </style>
+</head>
+<body>
+  <div class="hud">
+    <div>🍋 柠檬水摊 (Lemonade Stand)</div>
+    <div>第 <span id="day-el" style="color:#facc15;font-weight:bold;">1</span> 天</div>
+    <div>资金: <span id="money-el" class="money-val">$20.00</span></div>
+  </div>
+
+  <div class="main-view">
+    <div class="weather-card">
+      <div>
+        <div style="font-size:12px; color:#94a3b8;">今日天气预报</div>
+        <div class="weather-info" id="weather-el">☀️ 晴朗 28°C</div>
+      </div>
+      <div id="popularity-tip" style="font-size:13px; color:#cbd5e1;">客流量预期良好</div>
+    </div>
+
+    <!-- Supplies Purchase -->
+    <div class="sec-card">
+      <div class="sec-title">📦 进货原料与库存</div>
+      <div class="item-row">
+        <span>🍋 柠檬 (现有 <strong id="inv-lemons">0</strong> 个)</span>
+        <button class="btn-buy" id="buy-lemons">买 10 个 ($3.00)</button>
+      </div>
+      <div class="item-row">
+        <span>🍬 白糖 (现有 <strong id="inv-sugar">0</strong> 份)</span>
+        <button class="btn-buy" id="buy-sugar">买 10 份 ($2.00)</button>
+      </div>
+      <div class="item-row">
+        <span>🧊 冰块 (现有 <strong id="inv-ice">0</strong> 块)</span>
+        <button class="btn-buy" id="buy-ice">买 50 块 ($1.50)</button>
+      </div>
+      <div class="item-row">
+        <span>🥤 纸杯 (现有 <strong id="inv-cups">0</strong> 个)</span>
+        <button class="btn-buy" id="buy-cups">买 25 个 ($1.00)</button>
+      </div>
+    </div>
+
+    <!-- Recipe Setting -->
+    <div class="sec-card">
+      <div class="sec-title">🍹 独家配方与售价</div>
+      <div class="slider-row">
+        <span>每杯柠檬: <strong id="val-lemons">3</strong> 个</span>
+        <input type="range" id="rng-lemons" min="1" max="5" value="3">
+      </div>
+      <div class="slider-row">
+        <span>每杯白糖: <strong id="val-sugar">3</strong> 份</span>
+        <input type="range" id="rng-sugar" min="1" max="5" value="3">
+      </div>
+      <div class="slider-row">
+        <span>每杯冰块: <strong id="val-ice">4</strong> 块</span>
+        <input type="range" id="rng-ice" min="0" max="8" value="4">
+      </div>
+      <div class="slider-row">
+        <span>每杯售价: $<strong id="val-price">1.50</strong></span>
+        <input type="range" id="rng-price" min="50" max="400" step="25" value="150">
+      </div>
+    </div>
+
+    <button class="btn-start-day" id="btn-start">🚀 开始今日营业！</button>
+
+    <div class="log-box" id="log-box">
+      请备好原料与配方，点击开始营业接待顾客！
+    </div>
+  </div>
+
+  <script src="game.js"></script>
+</body>
+</html>

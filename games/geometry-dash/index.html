@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>几何冲刺 (Geometry Dash) - OmniGame</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <div class="gd-container">
+    <header class="gd-header">
+      <div class="gd-title-row">
+        <h1 class="gd-title">几何冲刺 <span>Geometry Dash</span></h1>
+        <div class="gd-tools">
+          <button id="soundBtn" class="gd-icon-btn" title="声音">🔊</button>
+          <button id="restartBtn" class="gd-btn gd-btn-accent">重来</button>
+        </div>
+      </div>
+      <div class="gd-status-row">
+        <div class="gd-badge">进度: <span id="progressText">0%</span></div>
+        <div class="gd-badge">尝试次数: <span id="attemptsText">1</span></div>
+        <div class="gd-badge">最佳: <span id="bestText">0%</span></div>
+      </div>
+      <!-- Progress Bar -->
+      <div class="progress-bar-wrap">
+        <div class="progress-bar-fill" id="progressBar"></div>
+      </div>
+    </header>
+
+    <div class="canvas-wrap">
+      <canvas id="gameCanvas" width="400" height="300"></canvas>
+      <div class="start-hint" id="startHint">点击或按空格键起跳</div>
+    </div>
+
+    <footer class="gd-footer">
+      <div class="gd-hint">点击屏幕或按空格起跳 · 避开所有尖刺 · 跳上悬空踏板冲向终点！</div>
+    </footer>
+  </div>
+
+  <div class="modal-overlay" id="gameOverModal">
+    <div class="modal-card">
+      <div class="modal-emoji" id="modalEmoji">🌟</div>
+      <h2 class="modal-title" id="modalTitle">关卡通关！100% 完成！</h2>
+      <p class="modal-desc" id="modalDesc">完美的节奏与神经反应！</p>
+      <div class="modal-actions">
+        <button id="modalRestartBtn" class="modal-btn">再战一局</button>
+      </div>
+    </div>
+  </div>
+
+  <script src="game.js"></script>
+</body>
+</html>

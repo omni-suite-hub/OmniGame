@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>花园绽放 (Garden Bloom) - OmniGame</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <div class="gb-container">
+    <header class="gb-header">
+      <div class="gb-title-row">
+        <h1 class="gb-title">花园绽放 <span>Garden Bloom</span></h1>
+        <div class="gb-tools">
+          <button id="soundBtn" class="gb-icon-btn" title="声音">🔊</button>
+          <button id="restartBtn" class="gb-btn gb-btn-accent">新花园</button>
+        </div>
+      </div>
+      <div class="gb-status-row">
+        <div class="gb-badge">剩余步数: <span id="movesText">22</span></div>
+        <div class="gb-badge">绽放目标: <span id="targetText">2200</span></div>
+        <div class="gb-badge">当前得分: <span id="scoreText">0</span></div>
+      </div>
+    </header>
+
+    <div class="board-wrap">
+      <div class="garden-board" id="board"></div>
+    </div>
+
+    <footer class="gb-footer">
+      <div class="gb-hint">交换相连鲜花三消绽放 · 4连生成【水滴花】浇灌九宫爆破 · 5连唤醒【勤劳蜜蜂】全园授粉！</div>
+    </footer>
+  </div>
+
+  <div class="modal-overlay" id="gameOverModal">
+    <div class="modal-card">
+      <div class="modal-emoji" id="modalEmoji">🌺</div>
+      <h2 class="modal-title" id="modalTitle">百花齐放！花满庄园！</h2>
+      <p class="modal-desc" id="modalDesc">总积分 3120，获得绿植满星通关！</p>
+      <div class="modal-actions">
+        <button id="modalRestartBtn" class="modal-btn">重修花园</button>
+      </div>
+    </div>
+  </div>
+
+  <script src="game.js"></script>
+</body>
+</html>

@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>神庙逃亡 (Temple Run) - OmniGame</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <div class="tr-container">
+    <header class="tr-header">
+      <div class="tr-title-row">
+        <h1 class="tr-title">神庙逃亡 <span>Temple Run</span></h1>
+        <div class="tr-tools">
+          <button id="soundBtn" class="tr-icon-btn" title="声音">🔊</button>
+          <button id="restartBtn" class="tr-btn tr-btn-accent">重来</button>
+        </div>
+      </div>
+      <div class="tr-status-row">
+        <div class="tr-badge">逃亡距离: <span id="distText">0m</span></div>
+        <div class="tr-badge">远古金币: <span id="coinsText">0</span> 🪙</div>
+        <div class="tr-badge">得分: <span id="scoreText">0</span></div>
+      </div>
+    </header>
+
+    <div class="canvas-wrap">
+      <canvas id="gameCanvas" width="360" height="420"></canvas>
+      <div class="tr-overlay-hint" id="overlayHint">← → 变道/转弯 · ↑ 跳跃 · ↓ 滑铲</div>
+    </div>
+
+    <!-- Onscreen controls for quick mobile action -->
+    <div class="touch-controls">
+      <button class="t-btn" id="btnLeft">← 左拐</button>
+      <button class="t-btn" id="btnJump">↑ 跳跃</button>
+      <button class="t-btn" id="btnSlide">↓ 滑铲</button>
+      <button class="t-btn" id="btnRight">右拐 →</button>
+    </div>
+
+    <footer class="tr-footer">
+      <div class="tr-hint">十字路口及时左/右急转弯 · 飞跃断桥裂谷 · 滑铲避开石拱与喷火陷阱！</div>
+    </footer>
+  </div>
+
+  <div class="modal-overlay" id="gameOverModal">
+    <div class="modal-card">
+      <div class="modal-emoji" id="modalEmoji">🦍</div>
+      <h2 class="modal-title" id="modalTitle">被恶魔巨猿追上！</h2>
+      <p class="modal-desc" id="modalDesc">总奔跑 520 米，斩获远古神像积分 8600！</p>
+      <div class="modal-actions">
+        <button id="modalRestartBtn" class="modal-btn">重入神庙</button>
+      </div>
+    </div>
+  </div>
+
+  <script src="game.js"></script>
+</body>
+</html>

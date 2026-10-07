@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+  <title>画线保卫 - OmniGame</title>
+  <link rel="stylesheet" href="../_shared/game-layout.css">
+  <style>
+    body {
+      background: #0f172a;
+      color: #f8fafc;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      margin: 0;
+      padding: 0;
+      display: flex;
+      flex-direction: column;
+      height: 100vh;
+      overflow: hidden;
+      touch-action: none;
+      user-select: none;
+    }
+    .hud {
+      display: flex;
+      justify-content: space-around;
+      align-items: center;
+      padding: 8px 12px;
+      background: #1e293b;
+      border-bottom: 2px solid #334155;
+      font-size: 13px;
+      z-index: 10;
+    }
+    .hud-val {
+      font-weight: bold;
+      color: #facc15;
+    }
+    .ink-bar-wrap {
+      width: 100px;
+      height: 8px;
+      background: #334155;
+      border-radius: 4px;
+      overflow: hidden;
+      display: inline-block;
+      vertical-align: middle;
+      margin-left: 4px;
+    }
+    .ink-bar {
+      width: 100%;
+      height: 100%;
+      background: #38bdf8;
+      transition: width 0.1s;
+    }
+    .arena-container {
+      flex: 1;
+      position: relative;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      background: #cbd5e1;
+      overflow: hidden;
+    }
+    canvas {
+      background: #f8fafc;
+      box-shadow: 0 4px 25px rgba(0,0,0,0.4);
+      border-radius: 8px;
+      touch-action: none;
+      cursor: crosshair;
+    }
+    .modal {
+      position: absolute;
+      inset: 0;
+      background: rgba(15, 23, 42, 0.9);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      z-index: 50;
+    }
+    .modal.hidden { display: none; }
+    .modal h2 { font-size: 28px; margin: 0 0 10px 0; color: #facc15; }
+    .btn-action {
+      margin-top: 16px;
+      padding: 10px 24px;
+      background: #2563eb;
+      color: #fff;
+      border: none;
+      border-radius: 8px;
+      font-weight: bold;
+      font-size: 15px;
+      cursor: pointer;
+    }
+  </style>
+</head>
+<body>
+  <div class="hud">
+    <div>⏱️ 倒计时: <span id="timer-el" class="hud-val">8s</span></div>
+    <div>🖊️ 墨水: <div class="ink-bar-wrap"><div class="ink-bar" id="ink-bar"></div></div></div>
+    <div>关卡: <span id="level-el" class="hud-val">1 / 3</span></div>
+    <div>状态: <span id="status-el" class="hud-val" style="color:#0284c7;">请画线防护</span></div>
+  </div>
+
+  <div class="arena-container" id="container">
+    <canvas id="game-canvas"></canvas>
+
+    <div class="modal hidden" id="game-modal">
+      <h2 id="modal-title">🏆 成功护犬！</h2>
+      <p id="modal-desc" style="font-size:16px;">小狗安然无恙，蜜蜂飞走了！</p>
+      <button class="btn-action" id="btn-restart">进入下一关</button>
+    </div>
+  </div>
+
+  <script src="game.js"></script>
+</body>
+</html>

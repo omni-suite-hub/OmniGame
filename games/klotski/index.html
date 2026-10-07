@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover"
+    />
+    <title>数字华容道 · OmniGame</title>
+    <link rel="stylesheet" href="style.css" />
+  </head>
+  <body>
+    <div class="app-wrap">
+      <header class="game-header">
+        <div class="mode-selector">
+          <button class="mode-btn" data-size="3">3×3</button>
+          <button class="mode-btn active" data-size="4">4×4</button>
+          <button class="mode-btn" data-size="5">5×5</button>
+        </div>
+        <div class="stats-zone">
+          <div class="stat-pill"><span class="lbl">步数:</span><b id="stepsVal">0</b></div>
+          <div class="stat-pill"><span class="lbl">用时:</span><b id="timerVal">00:00</b></div>
+        </div>
+        <div class="header-tools">
+          <button id="soundBtn" class="tool-btn" title="开关音效">🔊</button>
+          <button id="shuffleBtn" class="tool-btn" title="重新洗牌">🔄</button>
+        </div>
+      </header>
+
+      <main class="board-container">
+        <div class="puzzle-board" id="puzzleBoard"></div>
+      </main>
+
+      <footer class="game-footer">
+        <p class="tip-text">点击或方向键滑动方块，将数字按从左到右、从上到下排列顺序列齐！</p>
+      </footer>
+
+      <!-- Victory Modal -->
+      <div id="modalOverlay" class="modal-overlay hidden">
+        <div class="modal-card">
+          <div class="modal-emoji">🏆</div>
+          <h2 class="modal-title">拼图成功！</h2>
+          <div class="modal-stats">
+            <div class="stat-item">
+              <span class="stat-label">所用步数</span>
+              <span class="stat-num" id="finalSteps">0</span>
+            </div>
+            <div class="stat-item">
+              <span class="stat-label">总计用时</span>
+              <span class="stat-num" id="finalTime">00:00</span>
+            </div>
+          </div>
+          <button id="playAgainBtn" class="modal-btn">🔄 再挑战一局</button>
+        </div>
+      </div>
+    </div>
+
+    <script src="../_shared/storage.js"></script>
+    <script src="game.js"></script>
+  </body>
+</html>

@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>饼干点点乐 (Cookie Clicker) - OmniGame</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <div class="cookie-container">
+    <header class="cookie-header">
+      <div class="cookie-title-row">
+        <h1 class="cookie-title">饼干点点乐 <span>Cookie Clicker</span></h1>
+        <div class="cookie-tools">
+          <button id="soundBtn" class="cookie-icon-btn" title="声音开关">🔊</button>
+          <button id="resetBtn" class="cookie-btn cookie-btn-ghost" title="重置存档">重置</button>
+        </div>
+      </div>
+      <div class="cookie-status-row">
+        <div class="cookie-stat">
+          <span class="stat-count" id="cookiesCountText">0</span>
+          <span class="stat-label">块香脆饼干</span>
+        </div>
+        <div class="cookie-stat cps">
+          <span class="cps-val" id="cpsText">0</span>
+          <span class="stat-label">每秒产能 (CPS)</span>
+        </div>
+      </div>
+    </header>
+
+    <!-- Main Big Cookie Section -->
+    <div class="big-cookie-area" id="cookieArea">
+      <div class="big-cookie" id="bigCookie">🍪</div>
+      <div class="floating-numbers" id="floatingNumbers"></div>
+    </div>
+
+    <!-- Upgrades / Buildings Shop -->
+    <div class="shop-section">
+      <div class="shop-title">自动化作坊生产线</div>
+      <div class="buildings-list" id="buildingsList"></div>
+    </div>
+
+    <footer class="cookie-footer">
+      <div class="cookie-hint">狂点大饼干烘焙美味 · 购买农场与工坊挂机自动躺赢 · 注意偶遇金色幸运饼干！</div>
+    </footer>
+  </div>
+
+  <div class="golden-cookie" id="goldenCookie">✨🍪✨</div>
+
+  <script src="game.js"></script>
+</body>
+</html>

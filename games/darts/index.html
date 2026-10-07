@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>经典飞镖 (Darts 301) - OmniGame</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <div class="darts-container">
+    <header class="darts-header">
+      <div class="darts-title-row">
+        <h1 class="darts-title">经典飞镖 <span>Darts 301</span></h1>
+        <div class="darts-tools">
+          <button id="soundBtn" class="darts-icon-btn" title="声音开关">🔊</button>
+          <button id="restartBtn" class="darts-btn darts-btn-accent" title="重开">重新开局</button>
+        </div>
+      </div>
+      <div class="darts-status-row">
+        <div class="darts-badge">剩余分值: <span id="targetScoreText">301</span></div>
+        <div class="darts-badge">本轮击中: <span id="roundHitText">-</span></div>
+        <div class="darts-badge darts-left" id="dartsLeftContainer">
+          飞镖: <span class="dart-icon active">🎯</span><span class="dart-icon active">🎯</span><span class="dart-icon active">🎯</span>
+        </div>
+      </div>
+    </header>
+
+    <div class="canvas-wrapper" id="canvasWrapper">
+      <canvas id="gameCanvas"></canvas>
+      <div class="aim-hint" id="aimHint">移动光标瞄准，按住蓄力、松手掷镖！正中红心 50 分，三倍区 20 获 60 分</div>
+    </div>
+
+    <footer class="darts-footer">
+      <div class="darts-hint">301 经典竞速减分制 · 减到恰好 0 分即获胜 · 超过 0 分判定爆镖重置本轮</div>
+    </footer>
+  </div>
+
+  <div class="modal-overlay" id="gameOverModal">
+    <div class="modal-card">
+      <div class="modal-emoji" id="modalEmoji">🎯</div>
+      <h2 class="modal-title" id="modalTitle">301 飞镖结镖！</h2>
+      <p class="modal-desc" id="modalDesc">总共投掷 12 镖 · 获胜！</p>
+      <div class="modal-actions">
+        <button id="modalRestartBtn" class="modal-btn modal-btn-primary">再战一局</button>
+      </div>
+    </div>
+  </div>
+
+  <script src="game.js"></script>
+</body>
+</html>

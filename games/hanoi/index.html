@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>汉诺塔 - OmniGame</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <div class="hanoi-container">
+    <header class="hanoi-header">
+      <div class="hanoi-title-row">
+        <h1 class="hanoi-title">汉诺塔 <span>Tower of Hanoi</span></h1>
+        <div class="hanoi-tools">
+          <button id="soundBtn" class="hanoi-icon-btn" title="声音开关">🔊</button>
+          <button id="undoBtn" class="hanoi-btn hanoi-btn-ghost" title="撤销一步">撤销</button>
+          <button id="restartBtn" class="hanoi-btn hanoi-btn-accent" title="重新开始">重玩</button>
+        </div>
+      </div>
+
+      <div class="hanoi-status-row">
+        <div class="hanoi-discs-select-wrap">
+          <label for="discCountSelect">圆盘数:</label>
+          <select id="discCountSelect" class="hanoi-select">
+            <option value="3">3 层 (最少 7 步)</option>
+            <option value="4" selected>4 层 (最少 15 步)</option>
+            <option value="5">5 层 (最少 31 步)</option>
+            <option value="6">6 层 (最少 63 步)</option>
+            <option value="7">7 层 (最少 127 步)</option>
+            <option value="8">8 层 (最少 255 步)</option>
+          </select>
+        </div>
+        <div class="hanoi-moves">步数: <span id="moveCount">0</span> / <span id="minMoves">15</span></div>
+      </div>
+    </header>
+
+    <div class="hanoi-stage-wrap">
+      <div class="hanoi-stage" id="stage">
+        <!-- Rod 0 (A) -->
+        <div class="hanoi-peg-wrap" data-peg="0">
+          <div class="hanoi-peg-label">A 柱</div>
+          <div class="hanoi-peg"></div>
+          <div class="hanoi-discs-stack" id="peg0"></div>
+        </div>
+        <!-- Rod 1 (B) -->
+        <div class="hanoi-peg-wrap" data-peg="1">
+          <div class="hanoi-peg-label">B 柱</div>
+          <div class="hanoi-peg"></div>
+          <div class="hanoi-discs-stack" id="peg1"></div>
+        </div>
+        <!-- Rod 2 (C) -->
+        <div class="hanoi-peg-wrap" data-peg="2">
+          <div class="hanoi-peg-label">C 柱 (目标)</div>
+          <div class="hanoi-peg"></div>
+          <div class="hanoi-discs-stack" id="peg2"></div>
+        </div>
+      </div>
+      <div class="hanoi-base"></div>
+    </div>
+
+    <div class="hanoi-controls-bar">
+      <button id="autoSolveBtn" class="hanoi-btn hanoi-btn-auto">🤖 AI 演示解法</button>
+      <div class="hanoi-hint-text">规则：大盘不能压在小盘上方，将全部圆盘移至 C 柱</div>
+    </div>
+  </div>
+
+  <div class="modal-overlay" id="hanoiModal">
+    <div class="modal-card">
+      <div class="modal-emoji" id="modalEmoji">🎉</div>
+      <h2 class="modal-title" id="modalTitle">挑战成功！</h2>
+      <p class="modal-desc" id="modalDesc">用时 00:45 · 15 步完美通关！</p>
+      <div class="modal-actions">
+        <button id="modalNextBtn" class="modal-btn modal-btn-primary">再来一局</button>
+      </div>
+    </div>
+  </div>
+
+  <script src="game.js"></script>
+</body>
+</html>

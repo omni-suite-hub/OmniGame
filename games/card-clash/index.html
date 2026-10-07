@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+  <title>卡牌比大小 (Card Clash) - OmniGame</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <div class="card-container">
+    <!-- Header -->
+    <header class="card-header">
+      <div class="header-top">
+        <h1 class="game-title">
+          <span class="title-emoji">🃏</span>
+          <span class="title-text">卡牌比大小</span>
+          <span class="title-badge">摸鱼对决</span>
+        </h1>
+        <div class="header-actions">
+          <button id="soundBtn" class="icon-btn" title="声音开关">🔊</button>
+          <button id="rulesBtn" class="icon-btn" title="玩法规则">❓</button>
+          <button id="onlineBtn" class="btn btn-accent" title="发起/加入联机">🌐 联机对战</button>
+        </div>
+      </div>
+
+      <!-- Settings Bar -->
+      <div class="settings-bar">
+        <div class="mode-pills" id="cardModePills">
+          <button class="pill active" data-mode="single">单张比大小</button>
+          <button class="pill" data-mode="three">三张牌对决</button>
+        </div>
+        <div class="opponent-type">
+          <button id="opponentTypeBtn" class="pill pill-outline">🤖 人机: 扑克赌神</button>
+        </div>
+      </div>
+
+      <!-- Scoreboard -->
+      <div class="scoreboard">
+        <div class="player-pill p1-pill">
+          <div class="avatar">🐱</div>
+          <div class="meta">
+            <div class="name" id="p1Name">你</div>
+            <div class="score"><span id="p1Score">0</span> 胜</div>
+          </div>
+        </div>
+
+        <div class="center-meta">
+          <div class="vs-text">VS</div>
+          <div class="round-badge" id="roundBadge">第 1 局</div>
+        </div>
+
+        <div class="player-pill p2-pill">
+          <div class="meta text-right">
+            <div class="name" id="p2Name">扑克赌神</div>
+            <div class="score"><span id="p2Score">0</span> 胜</div>
+          </div>
+          <div class="avatar">🤖</div>
+        </div>
+      </div>
+    </header>
+
+    <!-- Table Stage -->
+    <main class="table-stage" id="tableStage">
+      <!-- Opponent Card Area -->
+      <section class="hand-row opp-hand-row">
+        <div class="character-row opp-char">
+          <div class="character-avatar" id="oppAvatarMood">😏</div>
+          <div class="speech-bubble" id="oppBubble">我底牌很硬！</div>
+        </div>
+        <div class="hand-label">对方手牌</div>
+        <div class="cards-tray" id="oppCardsTray">
+          <!-- Rendered 3D Cards -->
+        </div>
+        <div class="hand-rank" id="oppRankText">等待发牌…</div>
+      </section>
+
+      <!-- Center Deck & Clash Result -->
+      <div class="table-center">
+        <div class="deck-pile" id="deckPile" title="点击洗牌发牌">
+          <div class="dealer-hands" id="dealerHands">
+            <span class="dealer-hand">🫲</span>
+            <span class="dealer-hand">🫱</span>
+          </div>
+          <div class="card-back-stack"></div>
+          <span class="deck-icon">🂠</span>
+        </div>
+        <div class="clash-result-banner" id="clashResultBanner">点击“洗牌发牌”开局</div>
+      </div>
+
+      <!-- Player Card Area -->
+      <section class="hand-row my-hand-row">
+        <div class="hand-rank" id="myRankText">等待发牌…</div>
+        <div class="cards-tray" id="myCardsTray">
+          <!-- Rendered 3D Cards -->
+        </div>
+        <div class="hand-label">你的手牌</div>
+        <div class="character-row my-char">
+          <div class="character-avatar" id="myAvatarMood">🐱</div>
+          <div class="speech-bubble" id="myBubble">发张大牌！</div>
+        </div>
+      </section>
+    </main>
+
+    <!-- Controls -->
+    <footer class="card-controls">
+      <button id="dealBtn" class="control-btn btn-deal">
+        <span class="btn-icon">🎴</span>
+        <span class="btn-txt">洗牌发牌</span>
+      </button>
+      <button id="doubleBtn" class="control-btn btn-double" disabled>
+        <span class="btn-icon">⚡</span>
+        <span class="btn-txt">加倍胜负</span>
+      </button>
+      <button id="revealBtn" class="control-btn btn-reveal" disabled>
+        <span class="btn-icon">✨</span>
+        <span class="btn-txt">翻牌决胜!</span>
+      </button>
+    </footer>
+  </div>
+
+  <!-- Penalty Modal -->
+  <div class="modal-overlay hidden" id="penaltyModal">
+    <div class="modal-card penalty-card">
+      <div class="modal-emoji">🃏👑🥤</div>
+      <h2 class="modal-title" id="penaltyModalTitle">牌局揭晓！抽取输家惩罚</h2>
+      <p class="modal-desc" id="penaltyModalDesc">看看赢家开出的办公室惩罚：</p>
+      
+      <div class="penalty-box">
+        <div class="penalty-tag">输家必须执行</div>
+        <div class="penalty-text" id="cardPenaltyText">请赢家喝一杯大杯拿铁！</div>
+      </div>
+
+      <div class="modal-actions">
+        <button id="reRollCardPenaltyBtn" class="modal-btn btn-ghost">换个惩罚 🎲</button>
+        <button id="nextCardRoundBtn" class="modal-btn btn-primary">下一轮对决 ⏩</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Rules Modal -->
+  <div class="modal-overlay hidden" id="rulesModal">
+    <div class="modal-card rules-card">
+      <div class="rules-header">
+        <h3 class="rules-title">🃏 卡牌比大小 · 规则秘籍</h3>
+        <button id="closeRulesBtn" class="modal-close">&times;</button>
+      </div>
+      <div class="rules-body">
+        <div class="rule-item">
+          <span class="rule-icon">🎴</span>
+          <div><strong>单张比大小</strong>：点数大小顺序为 <code>2 < 3 < ... < 10 < J < Q < K < A < 👑 小王 < 🃏 大王</code>。若点数相同比花色：<code>♠️ 黑桃 > ♥️ 红桃 > ♣️ 梅花 > ♦️ 方块</code>！</div>
+        </div>
+        <div class="rule-item">
+          <span class="rule-icon">🔥</span>
+          <div><strong>三张牌对决</strong>：极简炸金花规则！牌型大小：<code>单牌 < 对子 < 顺子 < 同花 < 同花顺 < 豹子 (三张同点)</code>！</div>
+        </div>
+        <div class="rule-item">
+          <span class="rule-icon">⚡</span>
+          <div><strong>加倍博弈</strong>：在翻开底牌之前，觉得胜券在握可按下“加倍”按钮，获胜后惩罚加码！</div>
+        </div>
+        <div class="rule-item">
+          <span class="rule-icon">🌐</span>
+          <div><strong>联机对战</strong>：支持局域网同 Wi-Fi 秒连与 6 位房间码跨网直连，支持同屏双人对战！</div>
+        </div>
+      </div>
+      <div class="modal-actions">
+        <button id="knowRulesBtn" class="modal-btn btn-primary">开始发牌！</button>
+      </div>
+    </div>
+  </div>
+
+  <script src="../_shared/storage.js"></script>
+  <script src="../_shared/omni-net.js"></script>
+  <script src="game.js"></script>
+</body>
+</html>

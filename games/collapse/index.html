@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>塌方消除 (Collapse) - OmniGame</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <div class="col-container">
+    <header class="col-header">
+      <div class="col-title-row">
+        <h1 class="col-title">塌方消除 <span>Super Collapse</span></h1>
+        <div class="col-tools">
+          <button id="soundBtn" class="col-icon-btn" title="声音">🔊</button>
+          <button id="restartBtn" class="col-btn col-btn-accent">重来</button>
+        </div>
+      </div>
+      <div class="col-status-row">
+        <div class="col-badge">得分: <span id="scoreText">0</span></div>
+        <div class="col-badge">消除方块: <span id="blocksText">0</span></div>
+        <div class="col-badge">下行倒计时: <span id="timerText">5s</span></div>
+      </div>
+      <!-- Rising Row Progress Bar -->
+      <div class="rise-bar-wrap">
+        <div class="rise-bar-fill" id="riseBar"></div>
+      </div>
+    </header>
+
+    <div class="board-wrap">
+      <div class="danger-line">⚠️ 危险封顶警戒线 ⚠️</div>
+      <div class="collapse-board" id="board"></div>
+    </div>
+
+    <footer class="col-footer">
+      <div class="col-hint">点击 3 个及以上相连同色方块群消除 · 底部持续推升新行 · 切勿触顶！</div>
+    </footer>
+  </div>
+
+  <div class="modal-overlay" id="gameOverModal">
+    <div class="modal-card">
+      <div class="modal-emoji" id="modalEmoji">🧱</div>
+      <h2 class="modal-title" id="modalTitle">方块触顶！游戏结束！</h2>
+      <p class="modal-desc" id="modalDesc">总消除 248 块方块，斩获 3680 分！</p>
+      <div class="modal-actions">
+        <button id="modalRestartBtn" class="modal-btn">再次挑战</button>
+      </div>
+    </div>
+  </div>
+
+  <script src="game.js"></script>
+</body>
+</html>

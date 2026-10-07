@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+  <title>双陆棋 - OmniGame</title>
+  <link rel="stylesheet" href="../_shared/game-layout.css">
+  <style>
+    body {
+      background: #0f172a;
+      color: #f8fafc;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      margin: 0;
+      padding: 0;
+      display: flex;
+      flex-direction: column;
+      height: 100vh;
+      overflow: hidden;
+      touch-action: manipulation;
+      user-select: none;
+    }
+    .hud {
+      display: flex;
+      justify-content: space-around;
+      align-items: center;
+      padding: 8px 12px;
+      background: #1e293b;
+      border-bottom: 2px solid #334155;
+      font-size: 13px;
+      z-index: 10;
+    }
+    .hud-val {
+      font-weight: bold;
+      color: #facc15;
+    }
+    .dice-bar {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      gap: 16px;
+      padding: 6px;
+      background: #0f172a;
+      border-bottom: 1px solid #334155;
+    }
+    .dice-box {
+      display: flex;
+      gap: 8px;
+    }
+    .dice {
+      width: 34px;
+      height: 34px;
+      background: #f8fafc;
+      color: #0f172a;
+      border-radius: 6px;
+      font-size: 20px;
+      font-weight: bold;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.4);
+    }
+    .dice.used {
+      opacity: 0.35;
+    }
+    .btn-roll {
+      padding: 6px 18px;
+      background: #ea580c;
+      color: #fff;
+      border: none;
+      border-radius: 6px;
+      font-weight: bold;
+      font-size: 14px;
+      cursor: pointer;
+    }
+    .arena-container {
+      flex: 1;
+      position: relative;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      background: #451a03;
+      overflow: hidden;
+    }
+    canvas {
+      box-shadow: 0 4px 25px rgba(0,0,0,0.7);
+      border-radius: 8px;
+      touch-action: none;
+    }
+    .modal {
+      position: absolute;
+      inset: 0;
+      background: rgba(15, 23, 42, 0.92);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      z-index: 50;
+    }
+    .modal.hidden { display: none; }
+    .modal h2 { font-size: 28px; margin: 0 0 10px 0; color: #facc15; }
+    .btn-action {
+      margin-top: 16px;
+      padding: 10px 24px;
+      background: #2563eb;
+      color: #fff;
+      border: none;
+      border-radius: 8px;
+      font-weight: bold;
+      font-size: 15px;
+      cursor: pointer;
+    }
+  </style>
+</head>
+<body>
+  <div class="hud">
+    <div>⚪ 玩家出盘: <span id="player-off-el" class="hud-val">0 / 15</span></div>
+    <div>⚫ 电脑出盘: <span id="bot-off-el" class="hud-val">0 / 15</span></div>
+    <div>回合: <span id="turn-el" class="hud-val" style="color:#22c55e;">玩家回合</span></div>
+  </div>
+
+  <div class="dice-bar">
+    <div class="dice-box" id="dice-display">
+      <div class="dice">-</div>
+      <div class="dice">-</div>
+    </div>
+    <button class="btn-roll" id="btn-roll">🎲 掷骰子</button>
+  </div>
+
+  <div class="arena-container" id="container">
+    <canvas id="game-canvas"></canvas>
+
+    <div class="modal hidden" id="game-modal">
+      <h2 id="modal-title">🏆 算无遗策！</h2>
+      <p id="modal-desc" style="font-size:16px;">15枚棋子已全部移出棋盘！</p>
+      <button class="btn-action" id="btn-restart">再战一盘</button>
+    </div>
+  </div>
+
+  <script src="game.js"></script>
+</body>
+</html>

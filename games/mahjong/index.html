@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>二人麻将 (Mahjong Duel) - OmniGame</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <div class="mj-container">
+    <header class="mj-header">
+      <div class="mj-title-row">
+        <h1 class="mj-title">二人麻将 <span>Duel</span></h1>
+        <div class="mj-tools">
+          <button id="soundBtn" class="mj-icon-btn" title="声音">🔊</button>
+          <button id="restartBtn" class="mj-btn mj-btn-accent">新对局</button>
+        </div>
+      </div>
+      <div class="mj-status-row">
+        <div class="mj-badge">牌墙剩余: <span id="wallCount">40</span></div>
+        <div class="mj-badge">当前回合: <span id="turnText">玩家摸牌</span></div>
+        <div class="mj-badge">底分: <span>100</span></div>
+      </div>
+    </header>
+
+    <div class="mj-table">
+      <!-- Bot area -->
+      <div class="bot-area">
+        <div class="bot-profile">🤖 雀神电脑 <span id="botScore">1000</span>分</div>
+        <div class="bot-hand" id="botHand"></div>
+      </div>
+
+      <!-- Discard River -->
+      <div class="river-area">
+        <div class="river-label">电脑弃牌</div>
+        <div class="river" id="botRiver"></div>
+        <div class="river-label">我的弃牌</div>
+        <div class="river" id="playerRiver"></div>
+      </div>
+
+      <!-- Action Buttons Floating Bar -->
+      <div class="action-bar" id="actionBar">
+        <button id="btnHu" class="action-btn btn-hu">胡牌！</button>
+        <button id="btnPeng" class="action-btn btn-peng">碰！</button>
+        <button id="btnPass" class="action-btn btn-pass">过</button>
+      </div>
+
+      <!-- Player Hand Area -->
+      <div class="player-area">
+        <div class="player-profile">👤 我 <span id="playerScore">1000</span>分</div>
+        <div class="player-hand-wrapper">
+          <div class="player-melds" id="playerMelds"></div>
+          <div class="player-hand" id="playerHand"></div>
+          <div class="player-draw-tile" id="playerDrawSlot"></div>
+        </div>
+      </div>
+    </div>
+
+    <footer class="mj-footer">
+      <div class="mj-hint">摸牌后点击手中麻将打出 · 凑齐 4 组顺子/刻子 + 1 对将牌即可胡牌！</div>
+    </footer>
+  </div>
+
+  <div class="modal-overlay" id="gameOverModal">
+    <div class="modal-card">
+      <div class="modal-emoji" id="modalEmoji">🀄</div>
+      <h2 class="modal-title" id="modalTitle">胡了！清一色大满贯！</h2>
+      <p class="modal-desc" id="modalDesc">本局得分 +300</p>
+      <div class="modal-actions">
+        <button id="modalRestartBtn" class="modal-btn">再弈一局</button>
+      </div>
+    </div>
+  </div>
+
+  <script src="game.js"></script>
+</body>
+</html>

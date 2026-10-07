@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>地狱模拟 (Bad Time Simulator) - OmniGame</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <div class="bts-container">
+    <header class="bts-header">
+      <div class="bts-title-row">
+        <h1 class="bts-title">地狱模拟 <span>Bad Time</span></h1>
+        <div class="bts-tools">
+          <button id="soundBtn" class="bts-icon-btn" title="声音">🔊</button>
+          <button id="restartBtn" class="bts-btn bts-btn-accent">重战</button>
+        </div>
+      </div>
+      <div class="bts-status-row">
+        <div class="bts-badge">体力: <span id="hpText">92/92</span></div>
+        <div class="bts-badge">存活时间: <span id="timeText">0.0s</span></div>
+        <div class="bts-badge">波次: <span id="waveText">第 1 波</span></div>
+      </div>
+      <!-- HP Bar -->
+      <div class="hp-bar-wrap">
+        <div class="hp-bar-fill" id="hpBar"></div>
+      </div>
+    </header>
+
+    <div class="battle-arena-wrap">
+      <!-- Sans pixel avatar -->
+      <div class="sans-avatar">💀</div>
+      <div class="sans-dialogue" id="sansDialogue">准备好度过一段糟糕的时光了吗？</div>
+
+      <canvas id="gameCanvas" width="320" height="220"></canvas>
+      <div class="bts-overlay-hint" id="overlayHint">用方向键控制红色决心之魂避险</div>
+    </div>
+
+    <!-- D-pad Touch Controls for mobile/side-panel -->
+    <div class="dpad-container">
+      <button class="d-btn d-up" id="btnUp">▲</button>
+      <div class="dpad-mid">
+        <button class="d-btn d-left" id="btnLeft">◀</button>
+        <button class="d-btn d-down" id="btnDown">▼</button>
+        <button class="d-btn d-right" id="btnRight">▶</button>
+      </div>
+    </div>
+
+    <footer class="bts-footer">
+      <div class="bts-hint">控制红心闪避白骨弹幕 · 避开激光爆能炮蓄能轰击 · 坚持越久评分越高！</div>
+    </footer>
+  </div>
+
+  <div class="modal-overlay" id="gameOverModal">
+    <div class="modal-card">
+      <div class="modal-emoji" id="modalEmoji">💔</div>
+      <h2 class="modal-title" id="modalTitle">决心碎裂！</h2>
+      <p class="modal-desc" id="modalDesc">极限坚持了 42.5 秒，突破到第 4 波弹幕！</p>
+      <div class="modal-actions">
+        <button id="modalRestartBtn" class="modal-btn">重拾决心</button>
+      </div>
+    </div>
+  </div>
+
+  <script src="game.js"></script>
+</body>
+</html>

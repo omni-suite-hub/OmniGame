@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+  <title>登山赛车 - OmniGame</title>
+  <link rel="stylesheet" href="../_shared/game-layout.css">
+  <style>
+    body {
+      background: #0f172a;
+      color: #f8fafc;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      margin: 0;
+      padding: 0;
+      display: flex;
+      flex-direction: column;
+      height: 100vh;
+      overflow: hidden;
+      touch-action: none;
+      user-select: none;
+    }
+    .hud {
+      display: flex;
+      justify-content: space-around;
+      align-items: center;
+      padding: 8px 12px;
+      background: #1e293b;
+      border-bottom: 2px solid #334155;
+      font-size: 13px;
+      z-index: 10;
+    }
+    .hud-val {
+      font-weight: bold;
+      color: #facc15;
+    }
+    .fuel-bar-wrap {
+      width: 90px;
+      height: 8px;
+      background: #334155;
+      border-radius: 4px;
+      overflow: hidden;
+      display: inline-block;
+      vertical-align: middle;
+      margin-left: 4px;
+    }
+    .fuel-bar {
+      width: 100%;
+      height: 100%;
+      background: #22c55e;
+      transition: width 0.1s;
+    }
+    .arena-container {
+      flex: 1;
+      position: relative;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      background: #38bdf8;
+      overflow: hidden;
+    }
+    canvas {
+      box-shadow: 0 4px 25px rgba(0,0,0,0.5);
+      touch-action: none;
+    }
+    .touch-pedals {
+      position: absolute;
+      bottom: 20px;
+      left: 0;
+      right: 0;
+      padding: 0 24px;
+      display: flex;
+      justify-content: space-between;
+      pointer-events: none;
+      z-index: 20;
+    }
+    .pedal-btn {
+      width: 76px;
+      height: 76px;
+      border-radius: 16px;
+      color: #fff;
+      font-size: 16px;
+      font-weight: bold;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      pointer-events: auto;
+      border: 3px solid rgba(255,255,255,0.4);
+      cursor: pointer;
+      box-shadow: 0 6px 15px rgba(0,0,0,0.4);
+    }
+    .btn-brake { background: #ef4444; }
+    .btn-gas   { background: #16a34a; }
+    .modal {
+      position: absolute;
+      inset: 0;
+      background: rgba(15, 23, 42, 0.9);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      z-index: 50;
+    }
+    .modal.hidden { display: none; }
+    .modal h2 { font-size: 28px; margin: 0 0 10px 0; color: #ef4444; }
+    .btn-action {
+      margin-top: 16px;
+      padding: 10px 24px;
+      background: #2563eb;
+      color: #fff;
+      border: none;
+      border-radius: 8px;
+      font-weight: bold;
+      font-size: 15px;
+      cursor: pointer;
+    }
+  </style>
+</head>
+<body>
+  <div class="hud">
+    <div>📏 距离: <span id="dist-el" class="hud-val">0m</span></div>
+    <div>⛽ 油量: <div class="fuel-bar-wrap"><div class="fuel-bar" id="fuel-bar"></div></div></div>
+    <div>🪙 金币: <span id="coins-el" class="hud-val">0</span></div>
+    <div>⚡ 时速: <span id="speed-el" class="hud-val">0 km/h</span></div>
+  </div>
+
+  <div class="arena-container" id="container">
+    <canvas id="game-canvas"></canvas>
+
+    <div class="touch-pedals">
+      <button class="pedal-btn btn-brake" id="btn-brake">
+        <span>◀</span>
+        <span>刹车</span>
+      </button>
+      <button class="pedal-btn btn-gas" id="btn-gas">
+        <span>▶</span>
+        <span>加速</span>
+      </button>
+    </div>
+
+    <div class="modal hidden" id="game-modal">
+      <h2 id="modal-title">💥 车辆侧翻！</h2>
+      <p id="modal-desc" style="font-size:16px;">驾驶员颈部受损！行驶距离: <span id="final-dist" style="color:#facc15;font-weight:bold;">0m</span></p>
+      <button class="btn-action" id="btn-restart">再次启程</button>
+    </div>
+  </div>
+
+  <script src="game.js"></script>
+</body>
+</html>

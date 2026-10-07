@@ -1,0 +1,181 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+  <title>字母接龙 - OmniGame</title>
+  <link rel="stylesheet" href="../_shared/game-layout.css">
+  <style>
+    body {
+      background: #0f172a;
+      color: #f8fafc;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      margin: 0;
+      padding: 0;
+      display: flex;
+      flex-direction: column;
+      height: 100vh;
+      overflow: hidden;
+      user-select: none;
+    }
+    .top-bar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 10px 16px;
+      background: #1e293b;
+      border-bottom: 1px solid #334155;
+      font-size: 14px;
+    }
+    .hud-stat {
+      font-weight: bold;
+      color: #38bdf8;
+    }
+    .main-view {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      padding: 12px;
+      gap: 12px;
+      max-width: 600px;
+      margin: 0 auto;
+      width: 100%;
+      box-sizing: border-box;
+      overflow-y: auto;
+    }
+    .timer-wrap {
+      height: 6px;
+      background: #334155;
+      border-radius: 3px;
+      overflow: hidden;
+    }
+    .timer-bar {
+      height: 100%;
+      width: 100%;
+      background: #22c55e;
+      transition: width 0.1s linear;
+    }
+    .chain-feed {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      padding: 10px;
+      background: #1e293b;
+      border-radius: 12px;
+      overflow-y: auto;
+      min-height: 200px;
+    }
+    .chain-item {
+      padding: 8px 12px;
+      border-radius: 8px;
+      max-width: 80%;
+      font-size: 15px;
+      font-weight: 600;
+    }
+    .chain-bot {
+      background: #334155;
+      color: #cbd5e1;
+      align-self: flex-start;
+      border-left: 4px solid #38bdf8;
+    }
+    .chain-user {
+      background: #0284c7;
+      color: #ffffff;
+      align-self: flex-end;
+      border-right: 4px solid #facc15;
+    }
+    .target-banner {
+      background: #1e293b;
+      padding: 10px;
+      border-radius: 10px;
+      text-align: center;
+      font-size: 16px;
+      border: 1px dashed #38bdf8;
+    }
+    .target-letter {
+      font-size: 24px;
+      font-weight: bold;
+      color: #facc15;
+      text-transform: uppercase;
+    }
+    .input-section {
+      display: flex;
+      gap: 8px;
+    }
+    .input-box {
+      flex: 1;
+      height: 44px;
+      background: #1e293b;
+      border: 2px solid #334155;
+      border-radius: 8px;
+      color: #fff;
+      font-size: 16px;
+      font-weight: bold;
+      padding: 0 12px;
+      text-transform: uppercase;
+      outline: none;
+    }
+    .input-box:focus {
+      border-color: #38bdf8;
+    }
+    .btn-submit {
+      padding: 0 20px;
+      background: #2563eb;
+      color: #fff;
+      border: none;
+      border-radius: 8px;
+      font-weight: bold;
+      font-size: 15px;
+      cursor: pointer;
+    }
+    .chips-row {
+      display: flex;
+      gap: 6px;
+      flex-wrap: wrap;
+    }
+    .chip-btn {
+      padding: 6px 12px;
+      background: #334155;
+      color: #cbd5e1;
+      border: 1px solid #475569;
+      border-radius: 6px;
+      font-size: 13px;
+      font-weight: bold;
+      cursor: pointer;
+    }
+    .chip-btn:hover {
+      background: #475569;
+      border-color: #38bdf8;
+    }
+  </style>
+</head>
+<body>
+  <div class="top-bar">
+    <div>🔤 字母接龙 (Word Chain)</div>
+    <div>回合: <span id="round-el" class="hud-stat">1</span></div>
+    <div>得分: <span id="score-el" class="hud-stat">0</span></div>
+  </div>
+
+  <div class="main-view">
+    <div class="timer-wrap">
+      <div class="timer-bar" id="timer-bar"></div>
+    </div>
+
+    <div class="chain-feed" id="chain-feed"></div>
+
+    <div class="target-banner">
+      请输入以字母「<span class="target-letter" id="target-letter">T</span>」开头的英文单词：
+    </div>
+
+    <div class="input-section">
+      <input type="text" class="input-box" id="word-input" placeholder="输入单词..." autocomplete="off">
+      <button class="btn-submit" id="btn-submit">接龙</button>
+    </div>
+
+    <div class="chips-row" id="chips-row"></div>
+  </div>
+
+  <script src="game.js"></script>
+</body>
+</html>

@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>木块拼图 (Wood Block Blast) - OmniGame</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <div class="block-container">
+    <header class="block-header">
+      <div class="block-title-row">
+        <h1 class="block-title">木块拼图 <span>Block Blast</span></h1>
+        <div class="block-tools">
+          <button id="soundBtn" class="block-icon-btn" title="声音开关">🔊</button>
+          <button id="restartBtn" class="block-btn block-btn-accent" title="重开">重新开局</button>
+        </div>
+      </div>
+      <div class="block-status-row">
+        <div class="block-badge">得分: <span id="scoreText">0</span></div>
+        <div class="block-badge">历史最高: <span id="bestText">0</span></div>
+        <div class="block-badge combo">连击: <span id="comboText">0</span></div>
+      </div>
+    </header>
+
+    <div class="board-area" id="boardArea">
+      <div class="block-grid" id="blockGrid"></div>
+    </div>
+
+    <!-- Piece Selector Tray -->
+    <div class="tray-container">
+      <div class="tray-title">待放置木块</div>
+      <div class="pieces-tray" id="piecesTray"></div>
+    </div>
+
+    <footer class="block-footer">
+      <div class="block-hint">将木块拖入或点选放入 8×8 棋盘 · 填满任意整行或整列即可爆破消除</div>
+    </footer>
+  </div>
+
+  <div class="modal-overlay" id="gameOverModal">
+    <div class="modal-card">
+      <div class="modal-emoji">🪵</div>
+      <h2 class="modal-title" id="modalTitle">无处可放，游戏结束！</h2>
+      <p class="modal-desc" id="modalDesc">最终得分: 0 分</p>
+      <div class="modal-actions">
+        <button id="modalRestartBtn" class="modal-btn modal-btn-primary">再战一局</button>
+      </div>
+    </div>
+  </div>
+
+  <script src="game.js"></script>
+</body>
+</html>

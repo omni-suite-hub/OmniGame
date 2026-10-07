@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+  <title>复古橄榄球 - OmniGame</title>
+  <link rel="stylesheet" href="../_shared/game-layout.css">
+  <style>
+    body {
+      background: #0f172a;
+      color: #f8fafc;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, monospace;
+      margin: 0;
+      padding: 0;
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+      height: 100vh;
+      touch-action: none;
+    }
+    .scoreboard {
+      display: flex;
+      justify-content: space-around;
+      align-items: center;
+      padding: 10px 16px;
+      background: #1e293b;
+      border-bottom: 2px solid #334155;
+      font-size: 14px;
+      font-weight: bold;
+    }
+    .score-box {
+      display: flex;
+      gap: 12px;
+      font-size: 16px;
+    }
+    .score-val {
+      color: #facc15;
+    }
+    .down-info {
+      color: #38bdf8;
+    }
+    .canvas-container {
+      flex: 1;
+      position: relative;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      background: #15803d;
+      overflow: hidden;
+    }
+    canvas {
+      background: #15803d;
+      box-shadow: 0 4px 20px rgba(0,0,0,0.5);
+      touch-action: none;
+    }
+    .tip-bar {
+      padding: 6px 12px;
+      background: #0f172a;
+      text-align: center;
+      font-size: 13px;
+      color: #94a3b8;
+      border-top: 1px solid #334155;
+    }
+    .modal {
+      position: absolute;
+      inset: 0;
+      background: rgba(15, 23, 42, 0.88);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      z-index: 50;
+    }
+    .modal.hidden { display: none; }
+    .modal h2 { font-size: 32px; margin: 0 0 12px 0; color: #facc15; }
+    .modal p { font-size: 16px; color: #e2e8f0; margin: 4px 0; }
+    .btn-action {
+      margin-top: 16px;
+      padding: 10px 24px;
+      font-size: 16px;
+      font-weight: bold;
+      border-radius: 8px;
+      border: none;
+      background: #3b82f6;
+      color: #fff;
+      cursor: pointer;
+      box-shadow: 0 4px 12px rgba(59,130,246,0.4);
+    }
+  </style>
+</head>
+<body>
+  <div class="scoreboard">
+    <div class="score-box">
+      <span>YOU: <span id="player-score" class="score-val">0</span></span>
+      <span>OPP: <span id="opp-score" class="score-val">0</span></span>
+    </div>
+    <div class="down-info" id="down-display">1st & 10</div>
+    <div>⏱️ <span id="clock-display">02:00</span></div>
+  </div>
+
+  <div class="canvas-container" id="container">
+    <canvas id="game-canvas"></canvas>
+
+    <div class="modal hidden" id="game-modal">
+      <h2 id="modal-heading">TOUCHDOWN! 🏈</h2>
+      <p id="modal-subtext">完美长传直达阵区！</p>
+      <button class="btn-action" id="modal-btn">继续进攻</button>
+    </div>
+  </div>
+
+  <div class="tip-bar">
+    🏈 鼠标/手指从四分卫向后拖拽瞄准并蓄力，松开即可精准弧线传球！接球后点按屏幕变向突进！
+  </div>
+
+  <script src="game.js"></script>
+</body>
+</html>

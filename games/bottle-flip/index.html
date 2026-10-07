@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>瓶子翻转 (Bottle Flip) - OmniGame</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <div class="flip-container">
+    <header class="flip-header">
+      <div class="flip-title-row">
+        <h1 class="flip-title">瓶子翻转 <span>Bottle Flip</span></h1>
+        <div class="flip-tools">
+          <button id="soundBtn" class="flip-icon-btn" title="声音开关">🔊</button>
+          <button id="restartBtn" class="flip-btn flip-btn-accent" title="重开">重新开局</button>
+        </div>
+      </div>
+      <div class="flip-status-row">
+        <div class="flip-badge">连跳得分: <span id="scoreText">0</span></div>
+        <div class="flip-badge">最高连翻: <span id="bestText">0</span></div>
+        <div class="flip-badge power">蓄力: <span id="powerPercent">0%</span></div>
+      </div>
+    </header>
+
+    <div class="canvas-wrapper" id="canvasWrapper">
+      <canvas id="gameCanvas"></canvas>
+      <div class="flip-hint" id="flipHint">按住屏幕蓄力，看准距离松开抛起水瓶！空中翻转360度稳稳立于目标台上</div>
+    </div>
+
+    <footer class="flip-footer">
+      <div class="flip-hint">按压时间越长跳跃越远 · 瓶身必须直立着陆 · 连续正中靶心获得双倍连击</div>
+    </footer>
+  </div>
+
+  <div class="modal-overlay" id="gameOverModal">
+    <div class="modal-card">
+      <div class="modal-emoji">🍾</div>
+      <h2 class="modal-title" id="modalTitle">水瓶倒下！</h2>
+      <p class="modal-desc" id="modalDesc">最终成功翻转: 0 次</p>
+      <div class="modal-actions">
+        <button id="modalRestartBtn" class="modal-btn modal-btn-primary">再翻一次</button>
+      </div>
+    </div>
+  </div>
+
+  <script src="game.js"></script>
+</body>
+</html>

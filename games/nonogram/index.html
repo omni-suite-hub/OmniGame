@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>数织像素解谜 (Nonogram / Picross) - OmniGame</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <div class="nono-container">
+    <header class="nono-header">
+      <div class="nono-title-row">
+        <h1 class="nono-title">数织解谜 <span>Nonogram</span></h1>
+        <div class="nono-tools">
+          <button id="soundBtn" class="nono-icon-btn" title="声音开关">🔊</button>
+          <button id="restartBtn" class="nono-btn nono-btn-ghost" title="重做">重置</button>
+        </div>
+      </div>
+
+      <div class="puzzle-selector">
+        <button class="puz-btn active" data-puz="heart">❤️ 爱心</button>
+        <button class="puz-btn" data-puz="cat">🐱 小猫</button>
+        <button class="puz-btn" data-puz="mushroom">🍄 蘑菇</button>
+        <button class="puz-btn" data-puz="rocket">🚀 火箭</button>
+      </div>
+
+      <div class="nono-status-row">
+        <div class="tool-toggle">
+          <button id="fillToolBtn" class="tool-btn active">⬛ 填色</button>
+          <button id="crossToolBtn" class="tool-btn">❌ 叉号</button>
+        </div>
+        <div class="nono-badge timer">时间: <span id="timerText">00:00</span></div>
+      </div>
+    </header>
+
+    <div class="grid-wrapper" id="gridWrapper">
+      <!-- Clues and Board dynamically rendered here -->
+      <div class="nonogram-board" id="board"></div>
+    </div>
+
+    <footer class="nono-footer">
+      <div class="nono-hint">按行与列数字涂格（如 "2 1" 代表连续2格与1格）· 鼠标右键或切换叉号标记空白</div>
+    </footer>
+  </div>
+
+  <div class="modal-overlay" id="victoryModal">
+    <div class="modal-card">
+      <div class="modal-emoji" id="modalEmoji">🎨</div>
+      <h2 class="modal-title" id="modalTitle">数织像素画解谜成功！</h2>
+      <p class="modal-desc" id="modalDesc">用时 01:42 · 完美破译</p>
+      <div class="modal-actions">
+        <button id="modalNextBtn" class="modal-btn modal-btn-primary">挑战下一幅</button>
+      </div>
+    </div>
+  </div>
+
+  <script src="game.js"></script>
+</body>
+</html>

@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>叠塔 (Stack) - OmniGame</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <div class="stack-container">
+    <header class="stack-header">
+      <div class="stack-title-row">
+        <h1 class="stack-title">叠塔 <span>Tower Stack</span></h1>
+        <div class="stack-tools">
+          <button id="soundBtn" class="stack-icon-btn" title="声音开关">🔊</button>
+          <button id="restartBtn" class="stack-btn stack-btn-accent" title="重新开始">重玩</button>
+        </div>
+      </div>
+
+      <div class="stack-status-row">
+        <div class="stack-badge">最高高度: <span id="bestScoreText">0</span></div>
+        <div class="stack-badge highlight">当前层数: <span id="scoreText">0</span></div>
+      </div>
+    </header>
+
+    <div class="stack-canvas-wrap">
+      <canvas id="gameCanvas" width="360" height="480"></canvas>
+      <div class="stack-combo-badge" id="comboBadge">PERFECT! x3</div>
+    </div>
+
+    <footer class="stack-footer">
+      <div class="stack-hint">点击屏幕或按空格键放置方块 · 完美对齐可扩张方块 · 连击音调升高</div>
+    </footer>
+  </div>
+
+  <div class="modal-overlay" id="stackModal">
+    <div class="modal-card">
+      <div class="modal-emoji" id="modalEmoji">🏗️</div>
+      <h2 class="modal-title" id="modalTitle">塔楼坍塌！</h2>
+      <p class="modal-desc" id="modalDesc">最终高度: 42 层 · 新纪录！</p>
+      <div class="modal-actions">
+        <button id="modalRestartBtn" class="modal-btn modal-btn-primary">再来一局</button>
+      </div>
+    </div>
+  </div>
+
+  <script src="game.js"></script>
+</body>
+</html>

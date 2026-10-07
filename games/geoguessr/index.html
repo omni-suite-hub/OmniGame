@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+  <title>地理猜猜 - OmniGame</title>
+  <link rel="stylesheet" href="../_shared/game-layout.css">
+  <style>
+    body {
+      background: #0f172a;
+      color: #f8fafc;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      margin: 0;
+      padding: 0;
+      display: flex;
+      flex-direction: column;
+      height: 100vh;
+      overflow: hidden;
+      user-select: none;
+    }
+    .hud {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 10px 16px;
+      background: #1e293b;
+      border-bottom: 1px solid #334155;
+      font-size: 14px;
+    }
+    .hud-val {
+      font-weight: bold;
+      color: #38bdf8;
+    }
+    .main-view {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      padding: 12px;
+      gap: 12px;
+      max-width: 650px;
+      margin: 0 auto;
+      width: 100%;
+      box-sizing: border-box;
+      overflow-y: auto;
+      justify-content: space-between;
+    }
+    .clue-card {
+      background: #1e293b;
+      border: 1px solid #334155;
+      border-radius: 14px;
+      padding: 16px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      text-align: center;
+      box-shadow: 0 4px 16px rgba(0,0,0,0.4);
+    }
+    .landmark-icon {
+      font-size: 48px;
+      margin-bottom: 8px;
+    }
+    .landmark-hint {
+      font-size: 16px;
+      font-weight: bold;
+      color: #facc15;
+      margin-bottom: 6px;
+    }
+    .landmark-desc {
+      font-size: 13px;
+      color: #cbd5e1;
+      line-height: 1.5;
+    }
+    .map-container {
+      background: #0369a1;
+      border: 2px solid #334155;
+      border-radius: 12px;
+      height: 200px;
+      position: relative;
+      overflow: hidden;
+      cursor: crosshair;
+      box-shadow: inset 0 2px 10px rgba(0,0,0,0.5);
+    }
+    .map-pin {
+      position: absolute;
+      width: 14px;
+      height: 14px;
+      background: #ef4444;
+      border: 2px solid #ffffff;
+      border-radius: 50%;
+      transform: translate(-50%, -50%);
+      pointer-events: none;
+    }
+    .actual-pin {
+      position: absolute;
+      width: 14px;
+      height: 14px;
+      background: #22c55e;
+      border: 2px solid #ffffff;
+      border-radius: 50%;
+      transform: translate(-50%, -50%);
+      pointer-events: none;
+    }
+    .choices-row {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 8px;
+    }
+    .country-btn {
+      padding: 10px 14px;
+      background: #334155;
+      border: 1px solid #475569;
+      border-radius: 8px;
+      color: #f8fafc;
+      font-size: 14px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.15s;
+    }
+    .country-btn:hover {
+      background: #0284c7;
+      border-color: #38bdf8;
+    }
+    .btn-submit {
+      padding: 12px;
+      background: linear-gradient(135deg, #059669, #047857);
+      color: #fff;
+      border: none;
+      border-radius: 10px;
+      font-size: 16px;
+      font-weight: bold;
+      cursor: pointer;
+    }
+    .result-banner {
+      font-size: 13px;
+      color: #facc15;
+      text-align: center;
+      min-height: 24px;
+    }
+  </style>
+</head>
+<body>
+  <div class="hud">
+    <div>🌍 地理猜猜 (GeoGuessr)</div>
+    <div>回合: <span id="round-el" class="hud-val">1 / 5</span></div>
+    <div>总积分: <span id="score-el" class="hud-val" style="color:#22c55e;">0</span></div>
+  </div>
+
+  <div class="main-view">
+    <div class="clue-card">
+      <div class="landmark-icon" id="lm-icon">🗼</div>
+      <div class="landmark-hint" id="lm-title">战神广场上的镂空铁塔</div>
+      <div class="landmark-desc" id="lm-desc">为纪念博览会建于塞纳河畔，高 330 米，是浪漫之都举世闻名的标志性建筑。</div>
+    </div>
+
+    <div>
+      <div style="font-size:12px; color:#94a3b8; margin-bottom:4px;">从以下四个地理国家/地区中选择它的坐落位置：</div>
+      <div class="choices-row" id="choices-row"></div>
+    </div>
+
+    <div class="result-banner" id="result-banner"></div>
+
+    <button class="btn-submit" id="btn-next">下一题 ➜</button>
+  </div>
+
+  <script src="game.js"></script>
+</body>
+</html>

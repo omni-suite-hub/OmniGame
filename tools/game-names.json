@@ -1,0 +1,578 @@
+[
+  {
+    "id": "gravitas-4",
+    "name": "重力方阵"
+  },
+  {
+    "id": "tetris-clash",
+    "name": "方块死斗"
+  },
+  {
+    "id": "hack-roulette",
+    "name": "暗箱轮盘"
+  },
+  {
+    "id": "dice-duel",
+    "name": "摇骰对决"
+  },
+  {
+    "id": "rps-duel",
+    "name": "猜拳巅峰赛"
+  },
+  {
+    "id": "card-clash",
+    "name": "卡牌比大小"
+  },
+  {
+    "id": "gomoku-clash",
+    "name": "五子棋巅峰赛"
+  },
+  {
+    "id": "tictactoe-ultimate",
+    "name": "大吃小井字棋"
+  },
+  {
+    "id": "air-hockey",
+    "name": "桌上空气曲棍球"
+  },
+  {
+    "id": "dots-and-boxes",
+    "name": "点格棋领地战"
+  },
+  {
+    "id": "tug-of-war",
+    "name": "疯狂拔河对决"
+  },
+  {
+    "id": "mole-clash",
+    "name": "打地鼠竞速死斗"
+  },
+  {
+    "id": "slap-hands",
+    "name": "啪啪打手反应王"
+  },
+  {
+    "id": "penalty-shootout",
+    "name": "足球点球大战"
+  },
+  {
+    "id": "darts-duel",
+    "name": "飞镖大师对决"
+  },
+  {
+    "id": "pong-clash",
+    "name": "霓虹乒乓死斗"
+  },
+  {
+    "id": "bomb-defuse-clash",
+    "name": "拆弹心跳博弈"
+  },
+  {
+    "id": "memory-clash",
+    "name": "记忆翻牌竞速"
+  },
+  {
+    "id": "curling-clash",
+    "name": "桌面冰壶碰撞"
+  },
+  {
+    "id": "minesweeper-clash",
+    "name": "双人扫雷死斗"
+  },
+  {
+    "id": "snake-clash",
+    "name": "双人贪吃蛇对决"
+  },
+  {
+    "id": "bubble-duel",
+    "name": "泡泡龙攻防战"
+  },
+  {
+    "id": "2048-clash",
+    "name": "2048 竞速死斗"
+  },
+  {
+    "id": "speed-type-duel",
+    "name": "极速打字对决"
+  },
+  {
+    "id": "spot-diff-clash",
+    "name": "眼力找不同对决"
+  },
+  {
+    "id": "battleship-clash",
+    "name": "海战棋迷雾决战"
+  },
+  {
+    "id": "find-horse",
+    "name": "找马挑战"
+  },
+  {
+    "id": "2048",
+    "name": "2048"
+  },
+  {
+    "id": "snake",
+    "name": "贪吃蛇"
+  },
+  {
+    "id": "minesweeper",
+    "name": "扫雷"
+  },
+  {
+    "id": "tetris",
+    "name": "俄罗斯方块"
+  },
+  {
+    "id": "perfect-circle",
+    "name": "画个完美的圆"
+  },
+  {
+    "id": "watermelon",
+    "name": "合成大西瓜"
+  },
+  {
+    "id": "dino",
+    "name": "恐龙跳跃"
+  },
+  {
+    "id": "flappy-bird",
+    "name": "像素鸟"
+  },
+  {
+    "id": "piano-tiles",
+    "name": "别踩白块儿"
+  },
+  {
+    "id": "breakout",
+    "name": "经典打砖块"
+  },
+  {
+    "id": "sokoban",
+    "name": "经典推箱子"
+  },
+  {
+    "id": "pacman",
+    "name": "吃豆人"
+  },
+  {
+    "id": "klotski",
+    "name": "数字华容道"
+  },
+  {
+    "id": "onet",
+    "name": "开心连连看"
+  },
+  {
+    "id": "space-invaders",
+    "name": "太空小蜜蜂"
+  },
+  {
+    "id": "gomoku",
+    "name": "五子棋"
+  },
+  {
+    "id": "tic-tac-toe",
+    "name": "井字棋"
+  },
+  {
+    "id": "reversi",
+    "name": "黑白棋"
+  },
+  {
+    "id": "sudoku",
+    "name": "数独"
+  },
+  {
+    "id": "hanoi",
+    "name": "汉诺塔"
+  },
+  {
+    "id": "bubble-shooter",
+    "name": "泡泡龙"
+  },
+  {
+    "id": "samegame",
+    "name": "同色消除"
+  },
+  {
+    "id": "stack",
+    "name": "叠塔"
+  },
+  {
+    "id": "gold-miner",
+    "name": "黄金矿工"
+  },
+  {
+    "id": "pipe-mania",
+    "name": "接水管"
+  },
+  {
+    "id": "wordle",
+    "name": "猜词"
+  },
+  {
+    "id": "color-sort",
+    "name": "色块排序"
+  },
+  {
+    "id": "memory-match",
+    "name": "记忆翻牌"
+  },
+  {
+    "id": "maze",
+    "name": "走迷宫"
+  },
+  {
+    "id": "bejeweled",
+    "name": "宝石迷阵"
+  },
+  {
+    "id": "unblock-me",
+    "name": "滑块解锁"
+  },
+  {
+    "id": "doodle-jump",
+    "name": "跳一跳"
+  },
+  {
+    "id": "solitaire",
+    "name": "纸牌接龙"
+  },
+  {
+    "id": "fruit-ninja",
+    "name": "水果忍者"
+  },
+  {
+    "id": "monkeytype",
+    "name": "打字测速"
+  },
+  {
+    "id": "zuma",
+    "name": "祖玛"
+  },
+  {
+    "id": "jigsaw",
+    "name": "艺术拼图"
+  },
+  {
+    "id": "pinball",
+    "name": "街机弹球"
+  },
+  {
+    "id": "cookie-clicker",
+    "name": "饼干点点乐"
+  },
+  {
+    "id": "darts",
+    "name": "经典飞镖"
+  },
+  {
+    "id": "basketball",
+    "name": "街头投篮"
+  },
+  {
+    "id": "nonogram",
+    "name": "数织解谜"
+  },
+  {
+    "id": "wood-block",
+    "name": "木块拼图"
+  },
+  {
+    "id": "sheep-match",
+    "name": "羊了个羊"
+  },
+  {
+    "id": "drift-boss",
+    "name": "漂移老板"
+  },
+  {
+    "id": "bottle-flip",
+    "name": "瓶子翻转"
+  },
+  {
+    "id": "chinese-chess",
+    "name": "中国象棋"
+  },
+  {
+    "id": "chess",
+    "name": "国际象棋"
+  },
+  {
+    "id": "mahjong-solitaire",
+    "name": "麻将接龙"
+  },
+  {
+    "id": "mahjong",
+    "name": "二人麻将"
+  },
+  {
+    "id": "dou-dizhu",
+    "name": "经典斗地主"
+  },
+  {
+    "id": "san-guo-sha",
+    "name": "三国杀简版"
+  },
+  {
+    "id": "uno",
+    "name": "UNO纸牌"
+  },
+  {
+    "id": "geometry-dash",
+    "name": "几何冲刺"
+  },
+  {
+    "id": "subway-surfers",
+    "name": "地铁跑酷"
+  },
+  {
+    "id": "temple-run",
+    "name": "神庙逃亡"
+  },
+  {
+    "id": "tunnel-rush",
+    "name": "隧道冲刺"
+  },
+  {
+    "id": "slope",
+    "name": "下坡疾驰"
+  },
+  {
+    "id": "drive-mad",
+    "name": "疯狂驾驶"
+  },
+  {
+    "id": "groovy-ski",
+    "name": "酷滑滑雪"
+  },
+  {
+    "id": "bad-time",
+    "name": "地狱模拟"
+  },
+  {
+    "id": "happy-match",
+    "name": "开心消消乐"
+  },
+  {
+    "id": "candy-crush",
+    "name": "糖果传奇"
+  },
+  {
+    "id": "garden-bloom",
+    "name": "花园绽放"
+  },
+  {
+    "id": "collapse",
+    "name": "塌方消除"
+  },
+  {
+    "id": "skydom",
+    "name": "天空之城"
+  },
+  {
+    "id": "line-connect",
+    "name": "色线连接"
+  },
+  {
+    "id": "8-ball-pool",
+    "name": "桌球八球"
+  },
+  {
+    "id": "bowling",
+    "name": "保龄球"
+  },
+  {
+    "id": "mini-golf",
+    "name": "迷你高尔夫"
+  },
+  {
+    "id": "mini-racing",
+    "name": "极速赛车"
+  },
+  {
+    "id": "retro-bowl",
+    "name": "复古橄榄球"
+  },
+  {
+    "id": "crossword",
+    "name": "经典填字"
+  },
+  {
+    "id": "idiom-chain",
+    "name": "成语接龙"
+  },
+  {
+    "id": "anagrams",
+    "name": "重排拼词"
+  },
+  {
+    "id": "quordle",
+    "name": "四词同猜"
+  },
+  {
+    "id": "poetry-fill",
+    "name": "诗词填空"
+  },
+  {
+    "id": "alphabet-chain",
+    "name": "字母接龙"
+  },
+  {
+    "id": "room-escape",
+    "name": "密室逃脱"
+  },
+  {
+    "id": "detective-logic",
+    "name": "推理侦探"
+  },
+  {
+    "id": "word-search",
+    "name": "单词搜索"
+  },
+  {
+    "id": "lemonade-stand",
+    "name": "柠檬水摊"
+  },
+  {
+    "id": "farm",
+    "name": "农场物语"
+  },
+  {
+    "id": "diner-dash",
+    "name": "餐厅达人"
+  },
+  {
+    "id": "simcity-lite",
+    "name": "模拟城市"
+  },
+  {
+    "id": "fishing",
+    "name": "钓鱼达人"
+  },
+  {
+    "id": "pet-shop",
+    "name": "宠物物语"
+  },
+  {
+    "id": "platformer",
+    "name": "平台跳跃"
+  },
+  {
+    "id": "text-adventure",
+    "name": "文字冒险"
+  },
+  {
+    "id": "roguelike",
+    "name": "地牢探险"
+  },
+  {
+    "id": "geoguessr",
+    "name": "地理猜猜"
+  },
+  {
+    "id": "rpg-lite",
+    "name": "轻量回合战斗"
+  },
+  {
+    "id": "agar-io",
+    "name": "大球吃小球"
+  },
+  {
+    "id": "slither-io",
+    "name": "蛇蛇大作战"
+  },
+  {
+    "id": "paper-io",
+    "name": "占地为王"
+  },
+  {
+    "id": "tangram",
+    "name": "七巧板"
+  },
+  {
+    "id": "drop-2048",
+    "name": "掉落2048"
+  },
+  {
+    "id": "tank-battle",
+    "name": "坦克大战"
+  },
+  {
+    "id": "bomberman",
+    "name": "炸弹人"
+  },
+  {
+    "id": "plants-defense",
+    "name": "植物防线"
+  },
+  {
+    "id": "sky-fighter",
+    "name": "雷霆战机"
+  },
+  {
+    "id": "whack-a-mole",
+    "name": "疯狂打地鼠"
+  },
+  {
+    "id": "slingshot-birds",
+    "name": "弹弓破坏"
+  },
+  {
+    "id": "cut-the-rope",
+    "name": "割绳子"
+  },
+  {
+    "id": "bridge-builder",
+    "name": "造桥大师"
+  },
+  {
+    "id": "draw-save",
+    "name": "画线保卫"
+  },
+  {
+    "id": "hill-climb",
+    "name": "登山赛车"
+  },
+  {
+    "id": "one-stroke",
+    "name": "一笔画"
+  },
+  {
+    "id": "spot-differences",
+    "name": "两图找茬"
+  },
+  {
+    "id": "color-switch",
+    "name": "色彩跳跃"
+  },
+  {
+    "id": "dancing-line",
+    "name": "跳舞的线"
+  },
+  {
+    "id": "tower-defense",
+    "name": "极简塔防"
+  },
+  {
+    "id": "chinese-checkers",
+    "name": "跳棋"
+  },
+  {
+    "id": "backgammon",
+    "name": "双陆棋"
+  },
+  {
+    "id": "auto-chess",
+    "name": "极简自走棋"
+  },
+  {
+    "id": "dominoes",
+    "name": "多米诺骨牌"
+  },
+  {
+    "id": "knife-hit",
+    "name": "飞刀打靶"
+  }
+]
